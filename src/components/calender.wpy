@@ -1,0 +1,34 @@
+<style type="less">
+.groupitem {
+}
+</style>
+<template>
+  <view class="groupitem">
+    <text>日历</text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import util from '../utils/util'
+  export default class Calender extends wepy.component {
+    data = {
+    }
+    methods = {
+      tap () {
+        this.gitem.childname = `Child Random(${Math.random()})`
+        console.log(`Clicked Group ${this.$parent.$index}. Item ${this.$index}, ID is ${this.gitem.childid}`)
+      }
+    }
+    onLoad() {
+      let today = new Date()
+      let year = today.getFullYear()
+      let month = today.getMonth()
+      let config = {
+        year: year,
+        month: month
+      }
+      let monthDay = util.dateUtils.calendar(config)
+      console.log(monthDay)
+    }
+  }
+</script>
