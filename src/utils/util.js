@@ -102,7 +102,7 @@ const dateUtils =  {
 			let month = param.month;
 			if (param.month === 0) {
 				year = param.year - 1;
-				month = 11;
+				month = 12;
 			}
 
 			const monthDay = dateUtils.getMonthDays(year, month - 1);
