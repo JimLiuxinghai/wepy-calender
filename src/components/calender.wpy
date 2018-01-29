@@ -26,6 +26,7 @@
       box-sizing: border-box;
       padding: 0 30rpx;
       .day {
+          position: relative;
           text-align: center;
           line-height: 80rpx;
           flex: 1;
@@ -47,6 +48,9 @@
 <template>
   <view class="calendar">
     <text>日历</text>
+    <view class="switch">
+        
+    </view>
     <view class="weeks">
       <repeat for="{{weeks}}" key="index" index="index" item="item">
          <view class="week-item">{{item}}</view> 
@@ -54,44 +58,65 @@
     </view>
     <view class="days">
         <view class="day-week" wx:for="monthDay" wx:for-item="days" wx:for-index="index" wx:key="index">
-            <view class="day" wx:for="{{monthDay[index]}}" wx:for-item="day" wx:for-index="dayindex" wx:key="dayindex" @tap="chooseday" data-mIndex="{{index}}" data-dayIndex="{{dayindex}}">
-                <text class="able" wx:if="{{day.disabled}}">{{day.index}}</text>
-                <text class="disable" wx:if="{{!day.disabled}}">{{day.index}}</text>
+            <view class="day" wx:for="{{monthDay[index]}}" wx:for-item="day" wx:for-index="dayindex" wx:key="dayindex" data-index="{{[index, dayindex]}}" @tap="chooseday">
+                <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                <text class="disable" wx:if="{{!day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                <text class="state" wx:if="{{day.state}}">
+                    {{day.state}}
+                </text>
             </view>
         </view>
     </view>
   </view>
 </template>
 <script>
-  import wepy from 'wepy'
-  import util from '../utils/util'
-  export default class Calender extends wepy.component {
-    data = {
-      weeks: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
-      monthDay: []
-    }
-    methods = {
-      chooseday(e) {
-        console.log(e)
-      }
-    }
-    onLoad() {
-      var today = new Date()
-      let year = today.getFullYear()
-      let month = today.getMonth()
-      let yearConfig = {
-        year: year,
-        month: month
-      }
+    import wepy from 'wepy'
+    import util from '../utils/util'
+    export default class Calender extends wepy.component {
+        data = {
+            weeks: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+            monthDay: [],
+            date: []
+        }
+        methods = {
+            chooseday(e) {
+                let index = e.target.dataset.index
+                let dayObj = this.monthDay[index[0]][index[1]]
+                if (dayObj.disabled) {
+                    if (this.date.length === 0) {
+                        this.date.push(dayObj.__date)
+                        this.monthDay[index[0]][index[1]].state = '入住'
+                    }
+                    else if (this.date.length === 1) {
+                        this.date.push(dayObj.__date)
+                        this.monthDay[index[0]][index[1]].state = '离店'
+                    }
+                    else {
+                        this.date = [];
+                        this.date.push(dayObj.__date)
+                        this.monthDay[index[0]][index[1]].state = '入住'
+                    }
+                }
+                else {
+                    return false
+                }
+                console.log(this.monthDay)
+            }
+        }   
+        onLoad() {
+            var today = new Date()
+            let year = today.getFullYear()
+            let month = today.getMonth()
+            let yearConfig = {
+            year: year,
+            month: month
+            }
 
-      let monthDay = util.dateUtils.calendar(yearConfig)
-      // monthDay.forEach((item) => {
-      //   this.monthDay = this.monthDay.concat(item)
-      // })
-      this.monthDay = monthDay;
-      //this.days = monthDay[0]
-      //console.log(this.days)
-      console.log(this.monthDay)
+            let monthDay = util.dateUtils.calendar(yearConfig)
+            // monthDay.forEach((item) => {
+            //   this.monthDay = this.monthDay.concat(item)
+            // })
+            this.monthDay = monthDay
+        }
     }
-  }
 </script>
