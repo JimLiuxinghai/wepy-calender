@@ -118,13 +118,12 @@ const dateUtils =  {
 					index: prev,
 					val: false
 				};
-				console.log(config)
 				const __date = dateUtils.strToDate(`${config.year}-${config.month + 1}-${config.index}`);
 				config.disabled = currentDate < __date;
 				config.__date = observeDts(config);
 
 				monthArray[monthArrayIndex].push(config);
-				console.log(monthArray, '上月')
+				
 				num++;
 			}
 		}
@@ -149,7 +148,7 @@ const dateUtils =  {
 			config.current = getCurrent(config);
 
 			monthArray[monthArrayIndex].push(config);
-			console.log(monthArray, '本月')
+			
 			num++;
 		});
 		//拼接下月天数

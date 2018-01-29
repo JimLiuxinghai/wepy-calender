@@ -1,10 +1,65 @@
 <style type="less">
-.groupitem {
+.calendar {
+  width: 100%;
+  background: #ffffff;
+  .weeks {
+    background: #ff7e00;
+    box-sizing: border-box;
+    padding: 0 30rpx;
+    display: flex;
+    width: 100%;
+    .week-item {
+      flex: 1;
+      color: #ffffff;
+      font-size: 28rpx;
+      line-height: 60rpx;
+      text-align: center;
+    }
+  }
+  .days {
+    margin-top: 15rpx;
+    .day-week {
+      width: 100%;
+      height: 30rpx;
+      display: flex;
+      height: 80rpx;
+      box-sizing: border-box;
+      padding: 0 30rpx;
+      .day {
+          text-align: center;
+          line-height: 80rpx;
+          flex: 1;
+          outline: 1rpx solid #ffffff;
+          background: #edf8fe;
+          font-size: 24rpx; 
+          .able {
+            color: #030303;
+          }
+          .disable {
+            color: #b5b3b2;
+          }
+      }
+    }
+  }
+  
 }
 </style>
 <template>
-  <view class="groupitem">
+  <view class="calendar">
     <text>日历</text>
+    <view class="weeks">
+      <repeat for="{{weeks}}" key="index" index="index" item="item">
+         <view class="week-item">{{item}}</view> 
+      </repeat>
+    </view>
+    <view class="days">
+        <view class="day-week" wx:for="monthDay" wx:for-item="days" wx:for-index="index" wx:key="index">
+            <view class="day" wx:for="{{monthDay[index]}}" wx:for-item="day" wx:for-index="dayindex" wx:key="dayindex" @tap="chooseday" data-mIndex="{{index}}" data-dayIndex="{{dayindex}}">
+                <text class="able" wx:if="{{day.disabled}}">{{day.index}}</text>
+                <text class="disable" wx:if="{{!day.disabled}}">{{day.index}}</text>
+            </view>
+        </view>
+    </view>
   </view>
 </template>
 <script>
@@ -12,23 +67,31 @@
   import util from '../utils/util'
   export default class Calender extends wepy.component {
     data = {
+      weeks: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+      monthDay: []
     }
     methods = {
-      tap () {
-        this.gitem.childname = `Child Random(${Math.random()})`
-        console.log(`Clicked Group ${this.$parent.$index}. Item ${this.$index}, ID is ${this.gitem.childid}`)
+      chooseday(e) {
+        console.log(e)
       }
     }
     onLoad() {
-      let today = new Date()
+      var today = new Date()
       let year = today.getFullYear()
       let month = today.getMonth()
-      let config = {
+      let yearConfig = {
         year: year,
         month: month
       }
-      let monthDay = util.dateUtils.calendar(config)
-      console.log(monthDay)
+
+      let monthDay = util.dateUtils.calendar(yearConfig)
+      // monthDay.forEach((item) => {
+      //   this.monthDay = this.monthDay.concat(item)
+      // })
+      this.monthDay = monthDay;
+      //this.days = monthDay[0]
+      //console.log(this.days)
+      console.log(this.monthDay)
     }
   }
 </script>

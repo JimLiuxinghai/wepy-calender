@@ -22,16 +22,8 @@
       <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
     </view>
 
-    <panel>
-      <view class="title" slot="title">测试数据绑定</view>
-      <calender />
-      <text class="info">{{normalTitle}}</text>
-      <text class="info">{{setTimeoutTitle}}</text>
-      <text class="info">{{mixin}}</text>
-      <text class="info">{{mynum}}</text>
-      <text class="info">{{now}}</text>
-      <button @tap="plus('a')" size="mini">  +  </button>
-    </panel>
+    <view class="title" slot="title">测试数据绑定</view>
+    <calender />
 
     <panel>
       <view class="title" slot="title">其它测试</view>
