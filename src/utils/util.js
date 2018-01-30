@@ -183,7 +183,69 @@ const dateUtils =  {
 		}
 
 		return monthArray;
-	}
+	},
+	/**
+	 * 获取一个区间内，指定的周有那些天（例如：['2016-07-05', '2016-08-15']中周一那些天是周一）
+	 * @param dates {Array} 需要筛选的日期有那些, 如果type === 'section'，第一项是开始日期，第二项是结束日期
+	 * @param weeks {Array} 筛选的周有那些 [0,1,2,3,4,5,6]
+	 * @param type {String} 默认section
+	 * @returns {Array}
+	 */
+	filterWeek: function (dates, weeks = [0, 1, 2, 3, 4, 5, 6], type = 'section') {
+		let arr = [];
+		if (type === 'section') {
+			let startTime = dateUtils.strToDate(dates[0]);
+			let endTime = dateUtils.strToDate(dates[1]);
+			let currTime = startTime;
+			while (currTime.getTime() <= endTime.getTime()) {
+				let currYear = currTime.getFullYear();
+				let currMonth = currTime.getMonth() + 1;
+				if (currMonth < 10) {
+					currMonth = `0${currMonth}`
+				}
+				let currDate = currTime.getDate();
+				if (currDate < 10) {
+					currDate = `0${currDate}`
+				}
+				let currWeek = currTime.getDay();
+
+				for (let i = 0; i < weeks.length; i++) {
+					if (currWeek == weeks[i]) {
+						arr.push(`${currYear}-${currMonth}-${currDate}`);
+						break;
+					}
+				}
+
+				currTime.setDate(parseInt(currDate) + 1);
+
+			}
+		} else {
+			dates.forEach((item) => {
+				let currTime = dateUtils.strToDate(item);
+				let currYear = currTime.getFullYear();
+				let currMonth = currTime.getMonth() + 1;
+				if (currMonth < 10) {
+					currMonth = `0${currMonth}`
+				}
+
+				let currDate = currTime.getDate();
+				if (currDate < 10) {
+					currDate = `0${currDate}`
+				}
+				let currWeek = currTime.getDay();
+
+				for (let i = 0; i < weeks.length; i++) {
+					if (currWeek === weeks) {
+						arr.push(`${currYear}-${currMonth}-${currDate}`);
+					}
+				}
+			});
+		}
+
+
+		return arr;
+
+	},
 }
 
 module.exports = {

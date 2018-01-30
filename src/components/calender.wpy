@@ -28,11 +28,27 @@
       .day {
           position: relative;
           text-align: center;
-          line-height: 80rpx;
           flex: 1;
-          outline: 1rpx solid #ffffff;
-          background: #edf8fe;
+          outline: 1rpx solid #ffffff;          
           font-size: 24rpx; 
+          
+          .has-state {
+            line-height: 40rpx;
+            background: #4eb5f7;
+            .state {
+                color: #ffffff;
+            }
+          }
+          .no-state {
+            line-height: 80rpx;
+            
+            &.true {
+                background: #cbe7f5;
+            }
+            &.false {
+                background: #edf8fe;
+            }
+          }
           .able {
             color: #030303;
           }
@@ -59,11 +75,16 @@
     <view class="days">
         <view class="day-week" wx:for="monthDay" wx:for-item="days" wx:for-index="index" wx:key="index">
             <view class="day" wx:for="{{monthDay[index]}}" wx:for-item="day" wx:for-index="dayindex" wx:key="dayindex" data-index="{{[index, dayindex]}}" @tap="chooseday">
-                <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
-                <text class="disable" wx:if="{{!day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
-                <text class="state" wx:if="{{day.state}}">
-                    {{day.state}}
-                </text>
+                <view class="has-state" wx:if="{{day.state}}" data-index="{{[index, dayindex]}}">
+                    <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                    <text class="state" data-index="{{[index, dayindex]}}">
+                        {{day.state}}
+                    </text>    
+                </view>
+                <view class="no-state {{day.in}}" wx:if="{{!day.state}}" data-index="{{[index, dayindex]}}">
+                     <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                    <text class="disable" wx:if="{{!day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                </view>
             </view>
         </view>
     </view>
@@ -89,11 +110,28 @@
                     }
                     else if (this.date.length === 1) {
                         this.date.push(dayObj.__date)
+                        let dates = util.dateUtils.filterWeek(this.date)
+                        this.monthDay.forEach((week) => {
+                            week.forEach((day) => {
+                                dates.forEach((date) => {
+                                    if(!day.state && date == day.__date) {
+                                        day.in = true;
+                                    }
+                                })
+                            })
+                        })
+
                         this.monthDay[index[0]][index[1]].state = '离店'
                     }
                     else {
-                        this.date = [];
+                        this.date = []
                         this.date.push(dayObj.__date)
+                        this.monthDay.forEach((week) => {
+                            week.forEach((day) => {
+                                day.state = '';
+                                day.in = false;
+                            })
+                        })
                         this.monthDay[index[0]][index[1]].state = '入住'
                     }
                 }

@@ -53,19 +53,10 @@
       </view>
     </panel>
 
-<!--     <panel>
-      <view class="title" slot="title">测试组件Repeat</view>
-      <repeat for="{{groupList}}" index="index" item="item" key="key">
-        <group :grouplist="item" :indexa="index"></group>
-      </repeat>
-    </panel> -->
-
     <panel>
       <view class="title" slot="title">测试列表</view>
       <list></list>
     </panel>
-
-    <toast />
   </view>
 </template>
 
