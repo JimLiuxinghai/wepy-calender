@@ -143,7 +143,8 @@ const dateUtils =  {
 			};
 
 			const __date = dateUtils.strToDate(`${config.year}-${config.month + 1}-${config.index}`);
-			config.disabled = currentDate < __date;
+			
+			config.disabled = currentDate <= __date;
 			config.__date = observeDts(config);
 			config.current = getCurrent(config);
 

@@ -2,6 +2,16 @@
 .calendar {
   width: 100%;
   background: #ffffff;
+  .switch {
+    display: flex;
+    .time {
+        flex: 5;
+        text-align: center;
+    }
+    .icon {
+        flex: 1;
+    }
+  }
   .weeks {
     background: #ff7e00;
     box-sizing: border-box;
@@ -65,7 +75,9 @@
   <view class="calendar">
     <text>日历</text>
     <view class="switch">
-        
+        <view class="icon" data-type = '1' @tap="monthClick">前</view>
+        <view class="time">{{year}} - {{month + 1}}</view>
+        <view class="icon" data-type = '2' @tap="monthClick">后</view>
     </view>
     <view class="weeks">
       <repeat for="{{weeks}}" key="index" index="index" item="item">
@@ -73,7 +85,7 @@
       </repeat>
     </view>
     <view class="days">
-        <view class="day-week" wx:for="monthDay" wx:for-item="days" wx:for-index="index" wx:key="index">
+        <view class="day-week" wx:for="monthDay" wx:for-item="days" wx:for-index="index" wx:key="index" wx:if="{{monthDay[index].length > 0}}">
             <view class="day" wx:for="{{monthDay[index]}}" wx:for-item="day" wx:for-index="dayindex" wx:key="dayindex" data-index="{{[index, dayindex]}}" @tap="chooseday">
                 <view class="has-state" wx:if="{{day.state}}" data-index="{{[index, dayindex]}}">
                     <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
@@ -95,6 +107,10 @@
     import util from '../utils/util'
     export default class Calender extends wepy.component {
         data = {
+            year: new Date().getFullYear(),
+            month: new Date().getMonth(),
+            year: 2018,
+            month: 3,
             weeks: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
             monthDay: [],
             date: [],
@@ -121,7 +137,6 @@
                             this.first = index
                         }
                         else {
-                            console.log(index,  this.first)
                             if(index[1] <= this.first[1]) {
                                 this.date = []
                                 
@@ -166,40 +181,43 @@
                         })
                         this.monthDay[index[0]][index[1]].state = '入住'
                     }
-
-                    console.log(this.monthDay)
-                    this.$apply()
                 }
                 else {
                     return false
                 }
             },
             dealMonth (year, month) {
+                let newArray = [];
                 let yearConfig = {
                     year: year,
                     month: month
                 }
                 let monthDay = util.dateUtils.calendar(yearConfig)
-                monthDay.forEach((week) => {
-                    week.forEach((day) => {
+                monthDay.forEach((week, windex) => {
+                    week.forEach((day, dindex) => {
                         day.in = false
                     })
                 })
+                console.log(monthDay)
                 return monthDay
+            },
+            monthClick (e) {
+                let type = e.target.dataset.type
+                this.month = type == 1 ? this.month - 1 : this.month + 1;
+                
+                if (this.month < 0) {
+                    this.year = this.year - 1;
+                    this.month = 11;
+                }
+                if (this.month > 11) {
+                    this.month = 0;
+                    this.year = this.year + 1;
+                }
+                this.monthDay = this.methods.dealMonth(this.year, this.month)
             }
         }   
         onLoad() {
-            var today = new Date()
-            let year = today.getFullYear()
-            let month = today.getMonth()
-            
-            let monthDay = this.methods.dealMonth(year, month)
-
-            this.monthDay = monthDay
-            // monthDay.forEach((item) => {
-            //   this.monthDay = this.monthDay.concat(item)
-            // })
-            //this.monthDay = monthDay
+            this.monthDay = this.methods.dealMonth(this.year, this.month)
         }
     }
 </script>
