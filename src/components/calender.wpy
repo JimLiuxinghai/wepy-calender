@@ -97,34 +97,66 @@
         data = {
             weeks: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
             monthDay: [],
-            date: []
+            date: [],
+            first: []
         }
         methods = {
             chooseday(e) {
                 let index = e.target.dataset.index
                 let dayObj = this.monthDay[index[0]][index[1]]
                 if (dayObj.disabled) {
+                    
                     if (this.date.length === 0) {
+                        this.first = index;
                         this.date.push(dayObj.__date)
                         this.monthDay[index[0]][index[1]].state = '入住'
                     }
                     else if (this.date.length === 1) {
-                        this.date.push(dayObj.__date)
-                        let dates = util.dateUtils.filterWeek(this.date)
-                        this.monthDay.forEach((week) => {
-                            week.forEach((day) => {
-                                dates.forEach((date) => {
-                                    if(!day.state && date == day.__date) {
-                                        day.in = true;
-                                    }
-                                })
-                            })
-                        })
+                        if(index[0] < this.first[0]) {
+                            this.date = []
+                            
+                            this.date.push(dayObj.__date)
+                            this.monthDay[this.first[0]][this.first[1]].state = ''
+                            this.monthDay[index[0]][index[1]].state = '入住'
+                            this.first = index
+                        }
+                        else {
+                            console.log(index,  this.first)
+                            if(index[1] <= this.first[1]) {
+                                this.date = []
+                                
+                                this.date.push(dayObj.__date)
 
-                        this.monthDay[index[0]][index[1]].state = '离店'
+                                
+                                this.monthDay[this.first[0]][this.first[1]].state = ''
+                                
+                                
+                                this.monthDay[index[0]][index[1]].state = '入住'
+                                this.first = index
+                            }
+                            else {
+                                this.date.push(dayObj.__date)
+                                let dates = util.dateUtils.filterWeek(this.date)
+
+                                this.monthDay.forEach((week) => {
+                                    week.forEach((day) => {
+                                        dates.forEach((date) => {
+                                            if(!day.state && date == day.__date) {
+                                                day.in = true;
+                                            }
+                                        })
+                                    })
+                                })
+                                
+                                this.monthDay[index[0]][index[1]].state = '离店'
+                            }
+                        }
+
+                        
                     }
                     else {
                         this.date = []
+                        this.first = index
                         this.date.push(dayObj.__date)
                         this.monthDay.forEach((week) => {
                             week.forEach((day) => {
@@ -134,27 +166,40 @@
                         })
                         this.monthDay[index[0]][index[1]].state = '入住'
                     }
+
+                    console.log(this.monthDay)
+                    this.$apply()
                 }
                 else {
                     return false
                 }
-                console.log(this.monthDay)
+            },
+            dealMonth (year, month) {
+                let yearConfig = {
+                    year: year,
+                    month: month
+                }
+                let monthDay = util.dateUtils.calendar(yearConfig)
+                monthDay.forEach((week) => {
+                    week.forEach((day) => {
+                        day.in = false
+                    })
+                })
+                return monthDay
             }
         }   
         onLoad() {
             var today = new Date()
             let year = today.getFullYear()
             let month = today.getMonth()
-            let yearConfig = {
-            year: year,
-            month: month
-            }
+            
+            let monthDay = this.methods.dealMonth(year, month)
 
-            let monthDay = util.dateUtils.calendar(yearConfig)
+            this.monthDay = monthDay
             // monthDay.forEach((item) => {
             //   this.monthDay = this.monthDay.concat(item)
             // })
-            this.monthDay = monthDay
+            //this.monthDay = monthDay
         }
     }
 </script>
