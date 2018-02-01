@@ -1,123 +1,173 @@
 <style type="less">
-.calendar {
-  width: 100%;
-  background: #ffffff;
-  .switch {
-    display: flex;
-    .time {
-        flex: 5;
-        text-align: center;
-    }
-    .icon {
-        flex: 1;
-    }
-  }
-  .weeks {
-    background: #ff7e00;
-    box-sizing: border-box;
-    padding: 0 30rpx;
-    display: flex;
+.wrapper {
     width: 100%;
-    .week-item {
-      flex: 1;
-      color: #ffffff;
-      font-size: 28rpx;
-      line-height: 60rpx;
-      text-align: center;
+    height: 100%;
+    background: rgba(0,,0,,0, 0.5);
+    .calendar {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background: #ffffff;
+        .switch {
+            display: flex;
+            .time {
+                flex: 5;
+                text-align: center;
+            }
+            .icon {
+                flex: 1;
+            }
+        }
+        .weeks {
+            background: #ff7e00;
+            box-sizing: border-box;
+            padding: 0 30rpx;
+            display: flex;
+            width: 100%;
+            .week-item {
+              flex: 1;
+              color: #ffffff;
+              font-size: 28rpx;
+              line-height: 60rpx;
+              text-align: center;
+            }
+        }
+        .days {
+            margin-top: 15rpx;
+            .day-week {
+              width: 100%;
+              height: 30rpx;
+              display: flex;
+              height: 80rpx;
+              box-sizing: border-box;
+              padding: 0 30rpx;
+              .day {
+                  position: relative;
+                  text-align: center;
+                  flex: 1;
+                  outline: 1rpx solid #ffffff;          
+                  font-size: 24rpx; 
+                  
+                  .has-state {
+                    line-height: 40rpx;
+                    background: #4eb5f7;
+                    .state {
+                        color: #ffffff;
+                    }
+                  }
+                  .no-state {
+                    line-height: 80rpx;
+                    
+                    &.true {
+                        background: #cbe7f5;
+                    }
+                    &.false {
+                        background: #edf8fe;
+                    }
+                  }
+                  .able {
+                    color: #030303;
+                  }
+                  .disable {
+                    color: #b5b3b2;
+                  }
+              }
+            }
+        }
+        /*确定取消*/
+        .control {
+            display: flex;
+            .button {
+                flex: 2;
+                text-align: center;
+                background: orange;
+            }
+            .time {
+                flex: 4;
+                text-align: center;
+            }
+        }
+      
     }
-  }
-  .days {
-    margin-top: 15rpx;
-    .day-week {
-      width: 100%;
-      height: 30rpx;
-      display: flex;
-      height: 80rpx;
-      box-sizing: border-box;
-      padding: 0 30rpx;
-      .day {
-          position: relative;
-          text-align: center;
-          flex: 1;
-          outline: 1rpx solid #ffffff;          
-          font-size: 24rpx; 
-          
-          .has-state {
-            line-height: 40rpx;
-            background: #4eb5f7;
-            .state {
-                color: #ffffff;
-            }
-          }
-          .no-state {
-            line-height: 80rpx;
-            
-            &.true {
-                background: #cbe7f5;
-            }
-            &.false {
-                background: #edf8fe;
-            }
-          }
-          .able {
-            color: #030303;
-          }
-          .disable {
-            color: #b5b3b2;
-          }
-      }
-    }
-  }
-  
 }
+
 </style>
 <template>
-  <view class="calendar">
-    <text>日历</text>
-    <view class="switch">
-        <view class="icon" data-type = '1' @tap="monthClick">前</view>
-        <view class="time">{{year}} - {{month + 1}}</view>
-        <view class="icon" data-type = '2' @tap="monthClick">后</view>
-    </view>
-    <view class="weeks">
-      <repeat for="{{weeks}}" key="index" index="index" item="item">
-         <view class="week-item">{{item}}</view> 
-      </repeat>
-    </view>
-    <view class="days">
-        <view class="day-week" wx:for="monthDay" wx:for-item="days" wx:for-index="index" wx:key="index" wx:if="{{monthDay[index].length > 0}}">
-            <view class="day" wx:for="{{monthDay[index]}}" wx:for-item="day" wx:for-index="dayindex" wx:key="dayindex" data-index="{{[index, dayindex]}}" @tap="chooseday">
-                <view class="has-state" wx:if="{{day.state}}" data-index="{{[index, dayindex]}}">
-                    <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
-                    <text class="state" data-index="{{[index, dayindex]}}">
-                        {{day.state}}
-                    </text>    
+    <view class="wrapper">
+        <view class="calendar">
+            <text>日历</text>
+            <view class="switch">
+                <view class="icon" data-type = '1' @tap="monthClick">前</view>
+                <view class="time">{{year}} - {{month + 1}}</view>
+                <view class="icon" data-type = '2' @tap="monthClick">后</view>
+            </view>
+            <view class="weeks">
+              <repeat for="{{weeks}}" key="index" index="index" item="item">
+                 <view class="week-item">{{item}}</view> 
+              </repeat>
+            </view>
+            <view class="days">
+                <view class="day-week" wx:for="monthDay" wx:for-item="days" wx:for-index="index" wx:key="index" wx:if="{{monthDay[index].length > 0}}">
+                    <view class="day" wx:if="{{type == 1}}" wx:for="{{monthDay[index]}}" wx:for-item="day" wx:for-index="dayindex" wx:key="dayindex" data-index="{{[index, dayindex]}}" @tap="chooseday">
+                        <view class="has-state" wx:if="{{day.state}}" data-index="{{[index, dayindex]}}">
+                            <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                            <text class="state" data-index="{{[index, dayindex]}}">
+                                {{day.state}}
+                            </text>    
+                        </view>
+                        <view class="no-state {{day.in}}" wx:if="{{!day.state}}" data-index="{{[index, dayindex]}}">
+                             <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                            <text class="disable" wx:if="{{!day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                        </view>
+                    </view>
+                    <view class="day" wx:if="{{type == 2}}" wx:for="{{monthDay[index]}}" wx:for-item="day" wx:for-index="dayindex" wx:key="dayindex" data-index="{{[index, dayindex]}}" @tap="singleday">
+                        <view class="has-state" wx:if="{{day.state}}" data-index="{{[index, dayindex]}}">
+                            <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                            <text class="state" data-index="{{[index, dayindex]}}">
+                                {{day.state}}
+                            </text>    
+                        </view>
+                        <view class="no-state {{day.in}}" wx:if="{{!day.state}}" data-index="{{[index, dayindex]}}">
+                             <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                            <text class="disable" wx:if="{{!day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
+                        </view>
+                    </view>
                 </view>
-                <view class="no-state {{day.in}}" wx:if="{{!day.state}}" data-index="{{[index, dayindex]}}">
-                     <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
-                    <text class="disable" wx:if="{{!day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
-                </view>
+            </view>
+
+            <view class="control">
+                <view class="button" @tap="cancel">取消</view>
+                <view class="time">{{date[0]}} - {{date[1]}}</view>
+                <view class="button" @tap="sure">确定</view>
             </view>
         </view>
     </view>
-  </view>
+    
 </template>
 <script>
+    /*
+        param : {
+            index-tap : function,
+            type: String (1:日租房, 2:时租房)
+        }
+    */
     import wepy from 'wepy'
     import util from '../utils/util'
     export default class Calender extends wepy.component {
+        props = {
+            type: Number
+        }
         data = {
             year: new Date().getFullYear(),
             month: new Date().getMonth(),
-            year: 2018,
-            month: 3,
             weeks: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
             monthDay: [],
             date: [],
             first: []
         }
         methods = {
-            chooseday(e) {
+            chooseday (e) {
                 let index = e.target.dataset.index
                 let dayObj = this.monthDay[index[0]][index[1]]
                 if (dayObj.disabled) {
@@ -186,6 +236,28 @@
                     return false
                 }
             },
+            singleday (e) {
+                let index = e.target.dataset.index
+                let dayObj = this.monthDay[index[0]][index[1]]
+                if (dayObj.disabled) {
+                    
+                    if (this.date.length === 0) {
+                        this.first = index;
+                        this.date.push(dayObj.__date)
+                        this.monthDay[index[0]][index[1]].state = '入住'
+                    }
+                    else {
+                        this.date = []
+                        this.date.push(dayObj.__date)
+                        this.monthDay[this.first[0]][this.first[1]].state = ''
+                        this.monthDay[index[0]][index[1]].state = '入住'
+                        this.first = index
+                    }
+                }
+                else {
+                    return false
+                }
+            },
             dealMonth (year, month) {
                 let newArray = [];
                 let yearConfig = {
@@ -198,7 +270,6 @@
                         day.in = false
                     })
                 })
-                console.log(monthDay)
                 return monthDay
             },
             monthClick (e) {
@@ -214,9 +285,18 @@
                     this.year = this.year + 1;
                 }
                 this.monthDay = this.methods.dealMonth(this.year, this.month)
+            },
+            cancel (e) {
+                console.log(this.date)
+                this.$emit('index-tap', false, '')
+            },
+            sure (e) {
+                console.log(this.date)
+                this.$emit('index-tap', true, this.date)
             }
         }   
         onLoad() {
+            console.log(this.type, 'type')
             this.monthDay = this.methods.dealMonth(this.year, this.month)
         }
     }
