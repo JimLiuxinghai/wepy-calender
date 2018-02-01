@@ -1,10 +1,13 @@
 <style lang="less">
     .index {
-
+        .banner {
+            width: 100%;
+        }
     }
 </style>
 <template>
     <view class="index">
+        <image  class="banner" src="../img/index-banner.png"></image>
         <view @tap="open">打开</view>
         <calender wx:if="{{cshow}}"  @index-tap.user="calender" :type="ctype"></calender>
     </view>
@@ -14,7 +17,7 @@
     import Calender from '../components/calender'
     export default class Index extends wepy.page {
         config = {
-            navigationBarTitleText: 'index'
+            navigationBarTitleText: '爱屋查找'
         }
         components = {
             calender: Calender
@@ -28,9 +31,12 @@
                 this.cshow = true
             },
             calender (type, date) {
-                console.log(type, 'type')
-                console.log(date, 'date')
+                this.cshow = false
             }
+        }
+        onLoad () {
+            
+
         }
     }
 </script>
