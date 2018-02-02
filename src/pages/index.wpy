@@ -1,26 +1,39 @@
 <style lang="less">
     .index {
         .banner {
+            position: absolute;
+            top: 0;
             width: 100%;
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
         }
     }
 </style>
 <template>
     <view class="index">
         <image  class="banner" src="../img/index-banner.png"></image>
-        <view @tap="open">打开</view>
+        <view class="content">
+            <input type="text" confirm-type="search" bindinput="input" bindconfirm="search"></input>
+            <hoteltab></hoteltab>
+            <view @tap="open">打开</view>    
+        </view>
         <calender wx:if="{{cshow}}"  @index-tap.user="calender" :type="ctype"></calender>
     </view>
 </template>
 <script>
     import wepy from 'wepy'
     import Calender from '../components/calender'
+    import Hoteltab from '../components/hoteltab'
     export default class Index extends wepy.page {
         config = {
             navigationBarTitleText: '爱屋查找'
         }
         components = {
-            calender: Calender
+            calender: Calender,
+            hoteltab: Hoteltab
         }
         data = {
             ctype: 1,
@@ -32,6 +45,12 @@
             },
             calender (type, date) {
                 this.cshow = false
+            },
+            input (e) {
+                console.log(e)
+            },
+            search () {
+                console.log(1212)
             }
         }
         onLoad () {

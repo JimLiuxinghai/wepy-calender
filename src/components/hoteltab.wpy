@@ -1,0 +1,49 @@
+<style lang="less">
+	.tab-wrapper {
+		.tab-title {
+			display: flex;
+			.title {
+				flex: 1;
+				color: #ffffff;
+				background: rgba(0, 0, 0, 0.5);
+				height: 120rpx;
+				line-height: 120rpx;
+				text-align: center;
+				&.active {
+					background: #ffffff;
+					color: #ff7e00;
+					border-bottom: 1px solid #ff7e00;
+				}
+			}
+		}
+	}
+</style>
+
+<template>
+	<view class="tab-wrapper">
+		<view class="tab-title">
+			<view class="title {{type == 'day' ? 'active':''}}" @tap="titleTap" data-type="day">a</view>
+			<view class="title {{type == 'hour' ? 'active':''}}" @tap="titleTap" data-type="hour">b</view>
+		</view>
+		<view class="address"></view>
+	</view>
+</template>
+
+<script>
+	import wepy from 'wepy'
+	export default class Hoteltab extends wepy.component {
+		data = {
+			type: 'day',
+			address: '',
+		}
+		methods = {
+			titleTap (e) {
+				let type = e.target.dataset.type
+				this.type = type
+			}
+		}
+		onLoad() {
+            
+        }
+	}
+</script>
