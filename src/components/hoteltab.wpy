@@ -1,19 +1,171 @@
 <style lang="less">
 	.tab-wrapper {
+		padding: 0 40rpx;
 		.tab-title {
 			display: flex;
 			.title {
+				overflow: hidden;
 				flex: 1;
 				color: #ffffff;
 				background: rgba(0, 0, 0, 0.5);
-				height: 120rpx;
-				line-height: 120rpx;
+				height: 70rpx;
+				line-height: 70rpx;
 				text-align: center;
+				font-size: 26rpx;
 				&.active {
 					background: #ffffff;
 					color: #ff7e00;
 					border-bottom: 1px solid #ff7e00;
 				}
+			}
+		}
+		.address {
+			background: #ffffff;
+			padding: 10rpx 30rpx;
+			.add-title {
+				font-size: 18rpx;
+				color: #9c9c9c;
+
+			}
+			.add-select {
+				display: flex;
+				height: 60rpx;
+				line-height: 60rpx;
+				border-bottom: 1px solid #d3d3d3;
+				.inner {
+					flex: 5;
+					font-size: 22rpx;
+					color: #000000;
+				}
+				.choose {
+					flex: 1;
+					font-size: 18rpx;
+					color: #9c9c9c;
+				}
+			}
+		}
+
+		.day {
+			background: #ffffff;
+			display: flex;
+			padding: 10rpx 30rpx;
+			.day-choose {
+				flex: 3;
+				text-align: center;
+				border-bottom: 1px solid #d3d3d3;
+				.desp {
+					height: 40rpx;
+					line-height: 40rpx;
+					font-size: 18rpx;
+					color: #9c9c9c;
+				}
+				.date {
+					height: 50rpx;
+					line-height: 50rpx;
+					font-size: 22rpx;
+					color: #000000;
+				}
+			}
+			.day-len {
+				flex: 1;
+				text-align: center;
+				.len-wrapper {
+					margin-top: 20rpx;
+					display: inline-block;
+					width: 50rpx;
+					height: 50rpx;
+					line-height: 60rpx;
+					font-size: 18rpx;
+					color: #000000;
+					background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACLElEQVRoge3aPWgUQRjG8d9dlmiMieJHYSXYKEZsFAXBRmwUIaAg2mhpZWFjaYidhaCChY1ghFSmFAtFC0UhKNhoI3aCouIXghjMncXO5S6aTfbW4M2F/cMwM7vzzvs+zMzuwEylfk4RruAkTmOsUA9/M479OIKHua1G66BawGGCExjE0QL2c1HFMNbjeJEOkpaOdmEatYy2fXiFj/iMVXgb3u1AT7Bvh+V4j9f4gI34FN5twwCmMmyr6DFSmTRaryXYglsYyuF4BOdbAn6HCp62KaCVJ9iDn6H+LeT3pSO0EC+MVA4nmMDWnE6X/VGv57Sbj/6MPgdy2g/hQqIpYgLX0Jth0Ivn0inUaLMhOD4kHeqsaZlFL95IR7UvPBsM+cFQ/pVhO4VT0o9Df4LvWIlnuJvDeQ9WhPK6kN9uI/i5qGJtKK8J+YMcdjulQn5UNYdydU6n0ziDR7iU02YhajiLx7jRht1MzMl8rebhZkiLydWQClHkPxIlpZDYaBXypWNRFGcm5tbFvh17pZ/XbmBaGjNmCzkWUleyZNZI64iM47LsLUpMNLZC17GZ2UJeYvJ/R/SPNLb8s6bW4BwNY2dm9iyZNVIKiY1SSGyUQmKjFBIbpZDYKIXERikkNkohsVEKiY1SSGyUQmKjFBIbS1LIYhz+d4yqppivnQykII1rH0mieYViWHr7oBuOFeohbQr1JMEdHMDukLqRe4n0uG0M+zocTBFq0tgv/gY2g1M4PS/jCwAAAABJRU5ErkJggg==');
+					background-size: 50rpx 50rpx;
+
+				}
+			}
+		}
+
+		.hour {
+			background: #ffffff;
+			display: flex;
+			padding: 10rpx 30rpx;
+			.desp {
+				width: 100%;
+				display: block;
+				height: 40rpx;
+				line-height: 40rpx;
+				font-size: 18rpx;
+				color: #9c9c9c;
+			}
+			.hour-day {
+				flex: 1;
+				text-align: center;
+				.date {
+					display: inline-block;
+					width: 80%;
+					height: 50rpx;
+					line-height: 50rpx;
+					font-size: 22rpx;
+					color: #ff7e00;
+					border-radius: 10rpx;
+					outline: 1px solid #ff7e00;
+				}
+
+			}
+			.select-hour {
+				flex: 2;
+				display: flex;
+				.hour-choose {
+					flex: 3;
+					text-align: center;
+					border-bottom: 1px solid #d3d3d3;
+					.desp {
+						height: 40rpx;
+						line-height: 40rpx;
+						font-size: 18rpx;
+						color: #9c9c9c;
+					}
+					.time {
+						height: 50rpx;
+						line-height: 50rpx;
+						font-size: 22rpx;
+						color: #000000;
+						text-align: center;
+					}
+				}
+				.hour-len {
+					flex: 1;
+					.len-wrapper {
+						margin-top: 20rpx;
+						display: inline-block;
+						width: 50rpx;
+						height: 50rpx;
+						line-height: 50rpx;
+						font-size: 18rpx;
+						color: #000000;
+						text-align: center;
+						background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAMAAAC7m5rvAAAArlBMVEVHcEz/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgD/fgCkgrP8AAAAOXRSTlMADfzSlgU67Qk+SNvWfozOxZICeHX4uJ6H4MKjRC6+yYOxF+VONUG16GsiEVPye6iariVjHTKrKSgJt0XKAAACr0lEQVQYGY3Bh0LaUACG0T87gRD2njJkiNvafu//Yr0JUMSi3nN0EOy7tf7zXN+Y36Qdfx/rg22Z3FBnwd3u7S7Q2ZBcf6sTZ82Br0KQtIbeImq3o8W021o1VPA56DgqOB45b9BzZIT1PhfK2S8ZTm9QJefFyg0w/LEKpQlXrBMVxnWMtYwt0C6pMO5wsKkO67NZfVjdcHDzR4VRG3iVgghIVGi55NJZydFRXJql5NpbFRIgCrQHfOUa7+QmS32ynJB7DJTrAnt1wX2T4UwxvJGuGHkYVUfGzoUnDcCTEVcxsoauamQYniPDg4EW0JFRBdy9vrR3gaqMCSxUg0zSM3C/0jfCNnAjKYOB5sN6LLUAd6VvhRhbKa4P5yq8YCz1gyXGTmdToKcfZUBH/5SAsiyUgUQnKRDKQgLUdJQAE1mpASsdDIFbWbkFnlQI7qEsS2XYBMqNgIoszYBQuQoQylICtJR7hCiWpTiCR+U8qMnaFKYyGgvoyloXNrGk+T1kslaH6E7Sb+BB1irg7iS9teFB1irg7iTdRZDJWh2iO0lxBF1Z60IUy/CgJms1qCr3DlEgS3EEQ+VmQChLIdBU7hZ4kKUKECoX3EMqS2WIGioMgVBWEuBJBwnQkZUO8EtHKbCShRVQ1UkJSGUhBUb6ZwrM9KMZMNDZC0ZJPyhhvOiDFuCO9a2xC7R04QaIxvrGOAI6+iQF2iN9qdQGyoE+mfcxKvrCDKM/13/mNYxaoitupxidua54orAe6ZPSmkKmK3xOqs0k0FEwqnic+PqPj5GtOVgMnnoPD71ubcHBTQ/D1yc+RktaTrhispRaGL4u+BhN5cJ6nwv9LFSuieHrg1eMpo6C28p7unHB3aTvzTDQURPjVWcVoKkLzsuf37tYF5pARWfxc/lVFrbld0e5v22AkFJYRdqrAAAAAElFTkSuQmCC');
+						background-size: 50rpx 50rpx;
+
+					}
+				}
+
+			}
+		}
+
+		.button-wrapper {
+			background: #ffffff;
+			text-align: center;
+			border-radius: 0 0 10rpx 10rpx;
+			.button {
+				margin: 30rpx 0;
+				display: inline-block;
+				width: 80%;
+				height: 60rpx;
+				line-height: 60rpx;
+				background: #ff7e00;
+				color: #ffffff;
+				border-radius: 30rpx;
+				font-size: 26rpx;
 			}
 		}
 	}
@@ -22,27 +174,123 @@
 <template>
 	<view class="tab-wrapper">
 		<view class="tab-title">
-			<view class="title {{type == 'day' ? 'active':''}}" @tap="titleTap" data-type="day">a</view>
-			<view class="title {{type == 'hour' ? 'active':''}}" @tap="titleTap" data-type="hour">b</view>
+			<view class="title {{type == 'day' ? 'active':''}}" style="border-radius: 10rpx 0 0 0;" @tap="titleTap" data-type="day">全日房</view>
+			<view class="title {{type == 'hour' ? 'active':''}}" @tap="titleTap" style="border-radius: 0 10rpx 0 0;" data-type="hour">时租房</view>
 		</view>
-		<view class="address"></view>
+		<view class="address">
+			<view class="add-title">入住地点</view>
+			<view class="add-select">
+				<view class="inner">{{address}}</view>
+				<view class="choose">
+					我的位置
+				</view>
+			</view>
+		</view>
+		<view class="day" wx:if="{{type == 'day'}}" @tap="daboulopen">
+			<view class="day-choose">
+				<view class="desp">入住日期</view>
+				<view class="date">{{outdate[0]}}</view>
+			</view>
+			<view class="day-len">
+				<view class="len-wrapper">
+					{{datelen}}晚
+				</view>
+			</view>	
+			<view class="day-choose">
+				<view class="desp">离店日期</view>
+				<view class="date">{{outdate[1]}}</view>
+			</view>
+		</view>
+		<view class="hour" wx:if="{{type == 'hour'}}" @tap="singleopen">
+			<view class="hour-day">
+				<view class="desp">入住日期</view>
+				<view class="date">{{outdate[0]}}</view>
+			</view>
+			<view class="select-hour">
+				<view class="hour-choose">
+					<view class="desp">入住时间</view>
+					<view class="time">
+						03时
+					</view>
+				</view>
+				<view class="hour-len">
+					<view class="len-wrapper">
+						4h
+					</view>
+				</view>
+				<view class="hour-choose">
+					<view class="desp">离店时间</view>
+					<view class="time">
+						03时
+					</view>
+				</view>
+			</view>                                      
+		</view>
+
+		<view class="button-wrapper">
+			<view class="button">爱屋搜索</view>
+		</view>
+		
 	</view>
+	<calender wx:if="{{cshow}}"  @index-tap.user="calender" :type.sync="ctype" :outdate.sync="outdate"></calender>
 </template>
 
 <script>
 	import wepy from 'wepy'
+	import Calender from './calender'
+	import util from '../utils/util'
 	export default class Hoteltab extends wepy.component {
 		data = {
 			type: 'day',
-			address: '',
+			address: '郑州',
+			cshow: false,
+			sshow: false,
+			ctype: 0,
+			outdate: [],
+			datelen: 1,
+			year: new Date().getFullYear(),
+            month: new Date().getMonth(),
 		}
+		components = {
+            calender: Calender
+        }
+
 		methods = {
 			titleTap (e) {
 				let type = e.target.dataset.type
 				this.type = type
-			}
+			},
+			daboulopen () {
+                this.cshow = true
+                this.ctype = 1
+                if(this.outdate.length <= 1) {
+                	let day = util.dateUtils.format(new Date())
+                	
+                	let nextDay = util.dateUtils.switch(day, 1)
+                	this.outdate = [day, nextDay]
+                }
+                
+            },
+            singleopen() {
+            	this.cshow = true
+            	this.ctype = 2
+            	this.outdate = [util.dateUtils.format(new Date())]
+            },
+            calender (type, date) {
+                this.cshow = false
+                if (type) {
+                	this.outdate = date
+                	this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
+                }
+                
+            }
+
 		}
 		onLoad() {
+            let day = util.dateUtils.format(new Date())
+            
+            let nextDay = util.dateUtils.switch(day, 1)
+            this.outdate = [day, nextDay]
             
         }
 	}

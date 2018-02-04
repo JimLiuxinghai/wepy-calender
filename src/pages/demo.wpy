@@ -22,8 +22,19 @@
       <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
     </view>
 
-    <view class="title" slot="title">测试数据绑定</view>
-    <calender  @index-tap.user="calender" :type="type"></calender>
+    <panel>
+      <view class="title" slot="title">测试数据绑定</view>
+
+      <text class="info">{{normalTitle}}</text>
+      <text class="info">{{setTimeoutTitle}}</text>
+      <text class="info">{{mixin}}</text>
+      <text class="info">{{mynum}}</text>
+      <text class="info">{{now}}</text>
+      <text class="info">{{num}}</text>
+      <text class="info">{{asyncNum}}</text>
+      <text class="info">{{sumNum}}</text>
+      <button @tap="plus('a')" size="mini">  +  </button>
+    </panel>
 
     <panel>
       <view class="title" slot="title">其它测试</view>
@@ -54,22 +65,29 @@
     </panel>
 
     <panel>
+      <view class="title" slot="title">测试组件Repeat</view>
+      <repeat for="" index="index" item="item" key="key">
+        <group :grouplist="item" :indexa="index"></group>
+      </repeat>
+    </panel>
+
+    <panel>
       <view class="title" slot="title">测试列表</view>
       <list></list>
     </panel>
+
+    <toast />
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import List from '../components/list'
   import Panel from '@/components/panel' // alias example
   import Counter from 'counter' // alias example
+  import List from '../components/list' // aliasFields example
   import Group from '../components/group'
   import Toast from 'wepy-com-toast'
   import testMixin from '../mixins/test'
-  import Calender from '../components/calender'
-
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: 'test'
@@ -80,14 +98,12 @@
       counter2: Counter,
       list: List,
       group: Group,
-      toast: Toast,
-      calender: Calender
+      toast: Toast
     }
 
     mixins = [testMixin]
 
     data = {
-      type: 2,
       mynum: 20,
       userInfo: {
         nickName: '加载中...'
@@ -149,10 +165,6 @@
     }
 
     methods = {
-      calender (type, date) {
-        console.log(type, 'type')
-        console.log(date, 'date')
-      },
       plus () {
         this.mynum++
       },

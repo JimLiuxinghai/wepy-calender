@@ -14,12 +14,19 @@
         background: #ffffff;
         .switch {
             display: flex;
+            line-height: 80rpx;
             .time {
                 flex: 5;
                 text-align: center;
+                font-size: 24rpx;
             }
             .icon {
                 flex: 1;
+                text-align: center;
+                image {
+                    width: 19rpx;
+                    height: 30rpx;
+                }
             }
         }
         .weeks {
@@ -99,11 +106,14 @@
 <template>
     <view class="wrapper" style="height: {{height}}px">
         <view class="calendar">
-            <text>日历</text>
             <view class="switch">
-                <view class="icon" data-type = '1' @tap="monthClick">前</view>
-                <view class="time">{{year}} - {{month + 1}}</view>
-                <view class="icon" data-type = '2' @tap="monthClick">后</view>
+                <view class="icon" data-type = '1' @tap="monthClick">
+                    <image src="../img/prev.png" data-type = '1'></image>
+                </view>
+                <view class="time">{{year}}年{{month + 1}}月</view>
+                <view class="icon" data-type = '2' @tap="monthClick">
+                    <image src="../img/next.png" data-type = '2'></image>
+                </view>
             </view>
             <view class="weeks">
               <repeat for="{{weeks}}" key="index" index="index" item="item">
@@ -159,7 +169,35 @@
     import util from '../utils/util'
     export default class Calender extends wepy.component {
         props = {
-            type: Number
+            type: Number,
+            outdate: Array
+        }
+        computed = {
+            outdate() {
+                let allIndex = [];
+                console.log(this.outdate)
+                if(this.outdate) {
+                    this.outdate.forEach((date) => {
+                        this.monthDay.forEach((week, windex) => {
+                            week.forEach((day, dindex) => {
+                                if(day.__date == date) {
+                                    let index = [windex, dindex]
+                                    allIndex.push(index)
+                                    
+                                }
+                            })
+                        })
+                    })
+                    allIndex.forEach((index) => {
+                        if(allIndex.length > 1) {
+                            this.methods.chooseday.apply(this, ['', index])
+                        }
+                        else {
+                            this.methods.singleday.apply(this, ['', index])
+                        }
+                    })
+                }
+            }
         }
         data = {
             year: new Date().getFullYear(),
@@ -171,8 +209,8 @@
             height: 0
         }
         methods = {
-            chooseday (e) {
-                let index = e.target.dataset.index
+            chooseday (e, outindex) {
+                let index = outindex || e.target.dataset.index
                 let dayObj = this.monthDay[index[0]][index[1]]
                 if (dayObj.disabled) {
                     
@@ -240,8 +278,8 @@
                     return false
                 }
             },
-            singleday (e) {
-                let index = e.target.dataset.index
+            singleday (e, outindex) {
+                let index = outindex || e.target.dataset.index
                 let dayObj = this.monthDay[index[0]][index[1]]
                 if (dayObj.disabled) {
                     
@@ -291,20 +329,31 @@
                 this.monthDay = this.methods.dealMonth(this.year, this.month)
             },
             cancel (e) {
-                console.log(this.date)
+                this.monthDay.forEach((week) => {
+                    week.forEach((day) => {
+                        day.state = '';
+                        day.in = false;
+                    })
+                })
+                console.log(this.monthDay)
                 this.$emit('index-tap', false, '')
             },
             sure (e) {
-                console.log(this.date)
+                this.monthDay.forEach((week) => {
+                    week.forEach((day) => {
+                        day.state = '';
+                        day.in = false;
+                    })
+                })
+                 console.log(this.monthDay)
                 this.$emit('index-tap', true, this.date)
             }
         }   
         onLoad() {
-            
             this.monthDay = this.methods.dealMonth(this.year, this.month)
             let sysInfo = wx.getSystemInfoSync()
             this.height = sysInfo.screenHeight;
-            console.log(sysInfo)
+            
         }
     }
 </script>
