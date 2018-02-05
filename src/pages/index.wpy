@@ -20,21 +20,30 @@
             <input type="text" confirm-type="search" bindinput="input" bindconfirm="search"></input>
             <hoteltab></hoteltab>  
         </view>
+        <view>
+            <repeat for="{{hotelList}}" item="item">
+                <hotelItem :item="item"></hotelItem>
+            </repeat>
+        </view>
     </view>
 </template>
 <script>
     import wepy from 'wepy'
     import Hoteltab from '../components/hoteltab'
+    import HotelItem from '../components/groupitem'
+    import Api from '../utils/api'
     export default class Index extends wepy.page {
         config = {
             navigationBarTitleText: '爱屋查找'
         }
         components = {
-            hoteltab: Hoteltab
+            hoteltab: Hoteltab,
+            hotelItem: HotelItem
         }
         data = {
             ctype: 1,
-            cshow: false
+            cshow: false,
+            hotelList: []
         }
         methods = {
             open () {
@@ -51,9 +60,23 @@
                 console.log(1212)
             }
         }
-        onLoad () {
-            
-
+        async onLoad () {
+            let param = {
+                method: 'POST',
+                data: {
+                    addition: '',
+                    page: {
+                        pageNum: 0,
+                        pageSize: 10
+                    }
+                },
+                query: {
+                    id: 0
+                }
+            }
+            let hotelList = await Api.hotelList(param)
+            console.log(hotelList)
+            this.hotelList = hotelList.content;
         }
     }
 </script>

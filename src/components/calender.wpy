@@ -151,7 +151,8 @@
 
             <view class="control">
                 <view class="button" @tap="cancel">取消</view>
-                <view class="time">{{date[0]}} - {{date[1]}}</view>
+                <view class="time" wx:if="{{date.length > 1}}">{{date[0]}} - {{date[1]}}</view>
+                <view class="time" wx:if="{{date.length <= 1 }}">{{date[0]}}</view>
                 <view class="button" @tap="sure">确定</view>
             </view>
         </view>
@@ -175,7 +176,6 @@
         computed = {
             outdate() {
                 let allIndex = [];
-                console.log(this.outdate)
                 if(this.outdate) {
                     this.outdate.forEach((date) => {
                         this.monthDay.forEach((week, windex) => {
@@ -273,6 +273,7 @@
                         })
                         this.monthDay[index[0]][index[1]].state = '入住'
                     }
+                    this.$apply()
                 }
                 else {
                     return false
@@ -295,6 +296,7 @@
                         this.monthDay[index[0]][index[1]].state = '入住'
                         this.first = index
                     }
+                    this.$apply()
                 }
                 else {
                     return false
@@ -341,11 +343,12 @@
             sure (e) {
                 this.monthDay.forEach((week) => {
                     week.forEach((day) => {
+                        debugger;
                         day.state = '';
                         day.in = false;
                     })
                 })
-                 console.log(this.monthDay)
+                console.log(this.monthDay)
                 this.$emit('index-tap', true, this.date)
             }
         }   

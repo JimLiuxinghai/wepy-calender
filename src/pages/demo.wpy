@@ -53,15 +53,9 @@
       <view class="title" slot="title">测试组件</view>
 
       <text class="testcounter">计数组件1: </text>
-      <view class="counterview">
-        <counter1 @index-emit.user="counterEmit" />
-      </view>
 
       <text class="testcounter">计数组件2: </text>
 
-      <view class="counterview">
-        <counter2 :num.sync="mynum"></counter2>
-      </view>
     </panel>
 
     <panel>
@@ -83,7 +77,6 @@
 <script>
   import wepy from 'wepy'
   import Panel from '@/components/panel' // alias example
-  import Counter from 'counter' // alias example
   import List from '../components/list' // aliasFields example
   import Group from '../components/group'
   import Toast from 'wepy-com-toast'
@@ -94,8 +87,6 @@
     }
     components = {
       panel: Panel,
-      counter1: Counter,
-      counter2: Counter,
       list: List,
       group: Group,
       toast: Toast
@@ -184,8 +175,6 @@
       communicate () {
         console.log(this.$name + ' tap')
 
-        this.$invoke('counter2', 'minus', 45, 6)
-        this.$invoke('counter1', 'plus', 45, 6)
 
         this.$broadcast('index-broadcast', 1, 3, 4)
       },
