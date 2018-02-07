@@ -183,7 +183,6 @@
                                 if(day.__date == date) {
                                     let index = [windex, dindex]
                                     allIndex.push(index)
-                                    
                                 }
                             })
                         })
@@ -343,7 +342,6 @@
             sure (e) {
                 this.monthDay.forEach((week) => {
                     week.forEach((day) => {
-                        debugger;
                         day.state = '';
                         day.in = false;
                     })
