@@ -1,11 +1,29 @@
 <style type="less">
     .item {
         padding: 20rpx;
+        display: flex;
+        .img {
+            flex: 1;
+            image {
+                width: 360rpx;
+                height: 200rpx;
+            }
+        }
     }
 </style>
 <template>
-    <view class="item">
-        {{item.hotelName}}
+    <view class="item" @tap="gotoDetail{{item.id}}">
+        <view class="img">
+            <image src="http://img.nicelife-china.com:80/i15/{{item.imageName}}"></image>
+        </view>
+        <view class="info">
+            <view class="name">{{item.hotelName}}</view>
+            <view class="address">{{item.address}}</view>
+            <view class="price">
+                <text class="num">￥{{item.lowestPrice}}</text>
+                <text class="text">起</text>
+            </view>
+        </view>
     </view>
 </template>
 <script>
@@ -14,6 +32,16 @@ import wepy from 'wepy'
 export default class GroupItem extends wepy.component {
     props = {
         item: {}
+    }
+    compute = {
+        item() {
+            console.log(this.item)
+        }
+    }
+    methods = {
+        gotoDetail (id) {
+            console.log(id)
+        }
     }
 
 }

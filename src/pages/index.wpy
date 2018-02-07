@@ -8,6 +8,15 @@
             z-index: 1;
         }
         .content {
+
+            .search {
+                width: 70%;
+                height: 60rpx;
+                line-height: 60rpx;
+                border-radius: 30rpx;
+                background: rgba(255, 255, 255, 0.5);
+                margin: 30rpx auto;
+            }
             position: relative;
             z-index: 2;
         }
@@ -17,12 +26,12 @@
     <view class="index">
         <image  class="banner" src="../img/index-banner.png"></image>
         <view class="content">
-            <input type="text" confirm-type="search" bindinput="input" bindconfirm="search"></input>
+            <input type="text" class="search" confirm-type="search" bindinput="input" bindconfirm="search"></input>
             <hoteltab></hoteltab>  
         </view>
         <view>
-            <repeat for="{{hotelList}}" item="item">
-                <hotelItem :item="item"></hotelItem>
+            <repeat for="{{hotelList}}" key="index" index="index" item="item">
+                <hotelItem :item.sync="item"></hotelItem>
             </repeat>
         </view>
     </view>
@@ -75,8 +84,9 @@
                 }
             }
             let hotelList = await Api.hotelList(param)
-            console.log(hotelList)
-            this.hotelList = hotelList.content;
+            
+            this.hotelList = hotelList.data.content;
+            this.$apply();
         }
     }
 </script>

@@ -17,7 +17,8 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
-      'pages/demo'
+      'pages/demo',
+      'pages/me'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -32,7 +33,7 @@ export default class extends wepy.app {
           "iconPath": "img/hotel.png",
           "selectedIconPath": "img/hotel-select.png"
         }, {
-          "pagePath": "pages/demo",
+          "pagePath": "pages/me",
           "text": "我的",
           "iconPath": "img/me.png",
           "selectedIconPath": "img/me-select.png"

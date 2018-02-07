@@ -1,0 +1,41 @@
+<style lang="less">
+    .mine {
+        .top {
+            width: 100%;
+            height: 300rpx;
+            background: #fc9530;
+        }
+    }
+</style>
+<template>
+    <view class="mine">
+        <view class="top">
+
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Api from '../utils/api'
+    export default class Gol extends wepy.page {
+        config = {
+            navigationBarTitleText: '我的金豆'
+        }
+        components = {
+            
+        }
+        data = {
+            userInfo: {}
+        }
+        methods = {
+            
+        }
+        async onLoad () {
+            await wepy.login()
+            let userInfo = await wepy.getUserInfo()
+            this.userInfo = userInfo.userInfo
+            console.log(this.userInfo)
+            this.$apply()
+        }
+    }
+</script>
