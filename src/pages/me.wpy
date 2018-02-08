@@ -62,18 +62,18 @@
                 <view class="golden item">
                     <image></image>
                     <view class="title">
-                        <navigator url="/page/index/index" open-type="switchTab" hover-class="other-navigator-hover">我的金豆</navigator>
+                        <navigator url="../pages/money?gold={{goldBeans}}" open-type="navigate" hover-class="other-navigator-hover">我的金豆</navigator>
                     </view>
                 </view>
                 <view class="always item">
                     <image></image>
                     <view class="title">
-                        <navigator url="/page/index/index" open-type="switchTab" hover-class="other-navigator-hover">我的金豆</navigator>
+                        <navigator url="/page/index/index" open-type="navigate" hover-class="other-navigator-hover">我的金豆</navigator>
                     </view>
                 </view>
                 <view class="orders item">
                     <image></image>
-                    <navigator url="/page/index/index" open-type="switchTab" hover-class="other-navigator-hover">我的订单</navigator>
+                    <navigator url="/page/index/index" open-type="navigate" hover-class="other-navigator-hover">我的订单</navigator>
                 </view>
             </view>
         </view>
@@ -90,7 +90,8 @@
             
         }
         data = {
-            userInfo: {}
+            userInfo: {},
+            goldBeans: 0
         }
         methods = {
             getPhoneNumber (e) {   
@@ -117,6 +118,7 @@
         async onLoad () {
             await wepy.login()
             let userInfo = await wepy.getUserInfo()
+            console.log(userInfo)
             this.userInfo = userInfo.userInfo
             console.log(this.userInfo)
             this.$apply()
