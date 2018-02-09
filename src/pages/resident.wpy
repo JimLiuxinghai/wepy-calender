@@ -46,7 +46,7 @@
 <script>
     import wepy from 'wepy'
     import Api from '../utils/api'
-    export default class Money extends wepy.page {
+    export default class Resident extends wepy.page {
         config = {
             navigationBarTitleText: '我的金豆'
         }
