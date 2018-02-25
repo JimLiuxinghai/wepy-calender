@@ -1,46 +1,71 @@
 <style lang="less">
-    .mine {
-        .top {
-            width: 100%;
-            height: 300rpx;
-            background: #fc9530;
-        }
-        .info {
-            padding: 30rpx;
-            .title {
+    .resident {
+        width: 100%;
+        background: #f0f0f0;
+        overflow: hidden;
+        .add-wrapper {
+            text-align: center;
+            color: #ff7e00;
+            font-size: 24rpx;
+            line-height: 90rpx;
+            background: #ffffff;
+            margin: 20rpx 0;
+            border-top: 1rpx solid #d3d3d3;
+            border-bottom: 1rpx solid #d3d3d3;
+            .add {
+                display: inline-block;
+                vertical-align: middle;
+                text-align: center;
+                width: 40rpx;
                 height: 40rpx;
-                line-height: 40rpx;
-                font-size: 26rpx;
-                text {
-                    display: inline-block;
-                    width: 4rpx;
-                    height: 40rpx;
-                    background: #fc9530;
-                    vertical-align: middle;
-                }
+                border-radius: 50%;
+                background: #f0f0f0;
+                font-size: 40rpx;
+                line-height: 35rpx;
             }
-            .text {
-                font-size: 24rpx;
-                color: #8b8b8b;
-                line-height: 40rpx;
+        }
+        .concat {
+            background: #ffffff;
+            font-size: 28rpx;
+            // height: 90rpx;
+            // line-height: 90rpx;
+            text {
+                display: inline-block;
+                vertical-align: middle;
+            }
+            .name {
+                margin-right: 60rpx;
+            }
+            padding: 30rpx;
+            .del {
+                width: 31rpx;
+                height: 32rpx;
+                float: right;
+                margin-right: 30rpx;
+            }
+            .edit {
+                width: 32rpx;
+                height: 32rpx;
+                float: right;
             }
         }
     }
 </style>
 <template>
-    <view class="mine">
-        <view class="top">
+    <view class="resident" style="height: {{height}}px;">
+        <navigator class="add-wrapper" url="../pages/addres">
+            <view class="add">+</view>
+            添加常住人
+        </navigator>
 
+        <view class="concat">
+            <text class="name">韩向阳</text>
+            <text class="tel">13980987890</text>
+            
+            <image class="edit" src="../img/edit.png"></image>
+            <image class="del" src="../img/delet.png"></image>
         </view>
-        <view class="info">
-            <view class="title">
-                <text></text>
-                什么是金豆?
-            </view>
-            <view class="text">
-                金豆是科爱住公寓用户在科爱住客户端进行预订、参与活动给予的奖励。科爱住金豆仅能在科爱住客户端使用,可直接用于支付科爱住房费。消费是1颗金豆可抵1元使用。
-            </view>
-        </view>
+
     </view>
 </template>
 <script>
@@ -48,20 +73,20 @@
     import Api from '../utils/api'
     export default class Resident extends wepy.page {
         config = {
-            navigationBarTitleText: '我的金豆'
+            navigationBarTitleText: '常住人信息'
         }
         components = {
             
         }
         data = {
-            userInfo: {},
-            gold: 0
+            height: 0
         }
         methods = {
             
         }
-        async onLoad (options) {
-            this.gold = options.gold || 0
+        async onLoad () {
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
         }
     }
 </script>

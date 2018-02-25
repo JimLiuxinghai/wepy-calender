@@ -1,16 +1,31 @@
 <style lang="less">
     .mine {
+        background: #f0f0f0;
         .top {
             width: 100%;
             height: 300rpx;
             background: #fc9530;
+            text-align: center;
+            image {
+                margin-top: 50rpx;
+                width: 139rpx;
+                height: 131rpx;
+            }
+            .num {
+                text-align: center;
+                font-size: 30rpx;
+                color: #ffffff;
+            }
         }
         .info {
+            margin-top: 30rpx;
             padding: 30rpx;
+            background: #ffffff;
             .title {
                 height: 40rpx;
                 line-height: 40rpx;
                 font-size: 26rpx;
+                vertical-align: middle;
                 text {
                     display: inline-block;
                     width: 4rpx;
@@ -22,15 +37,19 @@
             .text {
                 font-size: 24rpx;
                 color: #8b8b8b;
-                line-height: 40rpx;
+                padding: 0 30rpx;
+                line-height: 60rpx;
             }
         }
     }
 </style>
 <template>
-    <view class="mine">
+    <view class="mine" style="height: {{height}}px;">
         <view class="top">
-
+            <image src="../img/golden.png"></image>
+            <view class="num">
+                {{gold}}豆
+            </view>
         </view>
         <view class="info">
             <view class="title">
@@ -45,6 +64,7 @@
 </template>
 <script>
     import wepy from 'wepy'
+
     import Api from '../utils/api'
     export default class Money extends wepy.page {
         config = {
@@ -55,13 +75,16 @@
         }
         data = {
             userInfo: {},
-            gold: 0
+            gold: 0,
+            height: 0
         }
         methods = {
             
         }
         async onLoad (options) {
             this.gold = options.gold || 0
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
         }
     }
 </script>

@@ -9,7 +9,7 @@
         }
         .content {
 
-            .search {
+            .input-wrapper {
                 width: 70%;
                 height: 60rpx;
                 line-height: 60rpx;
@@ -20,13 +20,16 @@
             position: relative;
             z-index: 2;
         }
-    }
+    } 
 </style>
 <template>
     <view class="index">
         <image  class="banner" src="../img/index-banner.png"></image>
         <view class="content">
-            <input type="text" class="search" confirm-type="search" bindinput="input" bindconfirm="search"></input>
+            <view class="input-wrapper">
+                <input type="text" class="search" confirm-type="search" bindinput="input" bindconfirm="search"></input>
+            </view>
+            
             <hoteltab></hoteltab>  
         </view>
         <view>

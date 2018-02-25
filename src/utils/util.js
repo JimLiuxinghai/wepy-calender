@@ -328,6 +328,18 @@ const dateUtils =  {
 		let end = new Date(endTime).getTime();
 		return Math.abs((end - start) / 86400000);
 	},
+	/*
+		获取屏幕高度
+	*/
+	getHeight: function() {
+		try {
+			let sys = wx.getSystemInfoSync()
+			return sys.windowHeight
+		}
+		catch (e) {
+
+		}
+	}
 }
 
 module.exports = {

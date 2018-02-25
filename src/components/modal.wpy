@@ -1,0 +1,146 @@
+<style type="less">
+    .modal {
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0, 0.5);
+        position: fixed;
+        top: 0;
+        z-index: 10;
+        padding: 0 50rpx;
+        box-sizing: border-box;
+        .content {
+            position: relative;
+            top: 100rpx;
+            background: #ffffff;
+            padding: 15rpx 40rpx;
+            border-radius: 10rpx;
+            .close {
+                width: 60rpx;
+                height: 60rpx;
+                border-radius: 50%;
+                background: #ffffff;
+                position: absolute;
+                top: -30rpx;
+                right: -30rpx;
+                text-align: center;
+                line-height: 60rpx;
+                image {
+                    width: 26rpx;
+                    height: 26rpx;
+                }
+            }
+            .image {
+                width: 100%;
+            }
+            .title {
+                font-size: 26rpx;
+                padding: 20rpx 0;
+            }
+            .info {
+                display: flex;
+                margin-top: 10rpx;
+                padding-left: 25rpx;
+                .info-in {
+                    flex: 1;
+                    font-size: 20rpx;
+                    color: #7c7c7c;
+                }
+            }
+            .text {
+                padding-left: 25rpx;
+                font-size: 20rpx;
+                color: #7c7c7c;
+            }
+            .img-wrapper {
+                padding-left: 25rpx;
+                .img {
+                    display: inline-block;
+                    width: 84rpx;
+                    text-align: center;
+                    image {
+                        width: 51rpx;
+                        height: 50rpx;
+                    }
+                    .img-info {
+                        font-size: 20rpx;
+                        color: #7c7c7c;
+                    }
+                }
+            }
+        }
+    }
+</style>
+<template>
+    <view class="modal" style="height: {{height}}px;">
+        <view class="content">
+            <view class="close" @tap="closeModal">
+                <image src="../img/close.png"></image>
+            </view>
+            <image class="image" src="{{imagePath}}"></image>
+            <view class="title">{{detail.roomName}}</view>
+            <view class="info">
+                <view class="info-in">房屋面积:{{detail.roomArea}}</view>
+                <view class="info-in">床型信息:{{detail.bedType}}</view>
+            </view>
+            <view class="info">
+                <view class="info-in">是否有窗:{{detail.ifWindow}}</view>
+                <view class="info-in">最多容纳人数:{{detail.maxPeople}}人</view>
+            </view>
+            <view class="info">
+                <view class="info-in">所处楼层:{{detail.floor}}</view>
+                <view class="info-in">独立卫浴:{{detail.wc}}</view>
+            </view>
+            <view class="title">房屋特色</view>
+            <view class="text">{{detail.feature}}</view>
+            <view class="title">房间设施</view>
+            <view class="img-wrapper">
+                <view class="img" wx:for="{{imgs}}" wx:for-item="item" wx:for-index="index" wx:key="index" >
+                    <image src="{{item.img}}"></image>
+                    <view class="img-info">{{item.text}}</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class Modal extends wepy.component {
+    props = {
+        roomDetail: {},
+        height: 0
+    }
+    computed = {
+        roomDetail() {
+            if(this.roomDetail) {
+                this.imagePath = 'http://img.nicelife-china.com:80/i15/' + this.roomDetail.imagePath
+                this.detail = this.roomDetail
+                this.$apply()
+            }
+            
+        }
+    }
+    data = {
+        imagePath: '',
+        detail: {},
+        imgs: [{
+            img: '../img/hot.png',
+            text: '暖气'
+        },{
+            img: '../img/24.png',
+            text: '全天热水'
+        }]
+    }
+    methods = {
+        closeModal () {
+            this.$emit('detail-tap', false)
+        }
+    }
+    onLoad () {
+        console.log(this.hotelDetail)
+        let sysInfo = wepy.getSystemInfoSync()
+        this.height = sysInfo.screenHeight;
+    }
+
+}
+</script>

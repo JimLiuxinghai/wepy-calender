@@ -1,6 +1,15 @@
 <style lang="less">
     .me {
+        position: relative;
+        overflow: hidden;
+        .bg {
+            width: 100%;
+            height: 335rpx;
+            position: absolute;
+            top: 0;
+        }
         .info-wrapper {
+            margin-top: 150rpx;
             padding: 40rpx;
             .info {
                 width: 100%;
@@ -24,15 +33,25 @@
                         height: 120rpx;
                     }
                 }
+                .name {
+                    position: relative;
+                    text-align: center;
+                    top: 100rpx;
+                    font-size: 36rpx;
+                    color: #3f4954;
+                }
             }
 
         }
         .nav-wrapper {
+            margin-top: 40rpx;
             padding: 30rpx;
             .nav {
                 display: flex;
+                border-radius: 10rpx;
                 box-shadow: 0px 0px 10px 0px #A3A2A5;
                 .item {
+                    padding: 30rpx;
                     flex: 1;
                     image {
                         display: block;
@@ -41,6 +60,8 @@
                         margin: 0 auto;
                     }
                     .title {
+                        margin-top: 30rpx;
+                        font-size: 24rpx;
                         text-align: center;
                     }
                 }
@@ -50,30 +71,42 @@
 </style>
 <template>
     <view class="me">
+        <image class="bg" src="../img/me-bg.png"></image>
+
         <view class="info-wrapper">
             <view class="info">
                 <view class="logo">
                     <image src="{{userInfo.avatarUrl}}"></image>
                 </view>
+                <view class="name">{{userInfo.nickName}}</view>
             </view>
         </view>
         <view class="nav-wrapper">
+            <button open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">获取手机号</button>
             <view class="nav">
                 <view class="golden item">
-                    <image></image>
+                    <navigator url="../pages/money?gold={{goldBeans}}" open-type="navigate" hover-class="other-navigator-hover">
+                    <image src="../img/sgold.png"></image>
                     <view class="title">
-                        <navigator url="../pages/money?gold={{goldBeans}}" open-type="navigate" hover-class="other-navigator-hover">我的金豆</navigator>
+                        我的金豆
                     </view>
+                    </navigator>
                 </view>
                 <view class="always item">
-                    <image></image>
-                    <view class="title">
-                        <navigator url="/page/index/index" open-type="navigate" hover-class="other-navigator-hover">我的金豆</navigator>
-                    </view>
+                    <navigator url="../pages/resident" open-type="navigate" hover-class="other-navigator-hover">
+                        <image src="../img/concat.png"></image>
+                        <view class="title">
+                           常住人信息
+                        </view>
+                    </navigator>
                 </view>
                 <view class="orders item">
-                    <image></image>
-                    <navigator url="/page/index/index" open-type="navigate" hover-class="other-navigator-hover">我的订单</navigator>
+                    <navigator url="../pages/money?gold={{goldBeans}}" open-type="navigate" hover-class="other-navigator-hover">
+                        <image src="../img/order.png"></image>
+                        <view class="title">
+                           我的订单
+                        </view>
+                    </navigator>
                 </view>
             </view>
         </view>
@@ -110,17 +143,45 @@
                       title: '提示',  
                       showCancel: false,  
                       content: '同意授权',  
-                      success: function (res) { }  
+                      async success () {
+                         let params = {
+                            method: 'POST',
+                            data: {
+                                openId: 'ozHS35WBom3ZJjMu0i_x5SSXWi9Q',
+                                encryptedData: e.detail.encryptedData,
+                                iv: e.detail.iv
+                            }
+                            
+                         }
+                         let phoneInfo = await Api.getPhone(params)
+                         console.log(phoneInfo, '8888')
+                      }  
                   })  
                 }  
             }
         }
         async onLoad () {
-            await wepy.login()
+            let loginInfo = await wepy.login()
+            let code = loginInfo.code
+            
             let userInfo = await wepy.getUserInfo()
-            console.log(userInfo)
+            
             this.userInfo = userInfo.userInfo
-            console.log(this.userInfo)
+            
+            let param = {
+                method: 'POST',
+                data: {
+                    code: code
+                },
+                query: {
+                    id: 'wxdf0a4eff9ba24e02'
+                }
+            }
+            let openInfo = await Api.openid(param)
+            
+            console.log(openInfo, '*****')
+            this.openid = openInfo.data.data.openid
+
             this.$apply()
         }
         async onShow () {

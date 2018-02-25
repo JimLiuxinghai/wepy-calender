@@ -1,0 +1,212 @@
+<style lang="less">
+    .detail {
+    	swiper {
+    		height: 400rpx;
+    		.swiper-item {
+    			height: 400rpx !important;
+    			.slide-image {
+    				width: 100%;
+    				height: 500rpx;
+    			}
+    		}
+    	}
+    	.content {
+    		padding: 20rpx 25rpx;
+    		.title-wrapper {
+    			display: flex;
+    			.left {
+    				flex: 5;
+    				.title {
+    					font-size: 26rpx;
+    				}
+    				.info {
+    					.fac {
+    						display: inline-block;
+    						text-align: center;
+    						padding: 5rpx 10rpx;
+    						background: #daf1fa;
+    						color: #47b8e6;
+    						font-size: 16rpx;
+    						margin-left: 10rpx;
+    						border-radius: 4rpx;
+    					}
+    				}
+    			}
+    			.right {
+    				flex: 2;
+    				image {
+    					display: inline-block;
+    					margin-left: 40rpx;
+    				}
+    				.tel {
+    					width: 35rpx;
+    					height: 35rpx;
+
+    				}
+    				.gps {
+    					width: 28rpx;
+    					height: 35rpx;
+    				}
+    			}
+    		}
+    		.introu {
+    			.close {
+    				text-align: center;
+    			}
+    			.icon {
+    				width: 28rpx;
+    				height: 14rpx;
+    			}
+    			.show {
+    				.introu-title {
+    					font-size: 22rpx;
+    					margin-top: 15rpx;
+    				}
+    				.introu-info {
+    					color: #7c7c7c;
+    					font-size: 20rpx;
+    					padding: 10rpx 20rpx;
+    					display: flex;
+    					.left {
+    						flex: 1;
+    					}
+    					.right {
+    						flex: 1;
+    					}
+    				}
+    			}
+    		}
+    	}
+    }
+</style>
+<template>
+    <view class="detail">
+    	<swiper indicator-dots="true" autoplay="true" interval="3000" duration="500">
+    	  	<block wx:for="{{hotelDetail.hotelImageInfos}}" wx:key="{{index}}">
+	    	    <swiper-item class="swiper-item">
+	    	      <image src="http://img.nicelife-china.com:80/i15/{{item.imageName}}" class="slide-image"/>
+	    	    </swiper-item>
+    	  	</block>
+    	</swiper>
+    	<view class="content">
+    		<view class="title-wrapper">
+    			<view class="left">
+    				<view class="title">{{hotelDetail.hotelInfo.hotelName}}</view>
+    				<view class="info">
+    					<view class="fac" wx:for="{{hotelDetail.hotelFacilityInfos}}" wx:key="{{index}}">
+    						{{item.fvalue}}
+    					</view>
+    				</view>
+    			</view>
+    			<view class="right">
+    				<image src="../img/tel.png" class="tel" @tap="tel({{hotelDetail.hotelInfo.telephone}})"/>
+    				<image src="../img/gps1.png" class="gps" @tap="gps({{hotelDetail.hotelInfo.latitude}}, {{hotelDetail.hotelInfo.longitude}}, {{hotelDetail.hotelInfo.address}}, {{hotelDetail.hotelInfo.hotelName}})"/>
+    			</view>
+    		</view>
+    		<view class="introu">
+    			<view class="close" wx:if="{{!show}}" @tap="show(1)">
+    				<image src="../img/down.png" class="icon"/>
+    			</view>
+    			<view class="show" wx:if="{{show}}">
+    				<view class="introu-title">爱屋特色</view>
+    				<view class="introu-info">{{hotelDetail.hotelInfo.introduction}}</view>
+    				<view class="introu-title">爱屋介绍</view>
+    				<view class="introu-info">
+    					<view class="left">
+    						<view>装修时间: {{hotelDetail.hotelInfo.finalDecorationTime}}</view>
+    						<view>楼层高度: 10</view>
+    					</view>
+    					<view class="right">
+    						<view>开业时间: {{hotelDetail.hotelInfo.bussinessData}}</view>
+    						<view>房间总数: {{hotelDetail.hotelInfo.roomQuan}}</view>
+    					</view>
+    				</view>
+
+    				<view class="close" @tap="show(0)">
+    					<image src="../img/up.png" class="icon"/>
+    				</view>
+    			</view>
+    		</view>
+
+    		<view class="rooms-wrapper">
+    			<repeat for="{{hotelDetail.roomTypeInfos}}" key="index" index="index" item="item">
+    			    <room @index-tap.user="showModal" :item.sync="item" :index="index"></room>
+    			</repeat>
+    		</view>
+    	</view>
+        <detail wx:if="{{isModal}}" @detail-tap.user="showModal" :roomDetail.sync="roomDetail"/>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Api from '../utils/api'
+    import Room from '../components/room'
+    import dModal from '../components/modal'
+    export default class Detail extends wepy.page {
+        config = {
+        	navigationBarTitleText: '酒店详情'
+        }
+        data = {
+        	hotelDetail: {},
+        	show: false,
+            isModal: false,
+            roomDetail: {}
+        }
+        components = {
+            room: Room,
+            detail: dModal
+        }
+        methods = {
+        	tel (num) {
+        		wepy.makePhoneCall({
+        		 	phoneNumber: num 
+        		})
+        	},
+        	gps (lat, lng, address, hotelName) {
+        		wepy.openLocation({
+        			latitude: parseFloat(lat),
+        			longitude: parseFloat(lng),
+        			name: hotelName,
+        			address: address
+        		})
+        	},
+        	show (type) {
+        		this.show = type == 1
+        	},
+            async showModal (isShow, id, index) {
+                this.isModal = isShow;
+
+                if(isShow) {
+                    let param = {
+                        method: 'POST',
+                        query: {
+                            id: id
+                        }
+                    }
+                    let roomData = await Api.roomDetail(param)
+                    this.roomDetail = this.hotelDetail.roomTypeInfos[index]
+                    this.$apply()
+                    console.log(this.roomDetail)
+                }
+            }
+        }
+        async onLoad (options) {
+            let param = {
+                method: 'POST',
+                data: {
+                    type: 'a',
+                    bDate: options.bDate
+                },
+                query: {
+                    id: options.id
+                }
+            }
+            let hotelDetail = await Api.hotelDetail(param)
+            
+            this.hotelDetail = hotelDetail.data
+
+            console.log(this.hotelDetail)
+            this.$apply();
+        }
+    }
+</script>

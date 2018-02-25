@@ -9,10 +9,10 @@ const host = 'https://www.mwwae.cn/hotel';
 	}
 */
 const wxRequest = async (params = {}, url) => {
-    // wepy.showToast({
-    //   title: '加载中',
-    //   icon: 'loading'
-    // });
+    wepy.showToast({
+      title: '加载中',
+      icon: 'loading'
+    });
     
     let res = await wepy.request({
         url: url,
@@ -20,20 +20,25 @@ const wxRequest = async (params = {}, url) => {
         data: params.data || {},
         header: {'Content-Type': 'application/json'},
     });
-    // wepy.hideToast();
-    console.log(res, 'util')
+    wepy.hideToast();
+    
     return res;
 };
 
 // Index
 const hotelList = (params) => wxRequest(params, host + '/queryHotelList/' + params.query.id)
-const getVolIdList = (params) => wxRequest(params, host + '/api/hp/idlist/0')
-const getVolsByMonth = (params) => wxRequest(params, host + '/api/hp/bymonth/' + params.query.month)
-const getVolDetailById = (params) => wxRequest(params, host + '/api/hp/detail/' + params.query.id)
+const hotelDetail = (params) => wxRequest(params, host + '/getHotelDetail/' + params.query.id)
+const roomDetail = (params) => wxRequest(params, host + '/getRoomDetail/' + params.query.id)
+
+// User
+const openid = (params) => wxRequest(params, host + '/getOpenId/?appId=' + params.query.id)
+
+const getPhone = (params) => wxRequest(params, host + '/decrypt')
 
 module.exports = {
 	hotelList,
-	getVolIdList,
-	getVolsByMonth,
-	getVolDetailById
+	hotelDetail,
+    roomDetail,
+    openid,
+    getPhone
 }

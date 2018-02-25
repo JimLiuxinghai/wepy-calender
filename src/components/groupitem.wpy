@@ -2,6 +2,7 @@
     .item {
         padding: 20rpx;
         display: flex;
+        border-bottom: 1px solid #c9c9c9;
         .img {
             flex: 1;
             image {
@@ -9,16 +10,40 @@
                 height: 200rpx;
             }
         }
+        .info {
+            flex: 1;
+            padding: 20rpx;
+            box-sizing: border-box;
+            .name {
+                font-size: 24rpx;
+            }
+            .address {
+                font-size: 20rpx;
+                color: #9d9d9d;
+                .location {
+                    width: 14rpx;
+                    height: 18rpx;
+                    margin-right: 10rpx;
+                }
+            }
+            .price {
+                text-align: right;
+                font-size: 26rpx;
+                color: #ff7e00;
+            }
+        }
     }
 </style>
 <template>
-    <view class="item" @tap="gotoDetail{{item.id}}">
+    <view class="item" @tap="gotoDetail({{item.id}}, {{item.bussinessData}})">
         <view class="img">
             <image src="http://img.nicelife-china.com:80/i15/{{item.imageName}}"></image>
         </view>
         <view class="info">
             <view class="name">{{item.hotelName}}</view>
-            <view class="address">{{item.address}}</view>
+            <view class="address">
+                <image class="location" src="../img/location.png"></image>{{item.address}}
+            </view>
             <view class="price">
                 <text class="num">￥{{item.lowestPrice}}</text>
                 <text class="text">起</text>
@@ -39,8 +64,10 @@ export default class GroupItem extends wepy.component {
         }
     }
     methods = {
-        gotoDetail (id) {
-            console.log(id)
+        gotoDetail (id, bDate) {
+            wepy.navigateTo({
+              url: '../pages/detail?id='+id + '&bData=' + bDate
+            })
         }
     }
 

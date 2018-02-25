@@ -1,0 +1,119 @@
+<style lang="less">
+    .add {
+        width: 100%;
+        background: #f0f0f0;
+        overflow: hidden;
+        .wrapper {
+            margin-top: 20rpx;
+            background: #ffffff;
+            border-top: 1rpx solid #d3d3d3;
+            .item {
+                height: 90rpx;
+                line-height: 90rpx;
+                border-bottom: 1rpx solid #d3d3d3;
+                display: flex;
+                .text {
+                    flex: 2;
+                    text-align: right;
+                    font-size: 28rpx;
+                    box-sizing: border-box;
+                    padding-right: 60rpx;
+                }
+                .input {
+                    flex: 3;
+                    input {
+                        font-size: 28rpx;
+                        height: 90rpx;
+                        line-height: 90rpx;
+                    }
+                }
+            }
+        }
+        .tip {
+            font-size: 24rpx;
+            color: #8b8b8b;
+            line-height: 60rpx;
+            padding: 0 40rpx;
+        }
+        .button-wrapper {
+            text-align: center;
+            margin-top: 80rpx;
+            .button {
+                display: inline-block;
+                width: 250rpx;
+                height: 70rpx;
+                line-height: 70rpx;
+                border-radius: 70rpx;
+                background: #ff7e00;
+                color: #ffffff;
+                font-size: 30rpx;
+            }
+        }
+    }
+</style>
+<template>
+    <view class="add" style="height: {{height}}px;">
+        <view class="wrapper">
+            <view class="item">
+                <view class="text">
+                    姓  名
+                </view>
+                <view class="input">
+                    <input placeholder="请输入入住人姓名"></input>
+                </view>
+            </view>
+            <view class="item">
+                <view class="text">
+                    手机号
+                </view>
+                <view class="input">
+                    <input type="number" placeholder="请输入入住人手机号"></input>
+                </view>
+            </view>
+            <view class="item">
+                <view class="text">
+                    身份证
+                </view>
+                <view class="input">
+                    <input type="idcard" placeholder="请输入入住人身份证"></input>
+                </view>
+            </view>
+        </view>
+        <view class="tip">
+            注意：
+        </view>
+        <view class="tip">
+            根据公安局酒店经营管理条例,入住经营性质的酒店/民宿,需要根据提供入住人的身份证明信息。
+        </view>
+        <view class="tip">
+            入住人的身份信息只用于必要的身份核实和保险理赔事项,科爱住会为您严格保密。
+        </view>
+        <view class="button-wrapper">
+            <view class="button">
+                保存
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Api from '../utils/api'
+    export default class Resident extends wepy.page {
+        config = {
+            navigationBarTitleText: '添加入住人'
+        }
+        components = {
+            
+        }
+        data = {
+            height: 0
+        }
+        methods = {
+            
+        }
+        async onLoad () {
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
+        }
+    }
+</script>

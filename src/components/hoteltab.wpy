@@ -217,16 +217,14 @@
                 </view>
                 <view class="hour-len">
                     <view class="len-wrapper">
-                        {{hourlen}}
+                        4h
                     </view>
                 </view>
                 <view class="hour-choose">
                     <view class="desp">离店时间</view>
-                    <picker @change="endChange" value="{{endindex}}" range="{{endhour}}">
-                        <view class="time">
-                            {{endhour[endindex]}}时
-                        </view>
-                    </picker>
+                    <view class="time">
+                        {{endhour}}时
+                    </view>
                 </view>
             </view>                                      
         </view>
@@ -260,9 +258,8 @@
             year: new Date().getFullYear(),
             month: new Date().getMonth(),
             starthour: hour,
-            endhour: hour,
+            endhour: 4,
             startindex: 0,
-            endindex: 0,
             hourlen: 0
         }
         components = {
@@ -278,7 +275,7 @@
                     let nextDay = util.dateUtils.switch(day, 1)
                     this.outdate = [day, nextDay]
                     this.showdate = [day, nextDay]
-                    this.datelen = util.dateUtils.getDateDiff(showdate[0], showdate[1])
+                    this.datelen = util.dateUtils.getDateDiff(this.showdate[0], this.showdate[1])
                 }
                 else {
                     this.outdate = [util.dateUtils.format(new Date())]
@@ -308,11 +305,8 @@
             startChange (e) {
                 let index = e.detail.value
                 this.startindex = index
-            },
-            endChange (e) {
-                let index = e.detail.value
-                this.endindex = index
-                this.hourlen = endindex - startindex
+                this.endhour = this.starthour[index] + 4
+                this.$apply()
             }
 
         }

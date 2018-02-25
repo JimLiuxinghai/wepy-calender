@@ -88,13 +88,20 @@
         /*确定取消*/
         .control {
             display: flex;
+            padding: 20rpx 25rpx;
             .button {
                 flex: 2;
                 text-align: center;
                 background: orange;
+                color: #ffffff;
+                font-size: 26rpx;
+                height: 48rpx;
+                line-height: 48rpx;
+                border-radius: 5rpx;
             }
             .time {
                 flex: 4;
+                font-size: 20rpx;
                 text-align: center;
             }
         }
@@ -342,6 +349,7 @@
             sure (e) {
                 this.monthDay.forEach((week) => {
                     week.forEach((day) => {
+                        
                         day.state = '';
                         day.in = false;
                     })
@@ -352,7 +360,7 @@
         }   
         onLoad() {
             this.monthDay = this.methods.dealMonth(this.year, this.month)
-            let sysInfo = wx.getSystemInfoSync()
+            let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight;
             
         }
