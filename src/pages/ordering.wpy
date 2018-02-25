@@ -237,7 +237,7 @@
              </view>
         </view>
 
-        <repeat for="{{mens}}" key="index" index="index" item="item">
+        <repeat for="{{mens * rooms}}" key="index" index="index" item="item">
             <view class="men">
                 <view class="item">
                     <view class="item-title">入住人</view>

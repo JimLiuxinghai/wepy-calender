@@ -127,60 +127,67 @@
             goldBeans: 0
         }
         methods = {
-            getPhoneNumber (e) {   
-                console.log(e.detail.errMsg)   
-                console.log(e.detail.iv)   
-                console.log(e.detail.encryptedData)   
+            async getPhoneNumber (e) {
+                let _self = this  
                 if (e.detail.errMsg == 'getPhoneNumber:fail user deny'){  
-                  wx.showModal({  
-                      title: '提示',  
-                      showCancel: false,  
-                      content: '未授权',  
-                      success: function (res) { }  
-                  })  
+                    wx.showModal({  
+                        title: '提示',  
+                        showCancel: false,  
+                        content: '请授权',  
+                        success: function (res) {
+
+                        }  
+                    })  
                 } else {  
-                  wx.showModal({  
-                      title: '提示',  
-                      showCancel: false,  
-                      content: '同意授权',  
-                      async success () {
-                         let params = {
-                            method: 'POST',
-                            data: {
-                                openId: 'ozHS35WBom3ZJjMu0i_x5SSXWi9Q',
-                                encryptedData: e.detail.encryptedData,
-                                iv: e.detail.iv
-                            }
-                            
-                         }
-                         let phoneInfo = await Api.getPhone(params)
-                         console.log(phoneInfo, '8888')
-                      }  
-                  })  
+                    let params = {
+                       method: 'POST',
+                       data: {
+                           openId: _self.openid,
+                           encryptedData: e.detail.encryptedData,
+                           iv: e.detail.iv
+                       }
+                       
+                    }
+                    let phoneInfo = await Api.getPhone(params)
+                    console.log(phoneInfo, '8888') 
                 }  
             }
         }
         async onLoad () {
-            let loginInfo = await wepy.login()
-            let code = loginInfo.code
-            
+            //个人信息
             let userInfo = await wepy.getUserInfo()
             
             this.userInfo = userInfo.userInfo
-            
-            let param = {
-                method: 'POST',
-                data: {
-                    code: code
-                },
-                query: {
-                    id: 'wxdf0a4eff9ba24e02'
-                }
+
+
+            let openId = await wepy.getStorageSync('openId')
+
+            if(openId) {
+                this.openid = openId
             }
-            let openInfo = await Api.openid(param)
+            else {
+                let loginInfo = await wepy.login()
+                let code = loginInfo.code
+                
+                
+                
+                let param = {
+                    method: 'POST',
+                    data: {
+                        code: code
+                    },
+                    query: {
+                        id: 'wxdf0a4eff9ba24e02'
+                    }
+                }
+                let openInfo = await Api.openid(param)
+                
+                
+                this.openid = openInfo.data.data.openid
+
+                wepy.setStorageSync('openId', this.openid)
+            }
             
-            console.log(openInfo, '*****')
-            this.openid = openInfo.data.data.openid
 
             this.$apply()
         }
