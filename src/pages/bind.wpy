@@ -1,0 +1,118 @@
+<style lang="less">
+    .bind {
+        .top {
+            height: 300rpx;
+            background: #f0f0f0;
+            text-align: center;
+            line-height: 300rpx;
+            image {
+                width: 342rpx;
+                height: 112rpx;
+            }
+        }
+        .button {
+            width: 350rpx;
+            height: 60rpx;
+            border-radius: 60rpx;
+            background-color: #ff7e00;
+            color: #ffffff;
+            font-size: 26rpx;
+            line-height: 60rpx;
+            margin: 100rpx auto;
+            text-align: center;
+        }
+    }
+</style>
+<template>
+    <view class="bind">
+        <view class="top">
+            <image src="../img/bind.png" />
+        </view>
+        <button class="button" open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">立即绑定</button>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Api from '../utils/api'
+    export default class Bind extends wepy.page {
+        config = {
+            navigationBarTitleText: '个人中心'
+        }
+        components = {
+
+        }
+        data = {
+            openid: '',
+            nickname: ''
+        }
+        methods = {
+            async getPhoneNumber (e) {
+                let _self = this
+                if (e.detail.errMsg == 'getPhoneNumber:fail user deny'){
+                    wx.showModal({
+                        title: '提示',
+                        content: '请绑定手机号，获取更优质服务',
+                        success: function(res) {
+                            if (res.confirm) {
+                            console.log('用户点击确定')
+                            } else if (res.cancel) {
+                            console.log('用户点击取消')
+                            }
+                        }
+                    })
+                } else {
+                    let params = {
+                       method: 'POST',
+                       data: {
+                           openId: _self.openid,
+                           encryptedData: e.detail.encryptedData,
+                           iv: e.detail.iv
+                       }
+
+                    }
+                    let phoneInfo = await Api.getPhone(params)
+                    let phoneNum = phoneInfo.data.data.purePhoneNumber
+                    this.methods.register(phoneNum, _self.openid, _self.nickname)
+                }
+            },
+            async register (phone, openid, nickname) {
+                let params = {
+                    method: 'POST',
+                    data: {
+                        appId: 'wxdf0a4eff9ba24e02',
+                        openId: openid,
+                        phone: phone,
+                        nickname: nickname
+                    }
+                }
+
+                let registerRes = await Api.register(params)
+
+                if(registerRes.retCode == 0) {
+                     wepy.navigateTo({
+                        url: '../pages/me'
+                    })
+                }
+                else {
+                     wx.showModal({
+                        title: '错误偶',
+                        showCancel: false,
+                        content: '网络错误, 请稍候重试',
+                        success: function (res) {
+
+                        }
+                    })
+                }
+            }
+        }
+        onLoad (options) {
+
+            console.log(options)
+            this.openid = options.openid
+            this.nickname = options.nickname
+        }
+        async onShow () {
+
+        }
+    }
+</script>

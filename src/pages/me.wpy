@@ -82,7 +82,6 @@
             </view>
         </view>
         <view class="nav-wrapper">
-            <button open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">获取手机号</button>
             <view class="nav">
                 <view class="golden item">
                     <navigator url="../pages/money?gold={{goldBeans}}" open-type="navigate" hover-class="other-navigator-hover">
@@ -120,57 +119,52 @@
             navigationBarTitleText: '个人中心'
         }
         components = {
-            
+
         }
         data = {
             userInfo: {},
             goldBeans: 0
         }
         methods = {
-            async getPhoneNumber (e) {
-                let _self = this  
-                if (e.detail.errMsg == 'getPhoneNumber:fail user deny'){  
-                    wx.showModal({  
-                        title: '提示',  
-                        showCancel: false,  
-                        content: '请授权',  
-                        success: function (res) {
-
-                        }  
-                    })  
-                } else {  
-                    let params = {
-                       method: 'POST',
-                       data: {
-                           openId: _self.openid,
-                           encryptedData: e.detail.encryptedData,
-                           iv: e.detail.iv
-                       }
-                       
+            async getUser (openid, nickName) {
+                let _self = this
+                let params = {
+                    method: 'POST',
+                    data: {
+                        appId: 'wxdf0a4eff9ba24e02',
+                        openId: openid
                     }
-                    let phoneInfo = await Api.getPhone(params)
-                    console.log(phoneInfo, '8888') 
-                }  
+                }
+                let userData = await Api.getUser(params)
+
+                if(userData.data.data == null) {
+                    wepy.navigateTo({
+                        url: '../pages/bind?openid=' + openid + '&nickname=' + nickName
+                    })
+                }
+                else {
+                    wx.setStorageSync('userid', userData.data.data.id)
+                    wx.setStorageSync('phone', userData.data.data.phone)
+                    wx.setStorageSync('name', _self.userInfo.nickName)
+                }
             }
         }
         async onLoad () {
             //个人信息
             let userInfo = await wepy.getUserInfo()
-            
+
             this.userInfo = userInfo.userInfo
 
+            let nickName =  userInfo.userInfo.nickName
 
+            wx.setStorageSync('name', nickName)
             let openId = await wepy.getStorageSync('openId')
-
             if(openId) {
                 this.openid = openId
             }
             else {
                 let loginInfo = await wepy.login()
                 let code = loginInfo.code
-                
-                
-                
                 let param = {
                     method: 'POST',
                     data: {
@@ -181,18 +175,17 @@
                     }
                 }
                 let openInfo = await Api.openid(param)
-                
-                
-                this.openid = openInfo.data.data.openid
 
+                this.openid = openInfo.data.data.openid
+                openId = this.openid
                 wepy.setStorageSync('openId', this.openid)
             }
-            
 
+            this.methods.getUser(openId, nickName)
             this.$apply()
         }
         async onShow () {
-            
+
         }
     }
 </script>

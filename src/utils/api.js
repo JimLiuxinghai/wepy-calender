@@ -13,7 +13,7 @@ const wxRequest = async (params = {}, url) => {
       title: '加载中',
       icon: 'loading'
     });
-    
+
     let res = await wepy.request({
         url: url,
         method: params.method || 'GET',
@@ -21,7 +21,7 @@ const wxRequest = async (params = {}, url) => {
         header: {'Content-Type': 'application/json'},
     });
     wepy.hideToast();
-    
+
     return res;
 };
 
@@ -32,13 +32,25 @@ const roomDetail = (params) => wxRequest(params, host + '/getRoomDetail/' + para
 
 // User
 const openid = (params) => wxRequest(params, host + '/getOpenId/?appId=' + params.query.id)
-
+const getUser = (params) => wxRequest(params, host + '/wxGetUser')
 const getPhone = (params) => wxRequest(params, host + '/decrypt')
+const register = (params) => wxRequest(params, host + '/wxRegister')
+
+//price
+const getPrice = (params) => wxRequest(params, host + '/preOrder/' + params.query.roomid + '?userId=' + params.query.userid)
+
+
+
+
 
 module.exports = {
 	hotelList,
 	hotelDetail,
     roomDetail,
     openid,
-    getPhone
+    getPhone,
+    getUser,
+    register,
+    getPrice
+
 }

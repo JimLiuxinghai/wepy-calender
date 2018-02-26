@@ -30,7 +30,7 @@
                 <input type="text" class="search" confirm-type="search" bindinput="input" bindconfirm="search"></input>
             </view>
             
-            <hoteltab></hoteltab>  
+            <hoteltab @dateInfo.user="date"></hoteltab>  
         </view>
         <view>
             <repeat for="{{hotelList}}" key="index" index="index" item="item">
@@ -55,7 +55,8 @@
         data = {
             ctype: 1,
             cshow: false,
-            hotelList: []
+            hotelList: [],
+            date: []
         }
         methods = {
             open () {
@@ -70,6 +71,10 @@
             },
             search () {
                 console.log(1212)
+            },
+            async date (date) {
+                this.date = date
+                wepy.setStorageSync('date', date)
             }
         }
         async onLoad () {
@@ -90,6 +95,22 @@
             
             this.hotelList = hotelList.data.content;
             this.$apply();
+        }
+        onShareAppMessage (res) {
+            if (res.from === 'button') {
+                // 来自页面内转发按钮
+                console.log(res.target)
+            }
+            return {
+                title: '爱屋查找',
+                path: '/pages/index',
+                success: function(res) {
+                    // 转发成功
+                },
+                fail: function(res) {
+                    // 转发失败
+                }
+            }
         }
     }
 </script>

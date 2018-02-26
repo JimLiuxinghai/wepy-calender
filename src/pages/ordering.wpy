@@ -28,7 +28,7 @@
                 margin-top: 20rpx;
             }
             .start {
-                flex: 4; 
+                flex: 4;
             }
             .date-length {
                 flex: 1;
@@ -172,7 +172,7 @@
                 }
             }
         }
-        
+
         .info {
             padding: 0 30rpx;
             line-height: 40rpx;
@@ -196,26 +196,26 @@
 <template>
     <view class="ordering" style="height: {{height}}px;">
         <view class="title">
-            <view>科爱住东风南路店</view>
-            <view>豪华单人房</view>
+            <view>{{params.hotelName}}</view>
+            <view>{{params.roomType}}</view>
         </view>
         <view class="date-info">
             <view class="start">
                 <view class="info">
                     入住时间
                 </view>
-                <view class="date">11月08日</view>
+                <view class="date">{{date[0]}}</view>
             </view>
             <view class="date-length">
                 <view class="date-gray">
-                    2天
+                    {{datelen}}天
                 </view>
             </view>
             <view class="end">
                 <view class="info">
                     离店时间
                 </view>
-                <view class="date">11月10日</view>
+                <view class="date">{{date[1]}}</view>
             </view>
         </view>
         <view class="select-wrapper">
@@ -242,21 +242,21 @@
                 <view class="item">
                     <view class="item-title">入住人</view>
                     <view class="item-input">
-                        <input placeholder="请填写入住人" />
+                        <input placeholder="请填写入住人" bindinput="inputmen"/>
                     </view>
                     <view class="item-icon">常用入住人</view>
                 </view>
                 <view class="item">
                     <view class="item-title">联系方式</view>
                     <view class="item-input">
-                        <input placeholder="请填写联系方式"  type="number"/>
+                        <input placeholder="请填写联系方式"  type="number" />
                     </view>
                 </view>
 
                 <view class="item">
                     <view class="item-title">身份证号</view>
                     <view class="item-input">
-                        <input placeholder="请填写身份证号"  type="idcard"/>
+                        <input placeholder="请填写身份证号"  type="idcard" bindinput="inputid"/>
                     </view>
                 </view>
             </view>
@@ -270,16 +270,16 @@
         <view class="price">
             <view class="item">
                 <view class="price-title">房间总价:</view>
-                <view class="price-num">￥410</view>
+                <view class="price-num">￥{{showPrice.originalPrice}}</view>
                 <view class="nav">房费明细:</view>
-                <view class="high-num">订单总价: ¥510</view>
+                <view class="high-num">订单总价: ¥{{showPrice.originalPrice}}</view>
             </view>
 
             <view class="item">
                 <view class="price-title">住房押金:</view>
-                <view class="price-num">￥410</view>
-                <view class="price-title total">订单总价: <text>￥499</text></view>
-                
+                <view class="price-num">￥{{showPrice.foregift}}</view>
+                <view class="price-title total">订单总价: <text>￥{{showPrice.foregift + showPrice.originalPrice}}</text></view>
+
             </view>
         </view>
 
@@ -302,17 +302,23 @@
 <script>
     import wepy from 'wepy'
     import Api from '../utils/api'
+    import util from '../utils/util'
     export default class Resident extends wepy.page {
         config = {
             navigationBarTitleText: '房屋预定'
         }
         components = {
-            
+
         }
         data = {
             height: 0,
             rooms: 1,
-            mens: 2
+            mens: 2,
+            params: {},
+            date: [],
+            datelen: 0,
+            showPrice: {},
+            mensInfo: []
         }
         methods = {
             mens (type) {
@@ -329,7 +335,7 @@
                             icon: 'none'
                         })
                     }
-                    
+
                 }
                 this.$apply()
             },
@@ -347,12 +353,55 @@
                             icon: 'none'
                         })
                     }
-                    
+
                 }
                 this.$apply()
+            },
+            inputmen (e) {
+                console.log(e)
+            },
+            async getPrice (bDate, eDate, len, roomid, userid) {
+                let params = {
+                    method: 'POST',
+                    data: {
+                        bDate: bDate,
+                        eDate: eDate,
+                        lockNum: len,
+                        type: 'a'
+                    },
+                    query: {
+                        roomid: roomid,
+                        userid: userid
+                    }
+                }
+                let priceInfo = await Api.getPrice(params)
+                this.priceInfo = priceInfo.data.data
+                this.showPrice = {
+                    originalPrice: parseFloat(priceInfo.data.data.originalPrice) || 0,
+                    rebatePrice:  parseFloat(priceInfo.data.data.rebatePrice) || 0,
+                    foregift: parseFloat(priceInfo.data.data.foregift) || 0,
+                }
+            },
+            async submit () {
+                let data = this.params
+                let name = wepy.getStorageSync('name')
+                let phone = wepy.getStorageSync('phone')
+                data.roomCnt = this.rooms
+                data.bDate = this.date[0]
+                data.eDate = this.date[1]
+                data.lockTime = this.datelen
+                data.contactName = name
+                data.contactPhone = phone
             }
         }
-        async onLoad () {
+        async onLoad (options) {
+            this.params = JSON.parse(options.params)
+            let date =  await wepy.getStorageSync('date')
+            this.userid = await wepy.getStorageSync('userid')
+            this.date = date
+            this.datelen = util.dateUtils.getDateDiff(this.date[0], this.date[1])
+            this.$apply()
+            this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
         }

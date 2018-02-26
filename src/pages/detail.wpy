@@ -130,11 +130,11 @@
 
     		<view class="rooms-wrapper">
     			<repeat for="{{hotelDetail.roomTypeInfos}}" key="index" index="index" item="item">
-    			    <room @index-tap.user="showModal" :item.sync="item" :index="index"></room>
+    			    <room @index-tap.user="showModal" :item.sync="item" :index="index" @detail-order.user="order"></room>
     			</repeat>
     		</view>
     	</view>
-        <detail wx:if="{{isModal}}" @detail-tap.user="showModal" :roomDetail.sync="roomDetail"/>
+        <detail wx:if="{{isModal}}" @detail-tap.user="showModal"  :roomDetail.sync="roomDetail"/>
     </view>
 </template>
 <script>
@@ -159,7 +159,7 @@
         methods = {
         	tel (num) {
         		wepy.makePhoneCall({
-        		 	phoneNumber: num 
+        		 	phoneNumber: num
         		})
         	},
         	gps (lat, lng, address, hotelName) {
@@ -188,7 +188,31 @@
                     this.$apply()
                     console.log(this.roomDetail)
                 }
+            },
+			async order (index) {
+				let _self = this
+				let userid = await wepy.getStorageSync('userid')
+				let roomDetail = this.hotelDetail.roomTypeInfos[index]
+				let params = {
+					hotelId: _self.hotelDetail.hotelInfo.id,
+					hotelName: _self.hotelDetail.hotelInfo.hotelName,
+					roomId: roomDetail.id,
+					roomType: roomDetail.roomType,
+					mctCode: 0
+				}
+				console.log(userid)
+				if(userid) {
+					wepy.navigateTo({
+						url: '../pages/ordering?params=' + JSON.stringify(params)
+					})
+				}
+				else {
+					wepy.navigateTo({
+						url: '../pages/me'
+					})
+				}
             }
+
         }
         async onLoad (options) {
             let param = {
@@ -202,7 +226,7 @@
                 }
             }
             let hotelDetail = await Api.hotelDetail(param)
-            
+
             this.hotelDetail = hotelDetail.data
 
             console.log(this.hotelDetail)

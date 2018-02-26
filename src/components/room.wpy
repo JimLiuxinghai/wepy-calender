@@ -81,7 +81,7 @@
             <view class="still">原价:{{item.highPrice}}</view>
             <view class="order-wrapper">
                 <view class="tip">注: 入住当天14点前免费取消</view>
-                <view class="order" @tap.stop="order">预定</view>
+                <view class="order" @tap.stop="order({{index}})">预定</view>
             </view>
         </view>
     </view>
@@ -91,7 +91,8 @@ import wepy from 'wepy'
 export default class Room extends wepy.component {
     props = {
         item: {},
-        index: Number
+        index: Number,
+        id: Number
     }
     compute = {
         item() {
@@ -104,17 +105,16 @@ export default class Room extends wepy.component {
     }
     methods = {
         showModal (id, index) {
-            console.log(id, index)
             this.$emit('index-tap', true, id, index)
         },
-        order () {
-            wepy.navigateTo({
-              url: '../pages/ordering'
-            })
+        order (index) {
+            console.log(index, 'room')
+            this.$emit('detail-order', index)
         }
     }
     onLoad () {
         console.log(this.item)
+        console.log(this.id, 'Id')
     }
 
 }
