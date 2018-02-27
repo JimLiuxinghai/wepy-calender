@@ -194,7 +194,7 @@
     }
 </style>
 <template>
-    <view class="ordering" style="height: {{height}}px;">
+    <view class="ordering" style="min-height: {{height}}px;">
         <view class="title">
             <view>{{params.hotelName}}</view>
             <view>{{params.roomType}}</view>
@@ -237,7 +237,7 @@
              </view>
         </view>
 
-        <repeat for="{{mens * rooms}}" key="index" index="index" item="item">
+        <repeat for="{{mens}}" key="index" index="index" item="item">
             <view class="men">
                 <view class="item">
                     <view class="item-title">入住人</view>
@@ -271,7 +271,7 @@
             <view class="item">
                 <view class="price-title">房间总价:</view>
                 <view class="price-num">￥{{showPrice.originalPrice}}</view>
-                <view class="nav">房费明细:</view>
+                <view class="nav" @tap="gotoPrice">房费明细</view>
                 <view class="high-num">订单总价: ¥{{showPrice.highPrice + showPrice.foregift}}</view>
             </view>
 
@@ -363,6 +363,8 @@
 
                 }
                 let num = this.rooms * this.mens
+                this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
+                console.log(this.showPrice, 'rooms')
                 this.methods.dealMens(num)
                 this.$apply()
             },
@@ -382,12 +384,15 @@
             showCalender () {
                 this.cshow = true
             },
-            calender (type, date) {
+            async calender (type, date) {
                 this.cshow = false
                 if (type) {
                     this.date = date
                     this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
+                    this.priceInfo = await this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
+                    this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
                 }
+
             },
             async getPrice (bDate, eDate, len, roomid, userid) {
                 let params = {
@@ -403,7 +408,6 @@
                         userid: userid
                     }
                 }
-                console.log(params)
                 let priceInfo = await Api.getPrice(params)
 
                 return priceInfo.data.data
@@ -461,7 +465,8 @@
                 let param = {
                     hotelName: this.params.hotelName,
                     roomType: this.params.roomType,
-                    priceInfo: this.priceInfo
+                    priceInfo: this.priceInfo,
+                    rooms: this.rooms
                 }
                 wepy.navigateTo({
                     url: '../pages/price?params=' + JSON.stringify(param)

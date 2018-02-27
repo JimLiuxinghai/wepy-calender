@@ -1,15 +1,78 @@
 <style lang="less">
     .price {
-
+        background-color: #f0f0f0;
+        .top {
+            padding: 40rpx 0;
+            box-sizing: border-box;
+        }
+        .cmp {
+            color: #ff7e00;
+            text-align: center;
+            >.num {
+                font-size: 56rpx;
+            }
+            >.text {
+                font-size: 26rpx;
+            }
+        }
+        .name {
+            text-align: center;
+            font-size: 26rpx;
+            margin-top: 40rpx;
+        }
+        .bottom {
+            background-color: #ffffff;
+            .title {
+                padding: 30rpx 0;
+                text-align: center;
+                font-size: 28rpx;
+            }
+            .day {
+                padding: 20rpx 30rpx;
+                border-bottom: 1px solid #f0f0f0;
+                .date {
+                    font-size: 24rpx;
+                }
+                .day-price {
+                    font-size: 26rpx;
+                    color: #ff7e00;
+                    float: right;
+                    margin-top: 10rpx;
+                }
+            }
+        }
+        .totalPrice {
+            padding: 30rpx;
+            font-size: 26rpx;
+            color: #ff7e00;
+            text-align: right;
+        }
     }
 </style>
 <template>
     <view class="price" style="height: {{height}}px;">
-
+        <view class="top">
+            <view class="cmp">
+                <text class="num">￥{{totalPrice.cmp}}</text>
+                <text class="text">(折后)</text>
+            </view>
+            <view class="name">{{hotelName}}{{roomType}}</view>
+        </view>
+        <view class="bottom">
+            <view class="title">房价明细({{roomType}})</view>
+            <repeat for="{{priceInfo}}" key="index" index="index" item="item">
+                <view class="day">
+                    <text class="date">{{item.dateStr}}</text>
+                    <text class="day-price">￥{{item.basePrice}} × {{rooms}}间 × {{rebatePrice}}折</text>
+                </view>
+            </repeat>
+        </view>
+        <view class="totalPrice">订单总价:{{totalPrice.base}}</view>
     </view>
 </template>
 <script>
     import wepy from 'wepy'
+    import util from '../utils/util'
     export default class Resident extends wepy.page {
         config = {
             navigationBarTitleText: '房费明细'
@@ -18,13 +81,37 @@
 
         }
         data = {
-            height: 0
+            height: 0,
+            totalPrice: {},
+            hotelName: '',
+            roomType: '',
+            rebatePrice: 0,
+            rooms: 0,
+            priceInfo: []
         }
         methods = {
 
         }
         async onLoad (options) {
+            console.log(options.params)
             let param = JSON.parse(options.params)
+            this.hotelName = param.hotelName
+            this.roomType = param.roomType
+            console.log(param, '******')
+            let price = {
+                base: 0,
+                cmp: 0
+            }
+            param.priceInfo.roomBasePriceInfos.forEach((dayPrice) => {
+                price.base += dayPrice.basePrice
+                price.cmp += dayPrice.cmpnPrice
+                dayPrice.dateStr = util.dateUtils.format(new Date(dayPrice.date))
+            })
+            this.rebatePrice = param.priceInfo.rebatePrice
+            this.totalPrice = price
+            this.rooms = param.rooms
+            console.log(param)
+            this.priceInfo = param.priceInfo.roomBasePriceInfos
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
         }
