@@ -108,7 +108,6 @@ export default class Room extends wepy.component {
             this.$emit('index-tap', true, id, index)
         },
         order (index) {
-            console.log(index, 'room')
             this.$emit('detail-order', index)
         }
     }

@@ -56,9 +56,9 @@
                   position: relative;
                   text-align: center;
                   flex: 1;
-                  outline: 1rpx solid #ffffff;          
-                  font-size: 24rpx; 
-                  
+                  outline: 1rpx solid #ffffff;
+                  font-size: 24rpx;
+
                   .has-state {
                     line-height: 40rpx;
                     background: #4eb5f7;
@@ -68,7 +68,7 @@
                   }
                   .no-state {
                     line-height: 80rpx;
-                    
+
                     &.true {
                         background: #cbe7f5;
                     }
@@ -105,7 +105,7 @@
                 text-align: center;
             }
         }
-      
+
     }
 }
 
@@ -124,7 +124,7 @@
             </view>
             <view class="weeks">
               <repeat for="{{weeks}}" key="index" index="index" item="item">
-                 <view class="week-item">{{item}}</view> 
+                 <view class="week-item">{{item}}</view>
               </repeat>
             </view>
             <view class="days">
@@ -134,7 +134,7 @@
                             <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
                             <text class="state" data-index="{{[index, dayindex]}}">
                                 {{day.state}}
-                            </text>    
+                            </text>
                         </view>
                         <view class="no-state {{day.in}}" wx:if="{{!day.state}}" data-index="{{[index, dayindex]}}">
                              <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
@@ -146,7 +146,7 @@
                             <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
                             <text class="state" data-index="{{[index, dayindex]}}">
                                 {{day.state}}
-                            </text>    
+                            </text>
                         </view>
                         <view class="no-state {{day.in}}" wx:if="{{!day.state}}" data-index="{{[index, dayindex]}}">
                              <text class="able" wx:if="{{day.disabled}}" data-index="{{[index, dayindex]}}">{{day.index}}<br /></text>
@@ -164,7 +164,7 @@
             </view>
         </view>
     </view>
-    
+
 </template>
 <script>
     /*
@@ -219,7 +219,7 @@
                 let index = outindex || e.target.dataset.index
                 let dayObj = this.monthDay[index[0]][index[1]]
                 if (dayObj.disabled) {
-                    
+
                     if (this.date.length === 0) {
                         this.first = index;
                         this.date.push(dayObj.__date)
@@ -228,7 +228,7 @@
                     else if (this.date.length === 1) {
                         if(index[0] < this.first[0]) {
                             this.date = []
-                            
+
                             this.date.push(dayObj.__date)
                             this.monthDay[this.first[0]][this.first[1]].state = ''
                             this.monthDay[index[0]][index[1]].state = '入住'
@@ -237,13 +237,13 @@
                         else {
                             if(index[1] <= this.first[1]) {
                                 this.date = []
-                                
+
                                 this.date.push(dayObj.__date)
 
-                                
+
                                 this.monthDay[this.first[0]][this.first[1]].state = ''
-                                
-                                
+
+
                                 this.monthDay[index[0]][index[1]].state = '入住'
                                 this.first = index
                             }
@@ -260,12 +260,12 @@
                                         })
                                     })
                                 })
-                                
+
                                 this.monthDay[index[0]][index[1]].state = '离店'
                             }
                         }
 
-                        
+
                     }
                     else {
                         this.date = []
@@ -289,7 +289,7 @@
                 let index = outindex || e.target.dataset.index
                 let dayObj = this.monthDay[index[0]][index[1]]
                 if (dayObj.disabled) {
-                    
+
                     if (this.date.length === 0) {
                         this.first = index;
                         this.date.push(dayObj.__date)
@@ -325,7 +325,7 @@
             monthClick (e) {
                 let type = e.target.dataset.type
                 this.month = type == 1 ? this.month - 1 : this.month + 1;
-                
+
                 if (this.month < 0) {
                     this.year = this.year - 1;
                     this.month = 11;
@@ -349,7 +349,7 @@
             sure (e) {
                 this.monthDay.forEach((week) => {
                     week.forEach((day) => {
-                        
+
                         day.state = '';
                         day.in = false;
                     })
@@ -357,12 +357,13 @@
                 console.log(this.monthDay)
                 this.$emit('index-tap', true, this.date)
             }
-        }   
+        }
         onLoad() {
             this.monthDay = this.methods.dealMonth(this.year, this.month)
+            console.log(this.monthDay, 'siii')
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight;
-            
+
         }
     }
 </script>

@@ -195,7 +195,7 @@
                 <view class="len-wrapper">
                     {{datelen}}晚
                 </view>
-            </view> 
+            </view>
             <view class="day-choose">
                 <view class="desp">离店日期</view>
                 <view class="date">{{showdate[1]}}</view>
@@ -226,13 +226,13 @@
                         {{endhour}}时
                     </view>
                 </view>
-            </view>                                      
+            </view>
         </view>
 
         <view class="button-wrapper">
             <view class="button">爱屋搜索</view>
         </view>
-        
+
     </view>
     <calender wx:if="{{cshow}}"  @index-tap.user="calender" :type.sync="ctype" :outdate.sync="outdate"></calender>
 </template>
@@ -271,7 +271,7 @@
                 let type = e.target.dataset.type
                 if(type == 'day') {
                     let day = util.dateUtils.format(new Date())
-                    
+
                     let nextDay = util.dateUtils.switch(day, 1)
                     this.outdate = [day, nextDay]
                     this.showdate = [day, nextDay]
@@ -304,7 +304,7 @@
                     this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
                 }
                 this.$emit('dateInfo', this.showdate)
-                
+
             },
             startChange (e) {
                 let index = e.detail.value
@@ -316,12 +316,12 @@
         }
         async onLoad() {
             let day = util.dateUtils.format(new Date())
-            
+
             let nextDay = util.dateUtils.switch(day, 1)
             this.outdate = [day, nextDay]
             this.showdate = [day, nextDay]
             wepy.setStorageSync('date', this.showdate)
-            
+
         }
     }
 </script>

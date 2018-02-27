@@ -1,0 +1,32 @@
+<style lang="less">
+    .price {
+
+    }
+</style>
+<template>
+    <view class="price" style="height: {{height}}px;">
+
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    export default class Resident extends wepy.page {
+        config = {
+            navigationBarTitleText: '房费明细'
+        }
+        components = {
+
+        }
+        data = {
+            height: 0
+        }
+        methods = {
+
+        }
+        async onLoad (options) {
+            let param = JSON.parse(options.params)
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
+        }
+    }
+</script>

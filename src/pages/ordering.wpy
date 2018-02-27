@@ -199,7 +199,7 @@
             <view>{{params.hotelName}}</view>
             <view>{{params.roomType}}</view>
         </view>
-        <view class="date-info">
+        <view class="date-info" @tap="showCalender">
             <view class="start">
                 <view class="info">
                     入住时间
@@ -272,7 +272,7 @@
                 <view class="price-title">房间总价:</view>
                 <view class="price-num">￥{{showPrice.originalPrice}}</view>
                 <view class="nav">房费明细:</view>
-                <view class="high-num">订单总价: ¥{{showPrice.originalPrice}}</view>
+                <view class="high-num">订单总价: ¥{{showPrice.highPrice + showPrice.foregift}}</view>
             </view>
 
             <view class="item">
@@ -297,18 +297,17 @@
         <view class="button" @tap="submit">
             提交订单
         </view>
+        <ncalender wx:if="{{cshow}}"  @index-tap.user="calender" :type.sync="ctype" :outdate.sync="date"></ncalender>
     </view>
 </template>
 <script>
     import wepy from 'wepy'
     import Api from '../utils/api'
     import util from '../utils/util'
+    import Calender from '../components/calender'
     export default class Resident extends wepy.page {
         config = {
             navigationBarTitleText: '房屋预定'
-        }
-        components = {
-
         }
         data = {
             height: 0,
@@ -318,7 +317,13 @@
             date: [],
             datelen: 0,
             showPrice: {},
-            mensInfo: []
+            priceInfo: {},
+            mensInfo: [],
+            ctype: 1,
+            cshow: false
+        }
+        components = {
+            ncalender: Calender
         }
         methods = {
             mensDeal (type) {
@@ -366,7 +371,6 @@
                 this.$apply()
                 let value = e.detail.value
                 let index = e.target.dataset.index
-                console.log(this.mensInfo)
                 this.mensInfo[index].name = value
             },
             inputId (e) {
@@ -374,6 +378,16 @@
                 let value = e.detail.value
                 let index = e.target.dataset.index
                 this.mensInfo[index].pid = value
+            },
+            showCalender () {
+                this.cshow = true
+            },
+            calender (type, date) {
+                this.cshow = false
+                if (type) {
+                    this.date = date
+                    this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
+                }
             },
             async getPrice (bDate, eDate, len, roomid, userid) {
                 let params = {
@@ -389,13 +403,23 @@
                         userid: userid
                     }
                 }
+                console.log(params)
                 let priceInfo = await Api.getPrice(params)
-                this.priceInfo = priceInfo.data.data
-                this.showPrice = {
-                    originalPrice: parseFloat(priceInfo.data.data.originalPrice) || 0,
-                    rebatePrice:  parseFloat(priceInfo.data.data.rebatePrice) || 0,
-                    foregift: parseFloat(priceInfo.data.data.foregift) || 0,
+
+                return priceInfo.data.data
+            },
+            dealShowPrice (rooms, priceInfo) {
+                let showPrice = {
+                    originalPrice: 0,
+                    foregift: priceInfo.foregift,
+                    highPrice: priceInfo.roomTypeInfo.highPrice || 0 * rooms + priceInfo.foregift
                 }
+                let originPrice = 0
+                priceInfo.roomBasePriceInfos.forEach((dayPrice) => {
+                    originPrice += dayPrice.cmpnPrice * rooms
+                })
+                showPrice.originalPrice = originPrice
+                return showPrice
             },
             dealMens (num) {
                 let newData = []
@@ -428,10 +452,19 @@
                     }
                 }
                 let submitInfo = await Api.submitOrder(params)
-                console.log(submitInfo)
                 wepy.showToast({
                   title: '提交成功',
                   icon: 'none'
+                })
+            },
+            gotoPrice () {
+                let param = {
+                    hotelName: this.params.hotelName,
+                    roomType: this.params.roomType,
+                    priceInfo: this.priceInfo
+                }
+                wepy.navigateTo({
+                    url: '../pages/price?params=' + JSON.stringify(param)
                 })
             }
         }
@@ -440,15 +473,16 @@
             this.params = JSON.parse(options.params)
             let date =  await wepy.getStorageSync('date')
             this.userid = await wepy.getStorageSync('userid')
+            console.log(this.userid, 'userid')
             this.date = date
             this.datelen = util.dateUtils.getDateDiff(this.date[0], this.date[1])
             this.$apply()
-            this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
+            this.priceInfo = await this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
+            this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
             this.mensInfo = this.methods.dealMens(num)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
             this.$apply()
-            console.log(this.mensInfo)
         }
     }
 </script>
