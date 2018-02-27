@@ -207,7 +207,7 @@
 					})
 				}
 				else {
-					wepy.navigateTo({
+					wepy.switchTab({
 						url: '../pages/me'
 					})
 				}

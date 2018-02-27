@@ -145,7 +145,7 @@
                 else {
                     wx.setStorageSync('userid', userData.data.data.id)
                     wx.setStorageSync('phone', userData.data.data.phone)
-                    wx.setStorageSync('name', _self.userInfo.nickName)
+                    
                 }
             }
         }

@@ -31,7 +31,7 @@ const hotelDetail = (params) => wxRequest(params, host + '/getHotelDetail/' + pa
 const roomDetail = (params) => wxRequest(params, host + '/getRoomDetail/' + params.query.id)
 
 // User
-const openid = (params) => wxRequest(params, host + '/getOpenId/?appId=' + params.query.id)
+const openid = (params) => wxRequest(params, host + '/getOpenId?appId=' + params.query.id)
 const getUser = (params) => wxRequest(params, host + '/wxGetUser')
 const getPhone = (params) => wxRequest(params, host + '/decrypt')
 const register = (params) => wxRequest(params, host + '/wxRegister')
@@ -39,6 +39,10 @@ const register = (params) => wxRequest(params, host + '/wxRegister')
 //price
 const getPrice = (params) => wxRequest(params, host + '/preOrder/' + params.query.roomid + '?userId=' + params.query.userid)
 
+
+//order
+
+const submitOrder = (params) => wxRequest(params, host + '/submitOrder?userId=' + params.query.userid)
 
 
 
@@ -51,6 +55,7 @@ module.exports = {
     getPhone,
     getUser,
     register,
-    getPrice
+    getPrice,
+    submitOrder
 
 }
