@@ -44,7 +44,9 @@ const getPrice = (params) => wxRequest(params, host + '/preOrder/' + params.quer
 
 const submitOrder = (params) => wxRequest(params, host + '/submitOrder?userId=' + params.query.userid)
 
+const orderList = (params) => wxRequest(params, host + '/getOrders?userId=' + params.query.userid)
 
+const orderDetail = (params) => wxRequest(params, host + '/showOrder/' + params.query.orderid + '?userId=' + params.query.userid)
 
 
 module.exports = {
@@ -56,6 +58,7 @@ module.exports = {
     getUser,
     register,
     getPrice,
-    submitOrder
-
+    submitOrder,
+    orderList,
+    orderDetail
 }

@@ -1,0 +1,189 @@
+<style lang="less">
+    .myorder {
+        padding: 0 30rpx;
+        background: #f0f0f0;
+        overflow: hidden;
+        .order {
+             margin-top: 20rpx;
+             font-size: 26rpx;
+             box-sizing: border-box;
+             padding: 0 25rpx;
+             background: #ffffff;
+             border: 1rpx solid #e6e6e6;
+             border-radius: 10rpx;
+            .gray {
+                color: #797979;
+                font-size: 24rpx;
+            }
+            .green {
+                color: #57ca57;
+            }
+            .orange {
+                color: #ff7e00;
+            }
+            .value {
+                margin-left: 20rpx;
+            }
+            .title {
+                font-size: 28rpx;
+            }
+            .right {
+                float: right;
+                color: #797979;
+            }
+            .item-wrapper {
+                padding: 10rpx 0;
+                border-bottom: 1px dashed #e6e6e6;
+                .item {
+                    line-height: 50rpx;
+                    height: 50rpx;
+                }
+            }
+            .result {
+                padding: 10rpx 0;
+                display: flex;
+                >.price {
+                    flex: 5;
+                    .price-item {
+                        line-height: 50rpx;
+                        height: 50rpx;
+                    }
+                }
+                >.button-wrapper {
+                    flex: 2;
+                    .button {
+                        width: 170rpx;
+                        height: 60rpx;
+                        border-radius: 60rpx;
+                        background: #ff7e00;
+                        color: #ffffff;
+                        font-size: 28rpx;
+                        text-align: center;
+                        line-height: 60rpx;
+                        margin-top: 22rpx;
+                    }
+                }
+            }
+        }
+    }
+</style>
+<template>
+    <view class="myorder" style="min-height: {{height}}px;">
+        <repeat for="{{orderInfo.content}}" key="index" index="index" item="item">
+            <view class="order">
+                <view class="item-wrapper">
+                    <view class="item">
+                        <text class="desp">订单编号:</text>
+                        <text class="gray value">{{item.orderNo}}({{item.roomTypeName}})</text>
+                    </view>
+                    <view class="item">
+                        <text class="desp">状态:</text>
+                        <text class="green value">{{item.statusStr}}</text>
+                    </view>
+                </view>
+                <view class="item-wrapper">
+                    <view class="item">
+                        <text class="desp title">{{item.hotelName}}{{item.roomTypeName}}</text>
+                    </view>
+                    <view class="item">
+                        <text class="desp">入住规格:</text>
+                        <text class="value">{{item.roomTypeName}}/{{item.roomCnt}}间</text>
+                        <text class="right"> > </text>
+                    </view>
+                    <view class="item">
+                        <text class="desp">入住时间:</text>
+                        <text class="gray value">{{item.bDateStr}}</text>
+                        <text>至</text>
+                        <text class="gray">{{item.eDateStr}}</text>
+                        <text>(共{{item.dateLen}}天)</text>
+                    </view>
+                </view>
+                <view class="result">
+                    <view class="price">
+                        <view class="price-item">
+                            <text class="desp">订单总价:</text>
+                            <text class="orange value">￥{{item.totalAmt}}</text>
+                        </view>
+                        <view class="price-item">
+                            <text class="desp">住房押金:</text>
+                            <text class="orange value">￥{{item.foregift}}</text>
+                        </view>
+                    </view>
+                    <view class="button-wrapper">
+                        <view class="button">立即支付</view>
+                    </view>
+                </view>
+            </view>
+        </repeat>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Api from '../utils/api'
+    import util from '../utils/util'
+    const statusMap = {
+        1: '待支付',
+        2: '待确认',
+        3: '已确认',
+        4: '已入住',
+        5: '已离店',
+        6: '已取消'
+    }
+    const payMap = {
+        1: '未支付',
+        2: '已支付',
+        3: '退款中',
+        4: '退款成功'
+    }
+    const checkOutMap = {
+        1: '用户申请退房',
+        2: '查房中',
+        3: '已退房'
+    }
+    export default class Myorder extends wepy.page {
+        config = {
+            navigationBarTitleText: '我的订单'
+        }
+        components = {
+
+        }
+        data = {
+            height: 0,
+            orderInfo: {}
+        }
+        methods = {
+            async getOrder () {
+                let userid = await wepy.getStorageSync('userid')
+                let data = {
+                    pageNum: 0,
+                    pageSize: 10
+                }
+                let params = {
+                    method: 'POST',
+                    data: data,
+                    query: {
+                        userid: userid
+                    }
+                }
+                let orderList = await Api.orderList(params)
+                
+                return orderList.data.data
+            }
+        }
+        async onLoad () {
+            let sysInfo = wepy.getSystemInfoSync()
+            let orderInfo = await this.methods.getOrder()
+            orderInfo.content.forEach((item) => {
+                item.statusStr = statusMap[item.status]
+                item.payStr = payMap[item.payStatus]
+                item.bDateStr = util.dateUtils.format(new Date(item.bDate))
+                item.eDateStr = util.dateUtils.format(new Date(item.eDate))
+                item.dateLen =  util.dateUtils.getDateDiff(item.bDateStr, item.eDateStr)
+            })
+            this.orderInfo = orderInfo
+            console.log(this.orderInfo, 'this')
+            this.height = sysInfo.screenHeight
+            this.$apply()
+        }
+    }
+</script>

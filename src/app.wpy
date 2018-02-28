@@ -26,13 +26,14 @@ export default class extends wepy.app {
       'pages/ordering',
       'pages/bind',
       'pages/afterOrder',
-      'pages/price'
+      'pages/price',
+      'pages/myOrder'
     ],
     window: {
       backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      navigationBarBackgroundColor: '#000000',
+      navigationBarTitleText: '爱屋查找',
+      navigationBarTextStyle: 'white'
     },
     "tabBar": {
         "list": [{

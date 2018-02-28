@@ -305,7 +305,7 @@
     import Api from '../utils/api'
     import util from '../utils/util'
     import Calender from '../components/calender'
-    export default class Resident extends wepy.page {
+    export default class Ordering extends wepy.page {
         config = {
             navigationBarTitleText: '房屋预定'
         }

@@ -73,7 +73,7 @@
 <script>
     import wepy from 'wepy'
     import util from '../utils/util'
-    export default class Resident extends wepy.page {
+    export default class Price extends wepy.page {
         config = {
             navigationBarTitleText: '房费明细'
         }
@@ -97,7 +97,6 @@
             let param = JSON.parse(options.params)
             this.hotelName = param.hotelName
             this.roomType = param.roomType
-            console.log(param, '******')
             let price = {
                 base: 0,
                 cmp: 0

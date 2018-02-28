@@ -103,13 +103,13 @@
             navigationBarTitleText: '添加入住人'
         }
         components = {
-            
+
         }
         data = {
             height: 0
         }
         methods = {
-            
+
         }
         async onLoad () {
             let sysInfo = wepy.getSystemInfoSync()

@@ -100,7 +100,7 @@
                     </navigator>
                 </view>
                 <view class="orders item">
-                    <navigator url="../pages/money?gold={{goldBeans}}" open-type="navigate" hover-class="other-navigator-hover">
+                    <navigator url="../pages/myOrder" open-type="navigate" hover-class="other-navigator-hover">
                         <image src="../img/order.png"></image>
                         <view class="title">
                            我的订单
@@ -126,8 +126,9 @@
             goldBeans: 0
         }
         methods = {
-            async getUser (openid, nickName) {
-                let _self = this
+            async getUser (openid, nickName, that) {
+                let _self = that
+                console.log(_self, 'this')
                 let params = {
                     method: 'POST',
                     data: {
@@ -145,7 +146,6 @@
                 else {
                     wx.setStorageSync('userid', userData.data.data.id)
                     wx.setStorageSync('phone', userData.data.data.phone)
-                    
                 }
             }
         }
@@ -181,7 +181,7 @@
                 wepy.setStorageSync('openId', this.openid)
             }
 
-            this.methods.getUser(openId, nickName)
+            this.methods.getUser(openId, nickName, this)
             this.$apply()
         }
         async onShow () {
