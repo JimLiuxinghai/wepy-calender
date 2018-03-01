@@ -48,7 +48,7 @@ const orderList = (params) => wxRequest(params, host + '/getOrders?userId=' + pa
 
 const orderDetail = (params) => wxRequest(params, host + '/showOrder/' + params.query.orderid + '?userId=' + params.query.userid)
 
-
+const cancelOrder = (params) => wxRequest(params, host + '/cancelOrder/' + params.query.orderid + '?userId=' + params.query.userid)
 //men
 const getMen = (params) => wxRequest(params, host + '/getCacheGuests?userId=' + params.query.userid)
 
@@ -67,5 +67,6 @@ module.exports = {
     orderList,
     orderDetail,
     getMen,
-    postMen
+    postMen,
+    cancelOrder
 }

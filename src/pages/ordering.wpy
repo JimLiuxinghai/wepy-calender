@@ -460,10 +460,17 @@
                     }
                 }
                 let submitInfo = await Api.submitOrder(params)
-                wepy.showToast({
-                  title: '提交成功',
-                  icon: 'none'
-                })
+                if(submitInfo.retCode == 0) {
+                    wepy.navigateTo({
+                        url: '../pages/afterOrder?orderid=' + submitInfo.data + '&reffer=' + '../pages/detail' 
+                    })
+                }
+                else {
+                   wepy.showToast({
+                     title: '网络错误',
+                     icon: 'none'
+                   }) 
+                }
             },
             gotoPrice () {
                 let param = {
@@ -482,7 +489,6 @@
             this.params = JSON.parse(options.params)
             let date =  await wepy.getStorageSync('date')
             this.userid = await wepy.getStorageSync('userid')
-            console.log(this.userid, 'userid')
             this.date = date
             this.datelen = util.dateUtils.getDateDiff(this.date[0], this.date[1])
             this.$apply()
@@ -491,6 +497,8 @@
             this.mensInfo = this.methods.dealMens(num)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
+
+            
             this.$apply()
         }
     }

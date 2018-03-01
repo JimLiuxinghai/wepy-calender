@@ -42,6 +42,10 @@
                     vertical-align: middle;
                     width: 120rpx;
                 }
+                .in {
+                    display: inline-block;
+                    vertical-align: middle;
+                }
                 .value {
                     display: inline-block;
                     vertical-align: middle;
@@ -50,12 +54,58 @@
                 .right {
                     float: right;
                 }
+                .throw {
+                    font-size: 24rpx;
+                    color: #9a9a9a;
+                    text-decoration: line-through;
+                }
+                .green {
+                    color: #19d100;
+                    margin-left: 10rpx;
+                }
+            }
+        }
+        .info-wrapper {
+            padding: 10rpx 40rpx;
+            .info {
+                line-height: 40rpx;
+                font-size: 20rpx;
+                color: #8c8c8c;
+            }
+        }
+        .button-wrapper {
+            display: flex;
+            height: 100rpx;
+            background-color: #ffffff;
+            padding: 0 30rpx;
+            overflow: hidden;
+            .btn-item {
+                flex: 1;
+                .btn {
+                    width: 230rpx;
+                    height: 60rpx;
+                    line-height: 60rpx;
+                    border-radius: 60rpx;
+                    color: #ffffff;
+                    margin: 20rpx auto;
+                    font-size: 26rpx;
+                    text-align: center;
+                    >.num {
+                        font-size: 18rpx;
+                    }
+                    &.orange {
+                        background: #ff7e00;
+                    }
+                    &.green {
+                        background: #19d100;
+                    }
+                }
             }
         }
     }
 </style>
 <template>
-    <view class="afterOrder" style="min-height: {{height}}px;">
+    <view class="afterOrder">
         <view class="title">
             <text>{{orderDetail.orderGenInfo.hotelName}}{{orderDetail.orderGenInfo.roomType}}</text>
             <image src="../img/gps1.png" class="gps" @tap="gps({{orderDetail.hotelInfo.latitude}}, {{orderDetail.hotelInfo.longitude}}, {{orderDetail.hotelInfo.address}}, {{orderDetail.hotelInfo.hotelName}})"/>
@@ -75,6 +125,10 @@
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.statusStr}}</view>
+                <view class="right">
+                    <text>支付状态:</text>
+                    <text class="green">{{orderDetail.orderGenInfo.payStr}}</text>
+                </view>
             </view>
         </view>
 
@@ -125,14 +179,57 @@
                     <view class="justify">房间总价</view>
                 </view>
                 <text>:</text>
-                <view class="value">{{orderDetail.orderGenInfo.orderNo}}</view>
+                <view class="value">{{orderDetail.orderGenInfo.saleAmt}}</view>
+                <view class="right throw">
+                    订单总价: {{orderDetail.orderGenInfo.totalAmt + orderDetail.orderGenInfo.foregift}}
+                </view>
             </view>
             <view class="item">
                 <view class="desp">
                     <view class="justify">住房押金</view>
                 </view>
                 <text>:</text>
-                <view class="value">{{orderDetail.orderGenInfo.statusStr}}</view>
+                <view class="value">{{orderDetail.orderGenInfo.foregift}}</view>
+                <view class="right">
+                    ￥折后总价: {{orderDetail.orderGenInfo.saleAmt + orderDetail.orderGenInfo.foregift}}
+                </view>
+            </view>
+        </view>
+
+        <view class="item-wrapper">
+            <repeat for="{{orderDetail.orderGenInfo.personInfos}}" key="index" index="index" item="item">
+                <view class="item">
+                    <view class="in">
+                        入住人信息{{index + 1}}:
+                    </view>
+                    <view class="value">{{item.name}}  <text style="margin-left: 20rpx;">{{item.pid}}</text></view>
+                </view>
+            </repeat>
+        </view>
+
+        <view class="info-wrapper">
+            <view class="info">
+                温馨提醒:
+            </view>
+            <view class="info">
+                1.未支付订单仅做登记不做房间保留,如没有空置房间将不能入住,请您尽   快完成支付。
+            </view>
+            <view class="info">
+                2.如果存在在线支付押金,押金将在退房时退还给您
+            </view>
+        </view>
+        
+        <view class="button-wrapper">
+            <view class="btn-item">
+                <view class="btn orange" @tap="cancelOrder">
+                    取消订单
+                </view>
+            </view>
+            <view class="btn-item">
+                <view class="btn green">
+                    全额支付
+                    <text class="num">(￥{{orderDetail.orderGenInfo.saleAmt + orderDetail.orderGenInfo.foregift}})</text>
+                </view>
             </view>
         </view>
     </view>
@@ -142,12 +239,18 @@
     import Api from '../utils/api'
     import util from '../utils/util'
     const statusMap = {
-        1: '待支付',
+        1: '等待支付',
         2: '待确认',
         3: '已确认',
         4: '已入住',
         5: '已离店',
         6: '已取消'
+    }
+    const payMap = {
+        1: '未支付',
+        2: '已支付',
+        3: '退款中',
+        4: '退款成功'
     }
     export default class After extends wepy.page {
         config = {
@@ -159,7 +262,8 @@
         data = {
             height: 0,
             orderid: 0,
-            orderDetail: {}
+            orderDetail: {},
+            reffer: ''
         }
         methods = {
             async getOrder (orderid, userid) {
@@ -173,10 +277,34 @@
                 let result = await Api.orderDetail(params)
                 let newData = result.data.data
                 newData.orderGenInfo.statusStr = statusMap[newData.orderGenInfo.status]
+                newData.orderGenInfo.payStr = payMap[newData.orderGenInfo.payStatus]
                 newData.orderGenInfo.bDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.bDate))
                 newData.orderGenInfo.eDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.eDate))
                 newData.orderGenInfo.dateLen =  util.dateUtils.getDateDiff(newData.orderGenInfo.bDateStr, newData.orderGenInfo.eDateStr)
                 return newData
+            },
+            async cancelOrder () {
+                wx.showModal({
+                  content: '您确定要取消订单吗?',
+                  async success  (res) {
+                    if (res.confirm) {
+                          let orderid = this.orderid
+                          let userid = await wepy.getStorageSync('userid')
+                          let params = {
+                              method: 'POST',
+                              query: {
+                                  orderid: orderid,
+                                  userid: userid
+                              }
+                          }
+                          let cancelRes = Api.cancelOrder(params)
+                          console.log(cancelRes)
+                    } else if (res.cancel) {
+                      console.log('用户点击取消')
+                    }
+                  }
+                })
+                
             },
             tel (num) {
         		wepy.makePhoneCall({
@@ -197,10 +325,17 @@
             this.height = sysInfo.screenHeight
 
             this.orderid = options.orderid
+            this.reffer = options.reffer
             let userid = await wepy.getStorageSync('userid')
             this.orderDetail = await this.methods.getOrder(this.orderid, userid)
 
-
+            //判断title 
+            if(options.reffer == '../pages/myOrder') {
+                let title = this.orderDetail.orderGenInfo.statusStr + '订单详情'
+                wx.setNavigationBarTitle({
+                    title: title
+                })
+            }
             this.$apply()
            
         }

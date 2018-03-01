@@ -81,7 +81,7 @@
                         <text class="green value">{{item.statusStr}}</text>
                     </view>
                 </view>
-                <view class="item-wrapper">
+                <view class="item-wrapper" @tap="gotoDetail({{item.orderNo}})">
                     <view class="item">
                         <text class="desp title">{{item.hotelName}}{{item.roomTypeName}}</text>
                     </view>
@@ -168,6 +168,11 @@
                 let orderList = await Api.orderList(params)
                 
                 return orderList.data.data
+            },
+            gotoDetail (orderid) {
+                wepy.navigateTo({
+                    url: '../pages/afterOrder?orderid=' + orderid + '&reffer=' + '../pages/myOrder'
+                })
             }
         }
         async onLoad () {
