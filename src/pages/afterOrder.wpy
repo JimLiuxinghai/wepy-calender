@@ -1,17 +1,154 @@
 <style lang="less">
     .afterOrder {
-
+        background: #e8e8e8;
+        .title {
+            background: #ffffff;
+            padding: 45rpx 30rpx;
+            >text {
+                font-size: 28rpx;
+            }
+            >image {
+                float: right;
+                margin-top: 10rpx;
+                &.tel {
+                    width: 35rpx;
+                    height: 35rpx;
+                    
+                }
+                &.gps {
+                    width: 28rpx;
+                    height: 35rpx;
+                    margin-left: 40rpx;
+                }
+            }
+        }
+        .justify {
+            text-align:justify;
+            text-align-last:justify;/* ie9*/
+            -moz-text-align-last:justify;/*ff*/
+            -webkit-text-align-last:justify;/*chrome 20+*/
+        }
+        .item-wrapper {
+            margin-top: 18rpx;
+            background: #ffffff;
+            >.item {
+                height: 70rpx;
+                line-height: 70rpx;
+                border-bottom: 1rpx solid #e8e8e8;
+                padding: 0 30rpx;
+                font-size: 24rpx;
+                .desp {
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 120rpx;
+                }
+                .value {
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-left: 10rpx;
+                }
+                .right {
+                    float: right;
+                }
+            }
+        }
     }
 </style>
 <template>
     <view class="afterOrder" style="min-height: {{height}}px;">
-        
+        <view class="title">
+            <text>{{orderDetail.orderGenInfo.hotelName}}{{orderDetail.orderGenInfo.roomType}}</text>
+            <image src="../img/gps1.png" class="gps" @tap="gps({{orderDetail.hotelInfo.latitude}}, {{orderDetail.hotelInfo.longitude}}, {{orderDetail.hotelInfo.address}}, {{orderDetail.hotelInfo.hotelName}})"/>
+            <image src="../img/tel.png" class="tel" @tap="tel({{orderDetail.hotelInfo.telephone}})"/>
+        </view>
+        <view class="item-wrapper">
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">订单编号</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderDetail.orderGenInfo.orderNo}}</view>
+            </view>
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">订单状态</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderDetail.orderGenInfo.statusStr}}</view>
+            </view>
+        </view>
+
+        <view class="item-wrapper">
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">房型</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderDetail.orderGenInfo.roomType}}</view>
+            </view>
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">房间数量</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderDetail.orderGenInfo.roomCnt}}</view>
+            </view>
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">住宿天数</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderGenInfo.bDateStr}}至{{orderGenInfo.eDateStr}} 共 {{orderGenInfo.dateLen}}</view>
+            </view>
+        </view>
+
+        <view class="item-wrapper">
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">联系人</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderDetail.orderGenInfo.contactName}}</view>
+            </view>
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">联系电话</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderDetail.orderGenInfo.contactPhone}}</view>
+            </view>
+        </view>
+
+        <view class="item-wrapper">
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">房间总价</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderDetail.orderGenInfo.orderNo}}</view>
+            </view>
+            <view class="item">
+                <view class="desp">
+                    <view class="justify">住房押金</view>
+                </view>
+                <text>:</text>
+                <view class="value">{{orderDetail.orderGenInfo.statusStr}}</view>
+            </view>
+        </view>
     </view>
 </template>
 <script>
     import wepy from 'wepy'
     import Api from '../utils/api'
     import util from '../utils/util'
+    const statusMap = {
+        1: '待支付',
+        2: '待确认',
+        3: '已确认',
+        4: '已入住',
+        5: '已离店',
+        6: '已取消'
+    }
     export default class After extends wepy.page {
         config = {
             navigationBarTitleText: '房屋预定'
@@ -21,143 +158,51 @@
         }
         data = {
             height: 0,
-            rooms: 1,
-            mens: 2,
-            params: {},
-            date: [],
-            datelen: 0,
-            showPrice: {},
-            mensInfo: []
+            orderid: 0,
+            orderDetail: {}
         }
         methods = {
-            mensDeal (type) {
-                if(type == 1) {
-                    this.mens += 1
-                }
-                else {
-                    if(this.mens > 1) {
-                        this.mens -= 1
-                    }
-                    else {
-                        wepy.showToast({
-                            title: '入住人不能少于1人',
-                            icon: 'none'
-                        })
-                    }
-
-                }
-                let num = this.rooms * this.mens
-                this.methods.dealMens(num)
-                this.$apply()
-            },
-            roomsDeal (type) {
-                if(type == 1) {
-                    this.rooms += 1
-                }
-                else {
-                    if(this.rooms > 1) {
-                        this.rooms -= 1
-                    }
-                    else {
-                        wepy.showToast({
-                            title: '房间不能少于1间',
-                            icon: 'none'
-                        })
-                    }
-
-                }
-                let num = this.rooms * this.mens
-                this.methods.dealMens(num)
-                this.$apply()
-            },
-            inputmen (e) {
-                this.methods.dealMens()
-                this.$apply()
-                let value = e.detail.value
-                let index = e.target.dataset.index
-                console.log(this.mensInfo)
-                this.mensInfo[index].name = value
-            },
-            inputId (e) {
-                this.methods.dealMens()
-                let value = e.detail.value
-                let index = e.target.dataset.index
-                this.mensInfo[index].pid = value
-            },
-            async getPrice (bDate, eDate, len, roomid, userid) {
+            async getOrder (orderid, userid) {
                 let params = {
                     method: 'POST',
-                    data: {
-                        bDate: bDate,
-                        eDate: eDate,
-                        lockNum: len,
-                        type: 'a'
-                    },
                     query: {
-                        roomid: roomid,
+                        orderid: orderid,
                         userid: userid
                     }
                 }
-                let priceInfo = await Api.getPrice(params)
-                this.priceInfo = priceInfo.data.data
-                this.showPrice = {
-                    originalPrice: parseFloat(priceInfo.data.data.originalPrice) || 0,
-                    rebatePrice:  parseFloat(priceInfo.data.data.rebatePrice) || 0,
-                    foregift: parseFloat(priceInfo.data.data.foregift) || 0,
-                }
-            },
-            dealMens (num) {
-                let newData = []
-                for (let i = 0; i < num; i ++) {
-                    let data = {
-                        name: '',
-                        pid: ''
-                    }
-                    newData.push(data)
-                }
+                let result = await Api.orderDetail(params)
+                let newData = result.data.data
+                newData.orderGenInfo.statusStr = statusMap[newData.orderGenInfo.status]
+                newData.orderGenInfo.bDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.bDate))
+                newData.orderGenInfo.eDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.eDate))
+                newData.orderGenInfo.dateLen =  util.dateUtils.getDateDiff(newData.orderGenInfo.bDateStr, newData.orderGenInfo.eDateStr)
                 return newData
             },
-            async submit () {
-                let data = this.params
-                let name = wepy.getStorageSync('name')
-                let phone = wepy.getStorageSync('phone')
-                let userid = this.userid
-                data.roomCnt = this.rooms
-                data.bDate = this.date[0]
-                data.eDate = this.date[1]
-                data.lockTime = this.datelen
-                data.contactName = name
-                data.contactPhone = phone
-                data.personInfos = this.mensInfo
-                let params = {
-                    method: 'POST',
-                    data: data,
-                    query: {
-                        userid: userid
-                    }
-                }
-                let submitInfo = await Api.submitOrder(params)
-                console.log(submitInfo)
-                wepy.showToast({
-                  title: '提交成功',
-                  icon: 'none'
-                })
-            }
+            tel (num) {
+        		wepy.makePhoneCall({
+        		 	phoneNumber: num
+        		})
+        	},
+        	gps (lat, lng, address, hotelName) {
+        		wepy.openLocation({
+        			latitude: parseFloat(lat),
+        			longitude: parseFloat(lng),
+        			name: hotelName,
+        			address: address
+        		})
+        	},
         }
         async onLoad (options) {
-            let num = this.rooms * this.mens
-            this.params = JSON.parse(options.params)
-            let date =  await wepy.getStorageSync('date')
-            this.userid = await wepy.getStorageSync('userid')
-            this.date = date
-            this.datelen = util.dateUtils.getDateDiff(this.date[0], this.date[1])
-            this.$apply()
-            this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
-            this.mensInfo = this.methods.dealMens(num)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
+
+            this.orderid = options.orderid
+            let userid = await wepy.getStorageSync('userid')
+            this.orderDetail = await this.methods.getOrder(this.orderid, userid)
+
+
             this.$apply()
-            console.log(this.mensInfo)
+           
         }
     }
 </script>

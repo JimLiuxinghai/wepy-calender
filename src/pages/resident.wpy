@@ -82,7 +82,7 @@
             height: 0
         }
         methods = {
-            async 
+             
         }
         async onLoad () {
             let sysInfo = wepy.getSystemInfoSync()
