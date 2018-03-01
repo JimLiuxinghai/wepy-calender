@@ -61,6 +61,7 @@
                         }
                     })
                 } else {
+                    console.log(e)
                     let params = {
                        method: 'POST',
                        data: {
@@ -70,7 +71,9 @@
                        }
 
                     }
+                    
                     let phoneInfo = await Api.getPhone(params)
+                    console.log(phoneInfo, '*****')
                     let phoneNum = phoneInfo.data.data.purePhoneNumber
                     this.methods.register(phoneNum, _self.openid, _self.nickname)
                 }
@@ -87,26 +90,27 @@
                 }
 
                 let registerRes = await Api.register(params)
-
-                if(registerRes.retCode == 0) {
-                     wepy.navigateTo({
+                
+                if(registerRes.data.retCode == 0) {
+                    wepy.switchTab({
                         url: '../pages/me'
                     })
                 }
                 else {
                      wx.showModal({
-                        title: '错误偶',
+                        title: '错误',
                         showCancel: false,
                         content: '网络错误, 请稍候重试',
                         success: function (res) {
-
+                            wepy.switchTab({
+                                url: '../pages/index'
+                            })
                         }
                     })
                 }
             }
         }
         onLoad (options) {
-
             console.log(options)
             this.openid = options.openid
             this.nickname = options.nickname

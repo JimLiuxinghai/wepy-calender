@@ -82,6 +82,7 @@
             
         }
         async onLoad (options) {
+            console.log(options)
             this.gold = options.gold || 0
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight

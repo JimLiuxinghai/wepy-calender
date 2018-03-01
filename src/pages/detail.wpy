@@ -200,7 +200,6 @@
 					roomType: roomDetail.roomType,
 					mctCode: 0
 				}
-				console.log(userid)
 				if(userid) {
 					wepy.navigateTo({
 						url: '../pages/ordering?params=' + JSON.stringify(params)

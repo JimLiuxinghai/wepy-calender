@@ -49,6 +49,11 @@ const orderList = (params) => wxRequest(params, host + '/getOrders?userId=' + pa
 const orderDetail = (params) => wxRequest(params, host + '/showOrder/' + params.query.orderid + '?userId=' + params.query.userid)
 
 
+//men
+const getMen = (params) => wxRequest(params, host + '/getCacheGuests?userId=' + params.query.userid)
+
+const postMen = (params) => wxRequest(params, host + '/saveCacheGuests?userId=' + params.query.userid)
+
 module.exports = {
 	hotelList,
 	hotelDetail,
@@ -60,5 +65,7 @@ module.exports = {
     getPrice,
     submitOrder,
     orderList,
-    orderDetail
+    orderDetail,
+    getMen,
+    postMen
 }

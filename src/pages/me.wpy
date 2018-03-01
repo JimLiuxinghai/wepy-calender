@@ -123,12 +123,11 @@
         }
         data = {
             userInfo: {},
-            goldBeans: 0
+            goldBeans: 10
         }
         methods = {
             async getUser (openid, nickName, that) {
                 let _self = that
-                console.log(_self, 'this')
                 let params = {
                     method: 'POST',
                     data: {
@@ -137,19 +136,22 @@
                     }
                 }
                 let userData = await Api.getUser(params)
-
+                console.log(userData)
                 if(userData.data.data == null) {
                     wepy.navigateTo({
                         url: '../pages/bind?openid=' + openid + '&nickname=' + nickName
                     })
                 }
                 else {
+                    that.goldBeans = userData.data.data.goldBeans || 0
                     wx.setStorageSync('userid', userData.data.data.id)
                     wx.setStorageSync('phone', userData.data.data.phone)
+                    that.$apply()
+                    console.log(that.goldBeans)
                 }
             }
         }
-        async onLoad () {
+        async onShow () {            
             //个人信息
             let userInfo = await wepy.getUserInfo()
 
@@ -159,6 +161,7 @@
 
             wx.setStorageSync('name', nickName)
             let openId = await wepy.getStorageSync('openId')
+            let userid = await wepy.getStorageSync('userid')
             if(openId) {
                 this.openid = openId
             }
@@ -180,12 +183,8 @@
                 openId = this.openid
                 wepy.setStorageSync('openId', this.openid)
             }
-
             this.methods.getUser(openId, nickName, this)
             this.$apply()
-        }
-        async onShow () {
-
         }
     }
 </script>

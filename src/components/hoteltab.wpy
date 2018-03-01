@@ -276,12 +276,12 @@
                     this.outdate = [day, nextDay]
                     this.showdate = [day, nextDay]
                     this.datelen = util.dateUtils.getDateDiff(this.showdate[0], this.showdate[1])
-                    wx.setStorageSync('oType', a)
+                    wx.setStorageSync('oType', 'a')
                 }
                 else {
                     this.outdate = [util.dateUtils.format(new Date())]
                     this.showdate = [util.dateUtils.format(new Date())]
-                    wx.setStorageSync('oType', b)
+                    wx.setStorageSync('oType', 'b')
                 }
                 this.type = type
 
@@ -320,6 +320,7 @@
             let nextDay = util.dateUtils.switch(day, 1)
             this.outdate = [day, nextDay]
             this.showdate = [day, nextDay]
+            console.log(this.showdate, 'showdate')
             wepy.setStorageSync('date', this.showdate)
 
         }

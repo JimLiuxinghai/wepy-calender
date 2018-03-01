@@ -16,6 +16,10 @@
                 border-radius: 30rpx;
                 background: rgba(255, 255, 255, 0.5);
                 margin: 30rpx auto;
+                .search {
+                    line-height: 60rpx;
+                    height: 60rpx;
+                }
             }
             position: relative;
             z-index: 2;
