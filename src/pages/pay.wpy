@@ -1,0 +1,60 @@
+<style lang="less">
+    .pay {
+        background: #e8e8e8;
+        .title {
+            text-align: center;
+            font-size: 30rpx;
+        }
+        .num {
+            text-align: center;
+            font-size: 46rpx;
+            color: #ff7e00;
+        }
+    }
+</style>
+<template>
+    <view class="pay" style="height: {{height}}px;">
+        <view class="title">支付总金额</view>
+        <view class="num">499</view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Api from '../utils/api'
+    export default class Resident extends wepy.page {
+        config = {
+            navigationBarTitleText: '支付方式'
+        }
+        components = {
+
+        }
+        data = {
+            height: 0,
+            payData: {}
+        }
+        methods = {
+            async getPay (userid, orderid) {
+                let params = {
+                    method: 'POST',
+                    query: {
+                        orderid: orderid,
+                        userid: userid
+                    }
+                }
+                let payRes = await Api.getPay(params)
+                
+                return payRes.data.data
+            }
+        }
+        async onLoad (options) {
+            console.log(options)
+            let userid = await wepy.getStorageSync('userid')
+            let orderid = options.orderid
+            
+            let payRes = this.methods.getPay(userid, orderid)
+            this.payData = payRes.payDistributeInfo
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
+        }
+    }
+</script>

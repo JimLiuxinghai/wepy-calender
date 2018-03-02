@@ -27,7 +27,8 @@ export default class extends wepy.app {
       'pages/bind',
       'pages/afterOrder',
       'pages/price',
-      'pages/myOrder'
+      'pages/myOrder',
+      'pages/pay'
     ],
     window: {
       backgroundTextStyle: 'light',

@@ -23,10 +23,9 @@
             }
         }
         .justify {
-            text-align:justify;
-            text-align-last:justify;/* ie9*/
-            -moz-text-align-last:justify;/*ff*/
-            -webkit-text-align-last:justify;/*chrome 20+*/
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
         }
         .item-wrapper {
             margin-top: 18rpx;
@@ -114,19 +113,19 @@
         <view class="item-wrapper">
             <view class="item">
                 <view class="desp">
-                    <view class="justify">订单编号</view>
+                    <view class="justify"><p>订</p><p>单</p><p>编</p><p>号</p></view>
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.orderNo}}</view>
             </view>
             <view class="item">
                 <view class="desp">
-                    <view class="justify">订单状态</view>
+                    <view class="justify"><p>订</p><p>单</p><p>状</p><p>态</p></view>
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.statusStr}}</view>
                 <view class="right">
-                    <text>支付状态:</text>
+                    <text>支 付 状 态:</text>
                     <text class="green">{{orderDetail.orderGenInfo.payStr}}</text>
                 </view>
             </view>
@@ -135,38 +134,38 @@
         <view class="item-wrapper">
             <view class="item">
                 <view class="desp">
-                    <view class="justify">房型</view>
+                    <view class="justify"><p>房</p><p>型</p></view>
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.roomType}}</view>
             </view>
             <view class="item">
                 <view class="desp">
-                    <view class="justify">房间数量</view>
+                    <view class="justify"><p>房</p><p>间</p><p>数</p><p>量</p></view>
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.roomCnt}}</view>
             </view>
             <view class="item">
                 <view class="desp">
-                    <view class="justify">住宿天数</view>
+                    <view class="justify"><p>住</p><p>宿</p><p>天</p><p>数</p></view>
                 </view>
                 <text>:</text>
-                <view class="value">{{orderGenInfo.bDateStr}}至{{orderGenInfo.eDateStr}} 共 {{orderGenInfo.dateLen}}</view>
+                <view class="value">{{orderDetail.orderGenInfo.bDateStr}}至{{orderDetail.orderGenInfo.eDateStr}}</view>
             </view>
         </view>
 
         <view class="item-wrapper">
             <view class="item">
                 <view class="desp">
-                    <view class="justify">联系人</view>
+                    <view class="justify"><p>联</p><p>系</p><p>人</p></view>
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.contactName}}</view>
             </view>
             <view class="item">
                 <view class="desp">
-                    <view class="justify">联系电话</view>
+                    <view class="justify"><p>联</p><p>系</p><p>电</p><p>话</p></view>
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.contactPhone}}</view>
@@ -176,7 +175,7 @@
         <view class="item-wrapper">
             <view class="item">
                 <view class="desp">
-                    <view class="justify">房间总价</view>
+                    <view class="justify"><p>房</p><p>间</p><p>总</p><p>价</p></view>
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.saleAmt}}</view>
@@ -186,7 +185,7 @@
             </view>
             <view class="item">
                 <view class="desp">
-                    <view class="justify">住房押金</view>
+                    <view class="justify"><p>住</p><p>房</p><p>押</p><p>金</p></view>
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.foregift}}</view>
@@ -226,7 +225,7 @@
                 </view>
             </view>
             <view class="btn-item">
-                <view class="btn green">
+                <view class="btn green" @tap="pay({{orderDetail.orderGenInfo.orderNo}})">
                     全额支付
                     <text class="num">(￥{{orderDetail.orderGenInfo.saleAmt + orderDetail.orderGenInfo.foregift}})</text>
                 </view>
@@ -279,6 +278,8 @@
                 newData.orderGenInfo.statusStr = statusMap[newData.orderGenInfo.status]
                 newData.orderGenInfo.payStr = payMap[newData.orderGenInfo.payStatus]
                 newData.orderGenInfo.bDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.bDate))
+                console.log(newData.orderGenInfo.bDateStr)
+                console.log(newData.orderGenInfo.bDate)
                 newData.orderGenInfo.eDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.eDate))
                 newData.orderGenInfo.dateLen =  util.dateUtils.getDateDiff(newData.orderGenInfo.bDateStr, newData.orderGenInfo.eDateStr)
                 return newData
@@ -318,7 +319,12 @@
         			name: hotelName,
         			address: address
         		})
-        	},
+            },
+            pay (orderid) {
+                wepy.navigateTo({
+                    url: '../pages/pay?orderid=' + orderid
+                })
+            }
         }
         async onLoad (options) {
             let sysInfo = wepy.getSystemInfoSync()
