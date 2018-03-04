@@ -74,7 +74,7 @@
                     display: inline-block;
                     width: 50rpx;
                     height: 50rpx;
-                    line-height: 60rpx;
+                    line-height: 65rpx;
                     font-size: 18rpx;
                     color: #000000;
                     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACLElEQVRoge3aPWgUQRjG8d9dlmiMieJHYSXYKEZsFAXBRmwUIaAg2mhpZWFjaYidhaCChY1ghFSmFAtFC0UhKNhoI3aCouIXghjMncXO5S6aTfbW4M2F/cMwM7vzzvs+zMzuwEylfk4RruAkTmOsUA9/M479OIKHua1G66BawGGCExjE0QL2c1HFMNbjeJEOkpaOdmEatYy2fXiFj/iMVXgb3u1AT7Bvh+V4j9f4gI34FN5twwCmMmyr6DFSmTRaryXYglsYyuF4BOdbAn6HCp62KaCVJ9iDn6H+LeT3pSO0EC+MVA4nmMDWnE6X/VGv57Sbj/6MPgdy2g/hQqIpYgLX0Jth0Ivn0inUaLMhOD4kHeqsaZlFL95IR7UvPBsM+cFQ/pVhO4VT0o9Df4LvWIlnuJvDeQ9WhPK6kN9uI/i5qGJtKK8J+YMcdjulQn5UNYdydU6n0ziDR7iU02YhajiLx7jRht1MzMl8rebhZkiLydWQClHkPxIlpZDYaBXypWNRFGcm5tbFvh17pZ/XbmBaGjNmCzkWUleyZNZI64iM47LsLUpMNLZC17GZ2UJeYvJ/R/SPNLb8s6bW4BwNY2dm9iyZNVIKiY1SSGyUQmKjFBIbpZDYKIXERikkNkohsVEKiY1SSGyUQmKjFBIbS1LIYhz+d4yqppivnQykII1rH0mieYViWHr7oBuOFeohbQr1JMEdHMDukLqRe4n0uG0M+zocTBFq0tgv/gY2g1M4PS/jCwAAAABJRU5ErkJggg==');
@@ -179,7 +179,7 @@
         </view>
         <view class="address">
             <view class="add-title">入住地点</view>
-            <view class="add-select">
+            <view class="add-select" @tap="openCity">
                 <view class="inner">{{address}}</view>
                 <view class="choose">
                     我的位置
@@ -242,7 +242,7 @@
     import Calender from './calender'
     import util from '../utils/util'
     const hour = [];
-    for (let i = 0; i <= 24; i ++) {
+    for (let i = 1; i <= 20; i ++) {
         hour.push(i);
     }
     export default class Hoteltab extends wepy.component {
@@ -258,7 +258,7 @@
             year: new Date().getFullYear(),
             month: new Date().getMonth(),
             starthour: hour,
-            endhour: 4,
+            endhour: 5,
             startindex: 0,
             hourlen: 0
         }
@@ -276,12 +276,15 @@
                     this.outdate = [day, nextDay]
                     this.showdate = [day, nextDay]
                     this.datelen = util.dateUtils.getDateDiff(this.showdate[0], this.showdate[1])
+                    wepy.setStorageSync('date', this.showdate)
                     wx.setStorageSync('oType', 'a')
                 }
                 else {
                     this.outdate = [util.dateUtils.format(new Date())]
                     this.showdate = [util.dateUtils.format(new Date())]
-                    wx.setStorageSync('oType', 'b')
+                    wepy.setStorageSync('date', this.showdate)
+                    wepy.setStorageSync('time', this.starthour[this.startindex])
+                    wx.setStorageSync('oType', 'p')
                 }
                 this.type = type
 
@@ -311,12 +314,23 @@
                 this.startindex = index
                 this.endhour = this.starthour[index] + 4
                 this.$apply()
+            },
+            openCity () {
+                wepy.showActionSheet({
+                  itemList: ['A', 'B', 'C'],
+                  success: function(res) {
+                    console.log(res.tapIndex)
+                  },
+                  fail: function(res) {
+                    console.log(res.errMsg)
+                  }
+                })
             }
 
         }
         async onLoad() {
             let day = util.dateUtils.format(new Date())
-
+            wx.setStorageSync('oType', 'a')
             let nextDay = util.dateUtils.switch(day, 1)
             this.outdate = [day, nextDay]
             this.showdate = [day, nextDay]

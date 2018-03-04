@@ -328,6 +328,46 @@ const dateUtils =  {
 		let end = new Date(endTime).getTime();
 		return Math.abs((end - start) / 86400000);
 	},
+	/**
+	 * 获取日期属于一年中第几周 星期几
+	 * @param date 2016-01-01
+	 * @returns {Object} year 属于哪一年第几周  num 第几周  week 周几 [0,1,2,3,4,5,6] 星期日为 0
+	 * {
+     *  year:2015,
+     *  num:53,
+     *  week:5
+     * }
+	 * */
+	getWeekNum: function (date) {
+		let thisTime = new Date(date);
+		thisTime = new Date(new Date(date).getFullYear(), thisTime.getMonth(), thisTime.getDate());
+		let nowTime = new Date(thisTime.getFullYear(), 0, 1);
+		let nowWeek = nowTime.getDay();
+		if (nowWeek !== 0) {
+			nowTime = new Date(thisTime.getFullYear(), 0, 1 + (7 - nowWeek));
+			if ((thisTime - nowTime) < 0) {
+				nowTime = new Date(thisTime.getFullYear() - 1, 0, 1);
+			}
+		}
+		let weekNum = Math.floor(((thisTime - nowTime ) / 86400000 ) / 7) + 1;
+
+		let season = {
+			1: 1, 2: 1, 3: 1,
+			4: 2, 5: 2, 6: 2,
+			7: 3, 8: 3, 9: 3,
+			10: 4, 11: 4, 12: 4
+		};
+
+		let month = thisTime.getMonth() + 1;
+		return {
+			year: nowTime.getFullYear(),
+			num: weekNum,
+			month: month,
+			season: season[month],
+			week: thisTime.getDay(),
+			thisYear: thisTime.getFullYear()
+		};
+	},
 	/*
 		获取屏幕高度
 	*/

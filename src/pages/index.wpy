@@ -1,6 +1,8 @@
 <style lang="less">
     .index {
         background: #e9e9e9;
+        position: relative;
+        overflow: hidden;
         .banner {
             position: absolute;
             top: 0;
@@ -19,6 +21,8 @@
                 .search {
                     line-height: 60rpx;
                     height: 60rpx;
+                    font-size: 24rpx;
+                    padding: 0 20rpx;
                 }
             }
             position: relative;
@@ -27,11 +31,11 @@
     } 
 </style>
 <template>
-    <view class="index">
+    <view class="index" style="min-height: {{height - 80}}px;">
         <image  class="banner" src="../img/index-banner.png"></image>
         <view class="content">
             <view class="input-wrapper">
-                <input type="text" class="search" confirm-type="search" bindinput="input" bindconfirm="search"></input>
+                <input placeholder="请输入关键字/爱屋名称" type="text" class="search" confirm-type="search" bindinput="input" bindconfirm="search"></input>
             </view>
             
             <hoteltab @dateInfo.user="date"></hoteltab>  
@@ -60,7 +64,8 @@
             ctype: 1,
             cshow: false,
             hotelList: [],
-            date: []
+            date: [],
+            height: 0
         }
         methods = {
             open () {
@@ -79,25 +84,47 @@
             async date (date) {
                 this.date = date
                 wepy.setStorageSync('date', date)
-            }
+            },
+            async getData () {
+                let param = {
+                    method: 'POST',
+                    data: {
+                        addition: '',
+                        page: {
+                            pageNum: 0,
+                            pageSize: 10
+                        }
+                    },
+                    query: {
+                        id: 0
+                    }
+                }
+
+
+                let hotelList = await Api.hotelList(param)
+                return hotelList
+            },
+            async getCity () {
+                let param = {
+                    method: 'POST',
+                    query: {
+                        mctCode: 0
+                    }
+                }
+                let cityList = await Api.cityList(param)
+                console.log(cityList)
+            },
+
         }
         async onLoad () {
-            let param = {
-                method: 'POST',
-                data: {
-                    addition: '',
-                    page: {
-                        pageNum: 0,
-                        pageSize: 10
-                    }
-                },
-                query: {
-                    id: 0
-                }
-            }
-            let hotelList = await Api.hotelList(param)
             
+            let hotelList = await this.methods.getData()
+            this.methods.getCity()
             this.hotelList = hotelList.data.content;
+
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
+
             this.$apply();
         }
         onShareAppMessage (res) {

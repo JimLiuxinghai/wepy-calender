@@ -98,6 +98,9 @@
                     &.green {
                         background: #19d100;
                     }
+                    &.gray {
+                        background: #e8e8e8;
+                    }
                 }
             }
         }
@@ -206,28 +209,54 @@
             </repeat>
         </view>
 
-        <view class="info-wrapper">
+        <view class="info-wrapper" wx:if="{{orderDetail.orderGenInfo.payStatus == 1}}">
             <view class="info">
                 温馨提醒:
             </view>
             <view class="info">
-                1.未支付订单仅做登记不做房间保留,如没有空置房间将不能入住,请您尽   快完成支付。
+                1.未支付订单仅做登记不做房间保留,如没有空置房间将不能入住,请您尽快完成支付。
             </view>
             <view class="info">
                 2.如果存在在线支付押金,押金将在退房时退还给您
             </view>
         </view>
         
-        <view class="button-wrapper">
+        <view class="info-wrapper" wx:if="{{orderDetail.orderGenInfo.payStatus == 2}}">
+            <view class="info">
+                温馨提醒:
+            </view>
+            <view class="info">
+                请您于{{orderDetail.orderGenInfo.bDateStr}}日尽快入住本酒店,本酒店将用最优质的服务让您感受到如家般的温暖。订单于入住当日14:00之后将不予退理
+            </view>
+        </view>
+
+        <view class="button-wrapper" wx:if="{{orderDetail.orderGenInfo.status == 1 || orderDetail.orderGenInfo.status == 2 || orderDetail.orderGenInfo.status == 3}}">
             <view class="btn-item">
-                <view class="btn orange" @tap="cancelOrder">
+                <view wx:if="{{ifCancle && orderDetail.orderGenInfo.status <= 3}}" class="btn orange" @tap="cancelOrder">
+                    取消订单
+                </view>
+                <view wx:if="{{!ifCancle || orderDetail.orderGenInfo.status == 3}}" class="btn gray">
                     取消订单
                 </view>
             </view>
-            <view class="btn-item">
+            <view class="btn-item" wx:if="{{orderDetail.orderGenInfo.payStatus == 1}}">
                 <view class="btn green" @tap="pay({{orderDetail.orderGenInfo.orderNo}})">
                     全额支付
                     <text class="num">(￥{{orderDetail.orderGenInfo.saleAmt + orderDetail.orderGenInfo.foregift}})</text>
+                </view>
+            </view>
+        </view>
+
+
+        <view class="button-wrapper" wx:if="{{orderDetail.orderGenInfo.status == 4}}">
+            <view class="btn-item">
+                <view class="btn orange" @tap="back({{orderDetail.orderGenInfo.orderNo}})">
+                    立即退房
+                </view>
+            </view>
+            <view class="btn-item">
+                <view class="btn green" @tap="defer({{orderDetail.orderGenInfo.orderNo}}, {{orderDetail.orderGenInfo.hotelName}}, {{orderDetail.orderGenInfo.roomType}})">
+                    续住
                 </view>
             </view>
         </view>
@@ -262,7 +291,8 @@
             height: 0,
             orderid: 0,
             orderDetail: {},
-            reffer: ''
+            reffer: '',
+            ifCancle: true
         }
         methods = {
             async getOrder (orderid, userid) {
@@ -278,19 +308,19 @@
                 newData.orderGenInfo.statusStr = statusMap[newData.orderGenInfo.status]
                 newData.orderGenInfo.payStr = payMap[newData.orderGenInfo.payStatus]
                 newData.orderGenInfo.bDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.bDate))
-                console.log(newData.orderGenInfo.bDateStr)
-                console.log(newData.orderGenInfo.bDate)
                 newData.orderGenInfo.eDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.eDate))
                 newData.orderGenInfo.dateLen =  util.dateUtils.getDateDiff(newData.orderGenInfo.bDateStr, newData.orderGenInfo.eDateStr)
                 return newData
             },
             async cancelOrder () {
+                let _self = this
+                let userid = await wepy.getStorageSync('userid')
                 wx.showModal({
                   content: '您确定要取消订单吗?',
                   async success  (res) {
                     if (res.confirm) {
-                          let orderid = this.orderid
-                          let userid = await wepy.getStorageSync('userid')
+                          let orderid = _self.orderid
+                          
                           let params = {
                               method: 'POST',
                               query: {
@@ -298,14 +328,69 @@
                                   userid: userid
                               }
                           }
-                          let cancelRes = Api.cancelOrder(params)
-                          console.log(cancelRes)
+                          let cancelRes = await Api.cancelOrder(params)
+                          
+                          if(cancelRes.data.retCode == 0) {
+                            wepy.showToast({
+                              title: '取消成功',
+                              icon: 'success'
+                            })
+                            // if(_self.reffer == '../pages/myOrder') {
+                            //     wepy.navigateTo({
+                            //         url: '../pages/myOrder'
+                            //     })
+                            // }
+                            // else {
+                            //     wepy.switchTab({
+                            //         url: '../pages/index'
+                            //     })
+                            // }
+                            wepy.switchTab({
+                                url: '../pages/index'
+                            })
+                          }
+                          else {
+                            wepy.showToast({
+                              title: '网络错误',
+                              icon: 'success'
+                            }) 
+                          }
                     } else if (res.cancel) {
                       console.log('用户点击取消')
                     }
                   }
                 })
                 
+            },
+            defer (orderid, name, type) {
+                let url = '../pages/defer?orderid=' + orderid + '&name=' + name + '&type=' + type
+                console.log(url)
+                wepy.navigateTo({
+                    url: url
+                })
+            },
+            async back (orderid) {
+                let userid = await wepy.getStorageSync('userid')
+                let params = {
+                    method: 'POST',
+                    query: {
+                        orderid: orderid,
+                        userid: userid
+                    }
+                }
+                let resData = await Api.backOrder(params)
+                
+                if(resData.data.retCode == 0) {
+                    wepy.navigateTo({
+                        url: '../pages/myOder'
+                    })
+                }
+                else {
+                    wepy.showToast({
+                      title: resData.data.retMsg,
+                      icon: 'success'
+                    })
+                }
             },
             tel (num) {
         		wepy.makePhoneCall({
@@ -324,6 +409,17 @@
                 wepy.navigateTo({
                     url: '../pages/pay?orderid=' + orderid
                 })
+            },
+            cancelState (orderGenInfo) {
+                let endTime = orderGenInfo.bDate + 14 * 60 * 60 * 1000
+                let now =  new Date().getTime()
+                if(orderGenInfo.payStatus == 2) {
+                    return endTime > now    
+                }
+                else {
+                    return true
+                }
+                
             }
         }
         async onLoad (options) {
@@ -334,7 +430,7 @@
             this.reffer = options.reffer
             let userid = await wepy.getStorageSync('userid')
             this.orderDetail = await this.methods.getOrder(this.orderid, userid)
-
+            this.ifCancle = this.methods.cancelState(this.orderDetail.orderGenInfo)
             //判断title 
             if(options.reffer == '../pages/myOrder') {
                 let title = this.orderDetail.orderGenInfo.statusStr + '订单详情'

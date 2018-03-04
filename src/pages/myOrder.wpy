@@ -61,6 +61,9 @@
                         text-align: center;
                         line-height: 60rpx;
                         margin-top: 22rpx;
+                        &.gray {
+                            background: #e8e8e8;
+                        }
                     }
                 }
             }
@@ -110,7 +113,10 @@
                         </view>
                     </view>
                     <view class="button-wrapper">
-                        <view class="button">立即支付</view>
+                        <view class="button" @tap="pay({{item.orderNo}})" wx:if="{{item.status == 1}}">立即支付</view>
+                        <view class="button" @tap="cancelOrder({{item.orderNo}})" wx:if="{{(item.status == 2 || item.status == 3) && item.cancelState}}">取消订单</view>
+                        <view class="button gray" wx:if="{{(item.status == 2 || item.status == 3) && !item.cancelState}}">取消订单</view>
+                        <view class="button" wx:if="{{item.status == 4 }}" @tap="back({{item.orderNo}})">立即退房</view>
                     </view>
                 </view>
             </view>
@@ -173,7 +179,94 @@
                 wepy.navigateTo({
                     url: '../pages/afterOrder?orderid=' + orderid + '&reffer=' + '../pages/myOrder'
                 })
-            }
+            },
+            cancelState (orderGenInfo) {
+                let endTime = orderGenInfo.bDate + 14 * 60 * 60 * 1000
+                let now =  new Date().getTime()
+                if(orderGenInfo.payStatus == 2) {
+                    return endTime > now    
+                }
+                else {
+                    return true
+                }
+                
+            },
+            pay (orderid) {
+                wepy.navigateTo({
+                    url: '../pages/pay?orderid=' + orderid
+                })
+            },
+            async cancelOrder (orderid) {
+                let _self = this
+                let userid = await wepy.getStorageSync('userid')
+                wx.showModal({
+                  content: '您确定要取消订单吗?',
+                  async success  (res) {
+                    if (res.confirm) {
+                          let params = {
+                              method: 'POST',
+                              query: {
+                                  orderid: orderid,
+                                  userid: userid
+                              }
+                          }
+                          let cancelRes = await Api.cancelOrder(params)
+                          
+                          if(cancelRes.data.retCode == 0) {
+                            wepy.showToast({
+                              title: '取消成功',
+                              icon: 'success'
+                            })
+                            // if(_self.reffer == '../pages/myOrder') {
+                            //     wepy.navigateTo({
+                            //         url: '../pages/myOrder'
+                            //     })
+                            // }
+                            // else {
+                            //     wepy.switchTab({
+                            //         url: '../pages/index'
+                            //     })
+                            // }
+                            wepy.switchTab({
+                                url: '../pages/index'
+                            })
+                          }
+                          else {
+                            wepy.showToast({
+                              title: '网络错误',
+                              icon: 'success'
+                            }) 
+                          }
+                    } else if (res.cancel) {
+                      console.log('用户点击取消')
+                    }
+                  }
+                })
+                
+            },
+            async back (orderid) {
+                let userid = await wepy.getStorageSync('userid')
+                let params = {
+                    method: 'POST',
+                    query: {
+                        orderid: orderid,
+                        userid: userid
+                    }
+                }
+                let resData = await Api.backOrder(params)
+                
+                if(resData.data.retCode == 0) {
+                    wepy.navigateTo({
+                        url: '../pages/myOder'
+                    })
+                }
+                else {
+                    wepy.showToast({
+                      title: resData.data.retMsg,
+                      icon: 'success'
+                    })
+                }
+            },
         }
         async onLoad () {
             let sysInfo = wepy.getSystemInfoSync()
@@ -184,6 +277,8 @@
                 item.bDateStr = util.dateUtils.format(new Date(item.bDate))
                 item.eDateStr = util.dateUtils.format(new Date(item.eDate))
                 item.dateLen =  util.dateUtils.getDateDiff(item.bDateStr, item.eDateStr)
+                item.cancelState = this.methods.cancelState(item)
+                console.log(item.cancelState)
             })
             this.orderInfo = orderInfo
             console.log(this.orderInfo, 'this')

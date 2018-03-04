@@ -28,7 +28,7 @@
                 margin-top: 20rpx;
             }
             .start {
-                flex: 4;
+                flex: 3;
             }
             .date-length {
                 flex: 1;
@@ -38,13 +38,16 @@
                     font-size: 18rpx;
                     text-align: center;
                     line-height: 60rpx;
-                    margin-top: 15rpx;
+                    margin: 15rpx auto;
                     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAY1BMVEVHcEzb29vb29vb29vb29vb29vb29vb29vb29vb29vc3Nzc3Nzc3Nzb29vb29vb29vb29vb29vc3Nzb29vb29vb29vb29vb29vc3Nzd3d3b29vb29vb29vc3Nza2trc3Nzb29tue/YUAAAAIHRSTlMAM0vMQImx8jyIAng3gpbG2vYn1OGm6lC1XUWsHLprDjX92MAAAADSSURBVEjH7ZXNFoIgEEbHUkFUUU38y5r3f8pIDpFaBa1acM9xMZ9cDjMLAHimIAPsaAWFtzCC/T6ssNhGWaCgZ3aSfwNdq7CWYQ61DjMGUDeoyaGUH67hMkxBPOqmBmNg8kppFqUyQQyI03hY6NTBDiu6AO4HCztVjhPOQDAF3RUTGMPn9lO5gmBkgoGH+zleeGaKaKt858+V1EVRE2tpaA1tF8WRH5U2o/aU7u1z9yEfveIVr3jFK9ZK4q44XuM9IPI8sUfgDL3rk5TCNSZOFOwGLD81FDyN4IYAAAAASUVORK5CYII=');
                     background-size: 50rpx 50rpx;
                 }
             }
             .end {
-                flex: 4;
+                flex: 3;
+            }
+            .week {
+                flex: 2;
             }
         }
 
@@ -210,17 +213,30 @@
                 </view>
                 <view class="date">{{date[0]}}</view>
             </view>
+            <view clas="week">
+                <view class="info">
+                    {{week[0]}}
+                </view>
+                <view class="date">{{time[0]}}</view>
+            </view>
             <view class="date-length">
                 <view class="date-gray">
                     {{datelen}}天
                 </view>
             </view>
-            <view class="end">
+            <view clas="end">
                 <view class="info">
                     离店时间
                 </view>
                 <view class="date">{{date[1]}}</view>
             </view>
+            <view class="week">
+                <view class="info">
+                    {{week[1]}}
+                </view>
+                <view class="date">{{time[1]}}</view>
+            </view>
+            
         </view>
         <view class="select-wrapper">
              <view class="select">
@@ -250,12 +266,12 @@
                     </view>
                     <view class="item-icon">常用入住人</view>
                 </view>
-                <view class="item">
+                <!-- <view class="item">
                     <view class="item-title">联系方式</view>
                     <view class="item-input">
                         <input placeholder="请填写联系方式"  type="number" />
                     </view>
-                </view>
+                </view> -->
 
                 <view class="item">
                     <view class="item-title">身份证号</view>
@@ -305,10 +321,21 @@
     </view>
 </template>
 <script>
+
     import wepy from 'wepy'
     import Api from '../utils/api'
     import util from '../utils/util'
     import Calender from '../components/calender'
+
+    const weekConfig = {
+        0: '周日',
+        1: '周一',
+        2: '周二',
+        3: '周三',
+        4: '周四',
+        5: '周五',
+        6: '周六',
+    }
     export default class Ordering extends wepy.page {
         config = {
             navigationBarTitleText: '房屋预定'
@@ -316,7 +343,7 @@
         data = {
             height: 0,
             rooms: 1,
-            mens: 2,
+            mens: 1,
             params: {},
             date: [],
             datelen: 0,
@@ -324,7 +351,9 @@
             priceInfo: {},
             mensInfo: [],
             ctype: 1,
-            cshow: false
+            cshow: false,
+            time: [],
+            week: []
         }
         components = {
             ncalender: Calender
@@ -346,8 +375,8 @@
                     }
 
                 }
-                let num = this.rooms * this.mens
-                this.methods.dealMens(num)
+                let num = this.mens
+                this.mensInfo = this.methods.dealMens(num)
                 this.$apply()
             },
             roomsDeal (type) {
@@ -369,18 +398,17 @@
                 let num = this.rooms * this.mens
                 this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
                 console.log(this.showPrice, 'rooms')
-                this.methods.dealMens(num)
+                
                 this.$apply()
             },
             inputmen (e) {
-                this.methods.dealMens()
+                
                 this.$apply()
                 let value = e.detail.value
                 let index = e.target.dataset.index
                 this.mensInfo[index].name = value
             },
             inputId (e) {
-                this.methods.dealMens()
                 let value = e.detail.value
                 let index = e.target.dataset.index
                 this.mensInfo[index].pid = value
@@ -399,13 +427,22 @@
 
             },
             async getPrice (bDate, eDate, len, roomid, userid) {
+                let oType = wepy.getStorageSync('oType')
+                let num = 0;
+                if(oType == 'a') {
+                    num = len
+                }
+                else {
+                    let time = wepy.getStorageSync('time')
+                    num = time
+                }
                 let params = {
                     method: 'POST',
                     data: {
                         bDate: bDate,
-                        eDate: eDate,
-                        lockNum: len,
-                        type: 'a'
+                        eDate: eDate || bDate,
+                        lockNum: num,
+                        type: oType
                     },
                     query: {
                         roomid: roomid,
@@ -443,34 +480,73 @@
             async submit () {
                 let data = this.params
                 let name = wepy.getStorageSync('name')
+                let oType = wepy.getStorageSync('oType')
                 let phone = wepy.getStorageSync('phone')
                 let userid = this.userid
-                data.roomCnt = this.rooms
-                data.bDate = this.date[0]
-                data.eDate = this.date[1]
-                data.lockTime = this.datelen
-                data.contactName = name
-                data.contactPhone = phone
-                data.personInfos = this.mensInfo
-                let params = {
-                    method: 'POST',
-                    data: data,
-                    query: {
-                        userid: userid
+
+                //校验身份证
+                let isId = true;
+                this.mensInfo.forEach((men) => {
+                    let isCorrect = this.methods.isIdCardNo(men.pid)
+                    if(!isCorrect) {
+                       isId = isCorrect 
+                    }
+                })
+                if(isId) {
+                    data.roomCnt = this.rooms
+
+                    data.bDate = this.date[0]
+                    data.eDate = this.date[1]
+                    data.lockTime = this.datelen
+                    data.contactName = name
+                    data.contactPhone = phone
+                    data.personInfos = this.mensInfo
+                    if(oType == 'a') {
+                        data.bDate = this.date[0]
+                        data.eDate = this.date[1]
+                        data.lockTime = this.datelen
+                        data.oType = 'a'
+                    }
+                    else {
+                        let time = wepy.getStorageSync('time')
+                        data.bDate = this.date[0]
+                        data.eDate = this.date[0]
+                        data.lockTime = time
+                        data.oType = 'p'
+                    }
+                    let params = {
+                        method: 'POST',
+                        data: data,
+                        query: {
+                            userid: userid
+                        }
+                    }
+                    console.log(data)
+                    let submitInfo = await Api.submitOrder(params)
+                    
+                    if(submitInfo.data.retCode == 0) {
+                        wepy.navigateTo({
+                            url: '../pages/afterOrder?orderid=' + submitInfo.data.data + '&reffer=' + '../pages/detail' 
+                        })
+                    }
+                    else {
+                       wepy.showToast({
+                         title: submitInfo.data.retMsg,
+                         icon: 'none'
+                       }) 
                     }
                 }
-                let submitInfo = await Api.submitOrder(params)
-                if(submitInfo.retCode == 0) {
-                    wepy.navigateTo({
-                        url: '../pages/afterOrder?orderid=' + submitInfo.data + '&reffer=' + '../pages/detail' 
-                    })
-                }
                 else {
-                   wepy.showToast({
-                     title: '网络错误',
-                     icon: 'none'
-                   }) 
+                    wepy.showToast({
+                         title: '身份证号码输入有误',
+                         icon: 'none'
+                    }) 
                 }
+                
+            },
+            isIdCardNo(num) {
+                num = num.toUpperCase()
+                return /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}$)/.test(num)
             },
             gotoPrice () {
                 let param = {
@@ -489,15 +565,33 @@
             this.params = JSON.parse(options.params)
             let date =  await wepy.getStorageSync('date')
             this.userid = await wepy.getStorageSync('userid')
-            this.date = date
-            this.datelen = util.dateUtils.getDateDiff(this.date[0], this.date[1])
+            
+            //时租房 日租房
+            let oType = wepy.getStorageSync('oType')
+            let time = wepy.getStorageSync('time')
+            if(oType == 'a') {
+                this.time = ['12:00', '12:00']
+                this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
+                this.date = date
+            }
+            else {
+                let num = time + ':00'
+                let num1 = time + 4 + ':00'
+                this.time = [num, num1]
+                this.datelen = 1
+                this.date = [date[0], date[0]]
+            }
+            
+            console.log(this.datelen)
+            let week = [util.dateUtils.getWeekNum(date[0]).week, util.dateUtils.getWeekNum(date[1] || date[0]).week]
+            console.log(week)
+            this.week = [weekConfig[week[0]], weekConfig[week[1]]]
             this.$apply()
             this.priceInfo = await this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
             this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
             this.mensInfo = this.methods.dealMens(num)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
-
             
             this.$apply()
         }

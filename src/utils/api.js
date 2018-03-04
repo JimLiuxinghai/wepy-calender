@@ -51,10 +51,22 @@ const orderDetail = (params) => wxRequest(params, host + '/showOrder/' + params.
 const cancelOrder = (params) => wxRequest(params, host + '/cancelOrder/' + params.query.orderid + '?userId=' + params.query.userid)
 
 const getPay = (params) => wxRequest(params, host + '/payOrder/' + params.query.orderid + '?userId=' + params.query.userid)
+
+const pay = (params) => wxRequest(params, host + '/miniPay?userId=' + params.query.userid)
+
+const getCon = (params) => wxRequest(params, host + '/deferCalc?userId=' + params.query.userid)
+
+const payDefer = (params) => wxRequest(params, host + '/deferSub?userId=' + params.query.userid)
+
+const backOrder = (params) => wxRequest(params, host + '/restoreOrder/' + params.query.orderid + '?userId=' + params.query.userid)
 //men
 const getMen = (params) => wxRequest(params, host + '/getCacheGuests?userId=' + params.query.userid)
 
 const postMen = (params) => wxRequest(params, host + '/saveCacheGuests?userId=' + params.query.userid)
+
+
+//city
+const cityList = (params) => wxRequest(params, host + '/getCities/' + params.query.mctCode)
 
 module.exports = {
 	hotelList,
@@ -71,5 +83,10 @@ module.exports = {
     getMen,
     postMen,
     cancelOrder,
-    getPay
+    getPay,
+    pay,
+    cityList,
+    getCon,
+    payDefer,
+    backOrder
 }

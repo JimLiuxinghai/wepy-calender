@@ -43,6 +43,12 @@
             }
 
         }
+        .phone {
+            text-align: center;
+            color: #3f4953;
+            font-size: 26rpx;
+            text-decoration: underline;
+        }
         .nav-wrapper {
             margin-top: 40rpx;
             padding: 30rpx;
@@ -81,6 +87,7 @@
                 <view class="name">{{userInfo.nickName}}</view>
             </view>
         </view>
+        <view class="phone">{{phone}}</view>
         <view class="nav-wrapper">
             <view class="nav">
                 <view class="golden item">
@@ -123,7 +130,8 @@
         }
         data = {
             userInfo: {},
-            goldBeans: 10
+            goldBeans: 10,
+            phone: ''
         }
         methods = {
             async getUser (openid, nickName, that) {
@@ -162,8 +170,10 @@
             wx.setStorageSync('name', nickName)
             let openId = await wepy.getStorageSync('openId')
             let userid = await wepy.getStorageSync('userid')
+            let phone = await wepy.getStorageSync('phone')
             if(openId) {
                 this.openid = openId
+                this.phone = phone
             }
             else {
                 let loginInfo = await wepy.login()

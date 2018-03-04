@@ -82,11 +82,23 @@
             height: 0
         }
         methods = {
-             
+             async getMens () {
+                let userid = await wepy.getStorageSync('userid')
+                let params = {
+                    method: 'POST',
+                    query: {
+                        userid: userid
+                    }
+                }
+                let resData = await Api.getMen(params)
+                console.log(resData)
+             }
         }
         async onLoad () {
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
+
+            this.methods.getMens()
         }
     }
 </script>

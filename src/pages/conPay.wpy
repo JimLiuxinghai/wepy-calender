@@ -136,21 +136,10 @@
             height: 0,
             payData: {},
             userid: '',
-            orderid: ''
+            orderid: '',
+            deferDays: 0
         }
         methods = {
-            async getPay (userid, orderid) {
-                let params = {
-                    method: 'POST',
-                    query: {
-                        orderid: orderid,
-                        userid: userid
-                    }
-                }
-                let payRes = await Api.getPay(params)
-                
-                return payRes.data.data
-            },
             async pay () {
                 let _self = this;
                 let openId = await wepy.getStorageSync('openId')
@@ -162,17 +151,21 @@
                     },
                     data: {
                         openId: openId,
-                        orderNo: _self.orderid,
-                        redirect: 'http://shop0.h.nicelife-china.com/weixin/payInform',
+                        redirect: 'http://shop0.h.nicelife-china.com/weixin/callback',
                         mctCode: '0',
-                        attach: 'mini_shop0',
                         appId: 'wxdf0a4eff9ba24e02',
-                        isMini: true
+                        deferSubInfo: {
+                        	deferDays: _self.payData.deferDays,
+                        	orderNo: _self.payData.orderNo,
+                        	payAmt: _self.payData.wxPayAmt,
+                        	payType: 'WEI'
+                        }
                     }
                 }
-                let payRes = await Api.pay(params)
+                let payRes = await Api.payDefer(params)
                 let data = payRes.data.data
-                if(data.needWxPay) {
+                
+                if(data.needWxPay && payRes.data.retCode) {
                     wepy.requestPayment({
                        timeStamp: data.payParams.timeStamp,
                        nonceStr: data.payParams.nonceStr,
@@ -180,29 +173,34 @@
                        signType: data.payParams.signType,
                        paySign: data.payParams.paySign,
                        success:function(res){
+	                       	wepy.showToast({
+	                       	  title: '支付成功',
+	                       	  icon: 'success'
+	                       	}) 
                             wepy.navigateTo({
                                 url: '../pages/myOrder?orderid=' + _self.orderid
                             })
                        },
                        fail:function(res){
+                       		wepy.showToast({
+                       		  title: '支付失败，请尽快完成支付',
+                       		  icon: 'none'
+                       		}) 
                        }
                     })
                 }
-                console.log(payRes)
+                
             }
         }
         async onLoad (options) {
-            
-            let userid = await wepy.getStorageSync('userid')
-            this.userid = userid
-            let orderid = options.orderid
-            this.orderid = orderid
-            let payRes = await this.methods.getPay(userid, orderid)
-            this.payData = payRes.payDistributeInfo
-            
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
-            this.$apply()
+            let priceInfo = JSON.parse(options.price)
+            this.payData = priceInfo
+            this.deferDays = options.deferDays
+            let userid = await wepy.getStorageSync('userid')
+            this.userid = userid
+            console.log(this.payData)
         }
     }
 </script>

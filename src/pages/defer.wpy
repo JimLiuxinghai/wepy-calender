@@ -1,0 +1,183 @@
+<style lang="less">
+    .con {
+        width: 100%;
+        background: #f0f0f0;
+        overflow: hidden;
+        .title {
+            text-align: center;
+            line-height: 40rpx;
+            font-size: 28rpx;
+            padding: 25rpx 0;
+            background: #ffffff;
+        }
+        .info {
+        	text-align: center;
+        	font-size: 26rpx;
+        	line-height: 70rpx;
+        	margin-top: 20rpx;
+        }
+        //选择信息
+        .select-wrapper {
+            margin-top: 20rpx;
+            background: #ffffff;
+            .select {
+                padding: 10rpx 30rpx;
+                border-bottom: 1px solid #e8e8e8;
+                .s-title {
+                    display: inline-block;
+                    font-size: 24rpx;
+                }
+                .right {
+                    float: right;
+                    margin-top: 10rpx;
+                    display: inline-block;
+                    font-size: 24rpx;
+                    text {
+                        display: inline-block;
+                        margin: 0 10rpx;
+                        &.minus {
+                            color: #9d9d9d;
+                            font-size: 30rpx;
+                        }
+                        &.plus {
+                            color: #ff7e00;
+                            font-size: 30rpx;
+                        }
+                    }
+
+                }
+            }
+        }
+        .button {
+        	width: 230rpx;
+        	height: 60rpx;
+        	line-height: 60rpx;
+        	border-radius: 60rpx;
+        	color: #ffffff;
+        	background: #ff7e00;
+        	font-size: 26rpx;
+        	text-align: center;
+        	margin: 120rpx auto;
+        }
+    }
+</style>
+<template>
+    <view class="con" style="min-height: {{height}}px;">
+        <view class="title">
+            <view>{{hotelInfo.name}}</view>
+            <view>{{hotelInfo.type}}</view>
+        </view>
+        <view class="info">住宿延期缴费</view>
+        <view class="select-wrapper">
+             <view class="select">
+                 <view class="s-title">请选择延期天数</view>
+                 <view class="right">
+                     <text class="minus" @tap="dayDeal(0)">-</text>
+                     <text class="inner">{{day}}天</text>
+                     <text class="plus" @tap="dayDeal(1)">+</text>
+                 </view>
+             </view>
+             <view class="select">
+                 <view class="s-title">当前需要缴纳费用</view>
+                 <view class="right">
+                     
+                     <text class="inner">￥{{price}}</text>
+                     
+                 </view>
+             </view>
+             
+        </view>
+        <view class="button" @tap="gotoPay">
+        	确认缴费
+        </view>
+    </view>
+</template>
+<script>
+
+    import wepy from 'wepy'
+    import Api from '../utils/api'
+    
+    export default class Con extends wepy.page {
+        config = {
+            navigationBarTitleText: '续住'
+        }
+        data = {
+            height: 0,
+            day: 1,
+            orderid: '',
+            price: 0,
+            hotelInfo: {},
+            priceInfo: {}
+        }
+        methods = {
+            async dayDeal (type) {
+            	let isUpdate = true
+            	if(type == 1) {
+            	    this.day += 1
+            	}
+            	else {
+            	    if(this.day > 1) {
+            	        this.day -= 1
+            	    }
+            	    else {
+            	    	isUpdate = false
+            	        wepy.showToast({
+            	            title: '续住天数不能少于1天',
+            	            icon: 'none'
+            	        })
+            	        
+            	    }
+
+            	}
+            	
+            	if(isUpdate) {
+
+            		let priceInfo = await this.methods.getPrice(this.day, this.orderid)
+            		this.priceInfo = priceInfo
+            		this.price = priceInfo.paidBeans || 0 + priceInfo.wxPayAmt
+            	}
+            	
+            	this.$apply()
+            	
+            },
+            async getPrice(day, orderid) {
+            	let userid = await wepy.getStorageSync('userid')
+            	let params = {
+            		method: 'POST',
+            		data: {
+            		    deferDays: day,
+            		    orderNo: orderid
+            		},
+            		query: {
+            		    userid: userid
+            		}
+            	}
+            	let resData = await Api.getCon(params)
+            	
+            	return resData.data.data
+            },
+            gotoPay () {
+            	let _self = this
+            	_self.priceInfo.orderNo = _self.orderid
+            	_self.priceInfo.deferDays = _self.day
+        	    wepy.navigateTo({
+        	        url: '../pages/conPay?price=' + JSON.stringify(_self.priceInfo)
+        	    })
+            }
+        }
+        async onLoad (options) {
+            this.orderid = options.orderid
+            this.hotelInfo = {
+            	name: options.name,
+            	type: options.type
+            }
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
+            let priceInfo = await this.methods.getPrice(this.day, this.orderid)
+            console.log(priceInfo)
+            this.priceInfo = priceInfo
+            this.price = priceInfo.paidBeans || 0 + priceInfo.wxPayAmt
+            this.$apply()
+        }
+    }
+</script>

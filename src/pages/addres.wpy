@@ -59,7 +59,7 @@
                     姓  名
                 </view>
                 <view class="input">
-                    <input placeholder="请输入入住人姓名"></input>
+                    <input placeholder="请输入入住人姓名" bindinput="inputName"></input>
                 </view>
             </view>
             <view class="item">
@@ -67,7 +67,7 @@
                     手机号
                 </view>
                 <view class="input">
-                    <input type="number" placeholder="请输入入住人手机号"></input>
+                    <input type="number" placeholder="请输入入住人手机号" bindinput="inputTel"></input>
                 </view>
             </view>
             <view class="item">
@@ -75,7 +75,7 @@
                     身份证
                 </view>
                 <view class="input">
-                    <input type="idcard" placeholder="请输入入住人身份证"></input>
+                    <input type="idcard" placeholder="请输入入住人身份证" bindinput="inputId"></input>
                 </view>
             </view>
         </view>
@@ -89,7 +89,7 @@
             入住人的身份信息只用于必要的身份核实和保险理赔事项,科爱住会为您严格保密。
         </view>
         <view class="button-wrapper">
-            <view class="button">
+            <view class="button" @tap="tapAdd">
                 保存
             </view>
         </view>
@@ -106,12 +106,67 @@
 
         }
         data = {
-            height: 0
+            height: 0,
+            customerName: '',
+            customerIdentity: '',
+            phoneNo: '',
+            id: ''
         }
         methods = {
+            inputId (e) {
+                let value = e.detail.value
+                this.customerIdentity = value
 
+            },
+            inputTel (e) {
+                let value = e.detail.value
+                this.phoneNo = value
+                
+            },
+            inputName (e) {
+                let value = e.detail.value
+                this.customerName = value
+                
+            },
+            tapAdd () {
+                if(this.customerName == '') {
+                    wepy.showToast({
+                         title: '请填写用户名',
+                         icon: 'none'
+                    }) 
+                    return false;
+                }
+                else if(this.inputTel == '' || !(/^1[34578]\d{9}$/.test(this.inputTel))) {
+                    wepy.showToast({
+                         title: '请输入正确手机号',
+                         icon: 'none'
+                    }) 
+                    return false;
+                }
+                else if (this.customerIdentity == '' || !(/(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}$)/.test(this.customerIdentity))) {
+                    wepy.showToast({
+                         title: '请输入正确身份证号',
+                         icon: 'none'
+                    }) 
+                    return false;
+                }
+                else {
+
+                }
+            },
+            async postMens () {
+                let userid = 
+                let params = {
+                    method: 'POST',
+                    data: data,
+                    query: {
+                        userid: userid
+                    }
+                }
+            }
         }
-        async onLoad () {
+        async onLoad (options) {
+            console.log(options)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
         }
