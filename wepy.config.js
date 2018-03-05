@@ -1,6 +1,6 @@
 const path = require('path');
 var prod = process.env.NODE_ENV === 'production'
-
+console.log(prod)
 module.exports = {
   wpyExt: '.wpy',
   build: {
@@ -35,12 +35,15 @@ module.exports = {
         'transform-decorators-legacy',
         'transform-object-rest-spread',
         'transform-export-extensions',
-        'syntax-export-extensions'
+        'syntax-export-extensions',
+        'transform-node-env-inline'
       ]
     }
   },
   plugins: {
+   
   },
+
   appConfig: {
     noPromiseAPI: ['createSelectorQuery']
   }
