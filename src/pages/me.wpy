@@ -121,6 +121,7 @@
 <script>
     import wepy from 'wepy'
     import Api from '../utils/api'
+    import envConfig from '../utils/config'
     export default class Me extends wepy.page {
         config = {
             navigationBarTitleText: '个人中心'
@@ -139,12 +140,12 @@
                 let params = {
                     method: 'POST',
                     data: {
-                        appId: 'wxdf0a4eff9ba24e02',
+                        appId: envConfig.appid,
                         openId: openid
                     }
                 }
                 let userData = await Api.getUser(params)
-                console.log(userData)
+                
                 if(userData.data.data == null) {
                     wepy.navigateTo({
                         url: '../pages/bind?openid=' + openid + '&nickname=' + nickName

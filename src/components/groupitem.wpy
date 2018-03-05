@@ -3,6 +3,7 @@
         padding: 20rpx;
         display: flex;
         border-bottom: 1px solid #c9c9c9;
+        
         .img {
             flex: 1;
             image {
@@ -13,12 +14,14 @@
         .info {
             flex: 1;
             padding: 20rpx;
+            position: relative;
             box-sizing: border-box;
             .name {
                 font-size: 24rpx;
             }
             .address {
                 font-size: 20rpx;
+                margin-top: 20rpx;
                 color: #9d9d9d;
                 .location {
                     width: 14rpx;
@@ -26,10 +29,27 @@
                     margin-right: 10rpx;
                 }
             }
+            .fac-wrapper {
+                .fac {
+                    display: inline-block;
+                    text-align: center;
+                    padding: 5rpx 10rpx;
+                    background: #daf1fa;
+                    color: #47b8e6;
+                    font-size: 16rpx;
+                    margin-left: 10rpx;
+                    border-radius: 4rpx;
+                }
+            }
             .price {
+                width: 100%;
+                position: relative;
+                bottom: 0;
                 text-align: right;
                 font-size: 26rpx;
                 color: #ff7e00;
+                padding: 0 20prx;
+                box-sizing: border-box;
             }
         }
     }
@@ -43,6 +63,11 @@
             <view class="name">{{item.hotelName}}</view>
             <view class="address">
                 <image class="location" src="../img/location.png"></image>{{item.address}}
+            </view>
+            <view class="fac-wrapper">
+                <view class="fac" wx:for="{{item.facilities}}" wx:key="{{index}}">
+                    {{item.fvalue}}
+                </view>
             </view>
             <view class="price">
                 <text class="num">￥{{item.lowestPrice}}</text>

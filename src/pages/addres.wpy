@@ -59,7 +59,7 @@
                     姓  名
                 </view>
                 <view class="input">
-                    <input placeholder="请输入入住人姓名" bindinput="inputName"></input>
+                    <input placeholder="请输入入住人姓名" bindinput="inputName" value="{{customerName}}"></input>
                 </view>
             </view>
             <view class="item">
@@ -67,7 +67,7 @@
                     手机号
                 </view>
                 <view class="input">
-                    <input type="number" placeholder="请输入入住人手机号" bindinput="inputTel"></input>
+                    <input type="number" placeholder="请输入入住人手机号" bindinput="inputTel" value="{{phoneNo}}"></input>
                 </view>
             </view>
             <view class="item">
@@ -75,7 +75,7 @@
                     身份证
                 </view>
                 <view class="input">
-                    <input type="idcard" placeholder="请输入入住人身份证" bindinput="inputId"></input>
+                    <input type="idcard" placeholder="请输入入住人身份证" bindinput="inputId" value="{{customerIdentity}}"></input>
                 </view>
             </view>
         </view>
@@ -116,7 +116,6 @@
             inputId (e) {
                 let value = e.detail.value
                 this.customerIdentity = value
-
             },
             inputTel (e) {
                 let value = e.detail.value
@@ -128,7 +127,8 @@
                 this.customerName = value
                 
             },
-            tapAdd () {
+            async tapAdd () {
+                
                 if(this.customerName == '') {
                     wepy.showToast({
                          title: '请填写用户名',
@@ -136,7 +136,7 @@
                     }) 
                     return false;
                 }
-                else if(this.inputTel == '' || !(/^1[34578]\d{9}$/.test(this.inputTel))) {
+                else if(this.phoneNo == '' || !(/^1[345789]\d{9}$/.test(this.phoneNo))) {
                     wepy.showToast({
                          title: '请输入正确手机号',
                          icon: 'none'
@@ -151,24 +151,47 @@
                     return false;
                 }
                 else {
-
-                }
-            },
-            async postMens () {
-                let userid = 
-                let params = {
-                    method: 'POST',
-                    data: data,
-                    query: {
-                        userid: userid
+                    let userid = await wepy.getStorageSync('userid')
+                    let data = [{
+                        customerName: this.customerName,
+                        phoneNo: this.phoneNo,
+                        customerIdentity: this.customerIdentity,
+                        id: this.id
+                    }]
+                    let params = {
+                        method: 'POST',
+                        data: data,
+                        query: {
+                            userid: userid
+                        }
+                    }
+                    let resData = await Api.postMen(params)
+                    console.log(resData)
+                    if(resData.data.retCode == 0) {
+                        wepy.navigateTo({
+                            url: '../pages/resident'                        })
+                    }
+                    else {
+                        wepy.showToast({
+                            title: resData.data.retMsg,
+                            icon: 'none'
+                        })  
                     }
                 }
             }
         }
         async onLoad (options) {
-            console.log(options)
+            
+            let params = JSON.parse(options.params)
+            console.log(params)
+            this.customerName = params.customerName
+            this.id = params.id
+            this.customerIdentity = params.customerIdentity
+            this.phoneNo = params.phoneNo
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
+
+            this.$apply()
         }
     }
 </script>

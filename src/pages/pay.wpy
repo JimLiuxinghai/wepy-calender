@@ -125,6 +125,7 @@
 <script>
     import wepy from 'wepy'
     import Api from '../utils/api'
+    import envConfig from '../utils/config'
     export default class Resident extends wepy.page {
         config = {
             navigationBarTitleText: '支付方式'
@@ -163,10 +164,10 @@
                     data: {
                         openId: openId,
                         orderNo: _self.orderid,
-                        redirect: 'http://shop0.h.nicelife-china.com/weixin/payInform',
-                        mctCode: '0',
-                        attach: 'mini_shop0',
-                        appId: 'wxdf0a4eff9ba24e02',
+                        redirect: envConfig.payUrl + '/weixin/payInform',
+                        mctCode: envConfig.mctCode,
+                        attach: `mini_shop${envConfig.mctCode}`,
+                        appId: envConfig.appid,
                         isMini: true
                     }
                 }
@@ -180,12 +181,31 @@
                        signType: data.payParams.signType,
                        paySign: data.payParams.paySign,
                        success:function(res){
-                            wepy.navigateTo({
-                                url: '../pages/myOrder?orderid=' + _self.orderid
+                            console.log('支付成功！！！！！！')
+                            wepy.showToast({
+                                title: '支付成功',
+                                icon: 'success',
+                                success: function() {
+                                    wepy.navigateTo({
+                                        url: '../pages/myOrder?orderid=' + _self.orderid
+                                    })
+                                }
                             })
+                            
                        },
                        fail:function(res){
                        }
+                    })
+                }
+                else {
+                    wepy.showToast({
+                        title: '支付成功',
+                        icon: 'success',
+                        success: function() {
+                            wepy.navigateTo({
+                                url: '../pages/myOrder?orderid=' + _self.orderid
+                            })
+                        }
                     })
                 }
                 console.log(payRes)

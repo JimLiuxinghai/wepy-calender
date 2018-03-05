@@ -34,6 +34,7 @@
 <script>
     import wepy from 'wepy'
     import Api from '../utils/api'
+    import envConfig from '../utils/config'
     export default class Bind extends wepy.page {
         config = {
             navigationBarTitleText: '个人中心'
@@ -82,7 +83,7 @@
                 let params = {
                     method: 'POST',
                     data: {
-                        appId: 'wxdf0a4eff9ba24e02',
+                        appId: envConfig.appid,
                         openId: openid,
                         phone: phone,
                         nickname: nickname

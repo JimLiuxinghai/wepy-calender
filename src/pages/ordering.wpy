@@ -262,9 +262,12 @@
                 <view class="item">
                     <view class="item-title">入住人</view>
                     <view class="item-input">
-                        <input placeholder="请填写入住人" data-index="{{index}}" bindinput="inputmen"/>
+                        <input placeholder="请填写入住人" value="{{mensInfo[index].name}}" data-index="{{index}}" bindinput="inputmen"/>
                     </view>
-                    <view class="item-icon">常用入住人</view>
+                    <picker @change="selectRes" data-index="{{index}}" value="{{resindex}}" range="{{resName}}">
+                        <view class="item-icon">常用入住人</view>
+                    </picker>
+                    
                 </view>
                 <!-- <view class="item">
                     <view class="item-title">联系方式</view>
@@ -276,7 +279,7 @@
                 <view class="item">
                     <view class="item-title">身份证号</view>
                     <view class="item-input">
-                        <input placeholder="请填写身份证号" data-index="{{index}}"  type="idcard" bindinput="inputId"/>
+                        <input placeholder="请填写身份证号" data-index="{{index}}" value="{{mensInfo[index].pid}}" type="idcard" bindinput="inputId"/>
                     </view>
                 </view>
             </view>
@@ -353,7 +356,10 @@
             ctype: 1,
             cshow: false,
             time: [],
-            week: []
+            week: [],
+            resident: [],
+            resName: [],
+            resindex: 0
         }
         components = {
             ncalender: Calender
@@ -402,16 +408,16 @@
                 this.$apply()
             },
             inputmen (e) {
-                
-                this.$apply()
                 let value = e.detail.value
                 let index = e.target.dataset.index
                 this.mensInfo[index].name = value
+                this.$apply()
             },
             inputId (e) {
                 let value = e.detail.value
                 let index = e.target.dataset.index
                 this.mensInfo[index].pid = value
+                this.$apply()
             },
             showCalender () {
                 this.cshow = true
@@ -423,8 +429,31 @@
                     this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
                     this.priceInfo = await this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
                     this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
+                    this.$apply()
                 }
 
+            },
+            //获取常用入住人
+            async getMens () {
+                let userid = await wepy.getStorageSync('userid')
+                let params = {
+                    method: 'POST',
+                    query: {
+                        userid: userid
+                    }
+                }
+                let resData = await Api.getMen(params)
+                // console.log(resData)
+                return resData.data.data
+            },
+            //选择常用入住人
+            selectRes (e) {
+                let index = e.detail.value
+                let domIndex = e.target.dataset.index
+                this.resindex = index
+                this.mensInfo[domIndex].name = this.resident[index].customerName
+                this.mensInfo[domIndex].pid = this.resident[index].customerIdentity
+                this.$apply()
             },
             async getPrice (bDate, eDate, len, roomid, userid) {
                 let oType = wepy.getStorageSync('oType')
@@ -592,6 +621,14 @@
             this.mensInfo = this.methods.dealMens(num)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
+            
+            //常用入住人
+            this.resident = await this.methods.getMens()
+            let resName = []
+            this.resident.forEach((item) => {
+                resName.push(item.customerName)
+            })
+            this.resName = resName
             
             this.$apply()
         }

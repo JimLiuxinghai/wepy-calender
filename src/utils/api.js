@@ -1,6 +1,7 @@
 import wepy from 'wepy';
-
-const host = 'https://www.mwwae.cn/hotel';
+import env from './config'
+console.log(env)
+const host = env.host;
 
 /*
 	params: {

@@ -52,6 +52,7 @@
     import Hoteltab from '../components/hoteltab'
     import HotelItem from '../components/groupitem'
     import Api from '../utils/api'
+    import envConfig from '../utils/config'
     export default class Index extends wepy.page {
         config = {
             navigationBarTitleText: '爱屋查找'
@@ -108,7 +109,7 @@
                 let param = {
                     method: 'POST',
                     query: {
-                        mctCode: 0
+                        mctCode: envConfig.mctCode
                     }
                 }
                 let cityList = await Api.cityList(param)

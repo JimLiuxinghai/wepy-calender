@@ -125,6 +125,7 @@
 <script>
     import wepy from 'wepy'
     import Api from '../utils/api'
+    import envConfig from '../utils/config'
     export default class Resident extends wepy.page {
         config = {
             navigationBarTitleText: '支付方式'
@@ -151,9 +152,9 @@
                     },
                     data: {
                         openId: openId,
-                        redirect: 'http://shop0.h.nicelife-china.com/weixin/callback',
-                        mctCode: '0',
-                        appId: 'wxdf0a4eff9ba24e02',
+                        redirect: envConfig.payUrl + '/weixin/callback',
+                        mctCode: envConfig.mctCode,
+                        appId: envConfig.appid,
                         deferSubInfo: {
                         	deferDays: _self.payData.deferDays,
                         	orderNo: _self.payData.orderNo,
@@ -172,13 +173,16 @@
                        package: data.payParams.package,
                        signType: data.payParams.signType,
                        paySign: data.payParams.paySign,
-                       success:function(res){
+                       success: function(res){
+                            console.log('支付成功！！！！！！')
 	                       	wepy.showToast({
-	                       	  title: '支付成功',
-	                       	  icon: 'success'
-	                       	}) 
-                            wepy.navigateTo({
-                                url: '../pages/myOrder?orderid=' + _self.orderid
+                                title: '支付成功',
+                                icon: 'success',
+                                success: function() {
+                                    wepy.navigateTo({
+                                        url: '../pages/myOrder?orderid=' + _self.orderid
+                                    })
+                                }
                             })
                        },
                        fail:function(res){
@@ -187,6 +191,17 @@
                        		  icon: 'none'
                        		}) 
                        }
+                    })
+                }
+                else {
+                    wepy.showToast({
+                        title: '支付成功',
+                        icon: 'success',
+                        success: function() {
+                            wepy.navigateTo({
+                                url: '../pages/myOrder?orderid=' + _self.orderid
+                            })
+                        }
                     })
                 }
                 
