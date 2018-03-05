@@ -330,7 +330,7 @@
         }
         async onLoad() {
             let day = util.dateUtils.format(new Date())
-            wx.setStorageSync('oType', 'a')
+            wepy.setStorageSync('oType', 'a')
             let nextDay = util.dateUtils.switch(day, 1)
             this.outdate = [day, nextDay]
             this.showdate = [day, nextDay]
