@@ -70,7 +70,7 @@
 <template>
     <view class="item" @tap="showModal({{item.id}}, {{index}})">
         <view class="img">
-            <image src="http://img.nicelife-china.com:80/i15/{{item.imagePath}}"></image>
+            <image src="{{imgUrl}}{{item.imagePath}}"></image>
         </view>
         <view class="info">
             <view class="price">
@@ -88,6 +88,7 @@
 </template>
 <script>
 import wepy from 'wepy'
+import envConfig from '../utils/config'
 export default class Room extends wepy.component {
     props = {
         item: {},
@@ -101,7 +102,8 @@ export default class Room extends wepy.component {
         }
     }
     data = {
-        modal: false
+        modal: false,
+        imgUrl: envConfig.imgUrl
     }
     methods = {
         showModal (id, index) {

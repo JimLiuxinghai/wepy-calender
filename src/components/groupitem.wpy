@@ -57,7 +57,7 @@
 <template>
     <view class="item" @tap="gotoDetail({{item.id}}, {{item.bussinessData}})">
         <view class="img">
-            <image src="http://img.nicelife-china.com:80/i15/{{item.imageName}}"></image>
+            <image src="{{imgUrl}}{{item.imageName}}"></image>
         </view>
         <view class="info">
             <view class="name">{{item.hotelName}}</view>
@@ -78,7 +78,7 @@
 </template>
 <script>
 import wepy from 'wepy'
-
+import envConfig from '../utils/config'
 export default class GroupItem extends wepy.component {
     props = {
         item: {}
@@ -87,6 +87,9 @@ export default class GroupItem extends wepy.component {
         item() {
             console.log(this.item)
         }
+    }
+    data = {
+        imgUrl: envConfig.imgUrl
     }
     methods = {
         gotoDetail (id, bDate) {

@@ -104,7 +104,7 @@
 </template>
 <script>
 import wepy from 'wepy'
-
+import envConfig from '../utils/config'
 export default class Modal extends wepy.component {
     props = {
         roomDetail: {},
@@ -113,7 +113,7 @@ export default class Modal extends wepy.component {
     computed = {
         roomDetail() {
             if(this.roomDetail) {
-                this.imagePath = 'http://img.nicelife-china.com:80/i15/' + this.roomDetail.imagePath
+                this.imagePath = envConfig.imgUrl + this.roomDetail.imagePath
                 this.detail = this.roomDetail
                 this.$apply()
             }

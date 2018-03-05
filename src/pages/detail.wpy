@@ -84,7 +84,7 @@
     	<swiper indicator-dots="true" autoplay="true" interval="3000" duration="500">
     	  	<block wx:for="{{hotelDetail.hotelImageInfos}}" wx:key="{{index}}">
 	    	    <swiper-item class="swiper-item">
-	    	      <image src="http://img.nicelife-china.com:80/i15/{{item.imageName}}" class="slide-image"/>
+	    	      <image src="{{imgUrl}}{{item.imageName}}" class="slide-image"/>
 	    	    </swiper-item>
     	  	</block>
     	</swiper>
@@ -142,6 +142,7 @@
     import Api from '../utils/api'
     import Room from '../components/room'
     import dModal from '../components/modal'
+    import envConfig from '../utils/config'
     export default class Detail extends wepy.page {
         config = {
         	navigationBarTitleText: '酒店详情'
@@ -150,7 +151,8 @@
         	hotelDetail: {},
         	show: false,
             isModal: false,
-            roomDetail: {}
+            roomDetail: {},
+            imgUrl: envConfig.imgUrl
         }
         components = {
             room: Room,
