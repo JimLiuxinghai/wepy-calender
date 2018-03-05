@@ -1,6 +1,6 @@
 const path = require('path');
 var prod = process.env.NODE_ENV === 'production'
-console.log(prod)
+
 module.exports = {
   wpyExt: '.wpy',
   build: {
