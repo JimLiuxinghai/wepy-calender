@@ -95,7 +95,8 @@
             <view class="title">房间设施</view>
             <view class="img-wrapper">
                 <view class="img" wx:for="{{imgs}}" wx:for-item="item" wx:for-index="index" wx:key="index" >
-                    <image src="{{item.img}}"></image>
+                    <!-- <image src="{{item.img}}"></image> -->
+                    <text class="iconfont {{item.class}}"></text>
                     <view class="img-info">{{item.text}}</view>
                 </view>
             </view>
@@ -124,9 +125,11 @@ export default class Modal extends wepy.component {
         imagePath: '',
         detail: {},
         imgs: [{
+            class: 'icon-xinglijicun',
             img: '../img/hot.png',
             text: '暖气'
         },{
+            class: 'icon-iconset0496',
             img: '../img/24.png',
             text: '全天热水'
         }]
