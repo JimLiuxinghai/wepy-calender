@@ -1,6 +1,6 @@
 import wepy from 'wepy';
 import env from './config'
-console.log(env)
+
 const host = env.host;
 
 /*
