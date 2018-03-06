@@ -76,7 +76,14 @@
             <view class="close" @tap="closeModal">
                 <image src="../img/close.png"></image>
             </view>
-            <image class="image" src="{{imagePath}}"></image>
+            <swiper indicator-dots="true" autoplay="true" interval="3000" duration="500">
+                <block wx:for="{{imgList}}" wx:key="{{index}}">
+                    <swiper-item class="swiper-item">
+                    <image src="{{imgUrl}}{{item.imageName}}" class="image"/>
+                    </swiper-item>
+                </block>
+            </swiper>
+           
             <view class="title">{{detail.roomName}}</view>
             <view class="info">
                 <view class="info-in">房屋面积:{{detail.roomArea}}</view>
@@ -94,10 +101,10 @@
             <view class="text">{{detail.feature}}</view>
             <view class="title">房间设施</view>
             <view class="img-wrapper">
-                <view class="img" wx:for="{{imgs}}" wx:for-item="item" wx:for-index="index" wx:key="index" >
+                <view class="img" wx:for="{{iconList}}" wx:for-item="item" wx:for-index="index" wx:key="index" >
                     <!-- <image src="{{item.img}}"></image> -->
-                    <text class="iconfont {{item.class}}"></text>
-                    <view class="img-info">{{item.text}}</view>
+                    <text class="iconfont {{item.fstyle}}"></text>
+                    <view class="img-info">{{item.fvalue}}</view>
                 </view>
             </view>
         </view>
@@ -109,7 +116,9 @@ import envConfig from '../utils/config'
 export default class Modal extends wepy.component {
     props = {
         roomDetail: {},
-        height: 0
+        height: 0,
+        imgList: [],
+        iconList: []
     }
     computed = {
         roomDetail() {
@@ -124,15 +133,7 @@ export default class Modal extends wepy.component {
     data = {
         imagePath: '',
         detail: {},
-        imgs: [{
-            class: 'icon-xinglijicun',
-            img: '../img/hot.png',
-            text: '暖气'
-        },{
-            class: 'icon-iconset0496',
-            img: '../img/24.png',
-            text: '全天热水'
-        }]
+        imgUrl: envConfig.imgUrl
     }
     methods = {
         closeModal () {

@@ -134,7 +134,7 @@
     			</repeat>
     		</view>
     	</view>
-        <detail wx:if="{{isModal}}" @detail-tap.user="showModal"  :roomDetail.sync="roomDetail"/>
+        <detail wx:if="{{isModal}}" @detail-tap.user="showModal" :imgList.sync="imgList" :iconList.sync="iconList"  :roomDetail.sync="roomDetail"/>
     </view>
 </template>
 <script>
@@ -152,7 +152,9 @@
         	show: false,
             isModal: false,
             roomDetail: {},
-            imgUrl: envConfig.imgUrl
+            imgUrl: envConfig.imgUrl,
+			imgList: [],
+			iconList: []
         }
         components = {
             room: Room,
@@ -186,9 +188,14 @@
                         }
                     }
                     let roomData = await Api.roomDetail(param)
+					
+					this.imgList = roomData.data.hotelImageInfos
+					//this.iconList = roomData.data.hotelFacilityInfos
+					this.iconList = this.hotelDetail.hotelFacilityInfos
+					console.log(this.iconList)
                     this.roomDetail = this.hotelDetail.roomTypeInfos[index]
                     this.$apply()
-                    console.log(this.roomDetail)
+                    
                 }
             },
 			async order (index) {
@@ -200,7 +207,7 @@
 					hotelName: _self.hotelDetail.hotelInfo.hotelName,
 					roomId: roomDetail.id,
 					roomType: roomDetail.roomType,
-					mctCode: 0
+					mctCode: envConfig.mctCode
 				}
 				if(userid) {
 					wepy.navigateTo({
