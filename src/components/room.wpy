@@ -61,7 +61,7 @@
                     line-height: 34rpx;
                     border-radius: 5rpx;
                     vertical-align: middle;
-                    margin-left: 20rpx;
+                    margin-left: 40rpx;
                 }
             }
         }
@@ -78,7 +78,7 @@
                 <text class="num">￥{{item.price}}</text>
                 <text class="text">/日</text>
             </view>
-            <view class="still">原价:{{item.highPrice}}</view>
+            <view class="still">原价:￥{{item.highPrice}}</view>
             <view class="order-wrapper">
                 <view class="tip">注: 入住当天14点前免费取消</view>
                 <view class="order" @tap.stop="order({{index}})">预定</view>

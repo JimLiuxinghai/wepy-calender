@@ -134,7 +134,7 @@
 
             		let priceInfo = await this.methods.getPrice(this.day, this.orderid)
             		this.priceInfo = priceInfo
-            		this.price = priceInfo.paidBeans || 0 + priceInfo.wxPayAmt
+            		this.price = priceInfo.goldBeans + priceInfo.wxPayAmt
             	}
             	
             	this.$apply()
@@ -176,7 +176,7 @@
             let priceInfo = await this.methods.getPrice(this.day, this.orderid)
             console.log(priceInfo)
             this.priceInfo = priceInfo
-            this.price = priceInfo.paidBeans || 0 + priceInfo.wxPayAmt
+            this.price = priceInfo.goldBeans + priceInfo.wxPayAmt
             this.$apply()
         }
     }

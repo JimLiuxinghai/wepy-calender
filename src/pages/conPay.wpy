@@ -80,8 +80,8 @@
 <template>
     <view class="pay" style="min-height: {{height}}px;">
         <view class="title">支付总金额</view>
-        <view class="num">{{(payData.wxPayAmt + payData.paidBeans) || 0}}</view>
-        <view class="panel" wx:if="{{payData.beansBalance > 0}}">
+        <view class="num">{{(payData.wxPayAmt + payData.goldBeans) || 0}}</view>
+        <view class="panel" wx:if="{{payData.goldBeans > 0}}">
             <view class="img">
                 <image class="beans" src="../img/beans.png"></image>
             </view>
@@ -90,7 +90,7 @@
                     金豆支付
                 </view>
                 <view class="desp">
-                    金豆剩余{{payData.beansBalance}}个，将自动扣除{{payData.paidBeans}}个
+                    金豆剩余{{payData.beansBalance}}个，将自动扣除{{payData.goldBeans}}个
                 </view>
             </view>
         </view>
@@ -174,16 +174,16 @@
                        signType: data.payParams.signType,
                        paySign: data.payParams.paySign,
                        success: function(res){
-                            console.log('支付成功！！！！！！')
-	                       	wepy.showToast({
-                                title: '支付成功',
-                                icon: 'success',
-                                success: function() {
-                                    wepy.navigateTo({
-                                        url: '../pages/myOrder?orderid=' + _self.orderid
-                                    })
-                                }
+                            wepy.showToast({
+                               title: '支付成功',
+                               icon: 'success'
                             })
+                            setTimeout(function(){
+                               wepy.hideToast()
+                               wepy.redirectTo({
+                                 url: '../pages/myOrder?orderid=' + _self.orderid
+                               })
+                            },150)
                        },
                        fail:function(res){
                        		wepy.showToast({
@@ -195,14 +195,15 @@
                 }
                 else {
                     wepy.showToast({
-                        title: '支付成功',
-                        icon: 'success',
-                        success: function() {
-                            wepy.navigateTo({
-                                url: '../pages/myOrder?orderid=' + _self.orderid
-                            })
-                        }
+                       title: '支付成功',
+                       icon: 'success'
                     })
+                    setTimeout(function(){
+                       wepy.hideToast()
+                       wepy.redirectTo({
+                         url: '../pages/myOrder?orderid=' + _self.orderid
+                       })
+                    },150)
                 }
                 
             }

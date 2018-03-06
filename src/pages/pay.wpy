@@ -80,7 +80,7 @@
 <template>
     <view class="pay" style="min-height: {{height}}px;">
         <view class="title">支付总金额</view>
-        <view class="num">{{(payData.wxPayAmt + payData.paidBeans) || 0}}</view>
+        <view class="num">{{(payData.wxPayAmt + payData.goldBeans + payData.foregift) || 0}}</view>
         <view class="panel" wx:if="{{payData.beansBalance > 0}}">
             <view class="img">
                 <image class="beans" src="../img/beans.png"></image>
@@ -90,7 +90,7 @@
                     金豆支付
                 </view>
                 <view class="desp">
-                    金豆剩余{{payData.beansBalance}}个，将自动扣除{{payData.paidBeans}}个
+                    金豆剩余{{payData.beansBalance}}个，将自动扣除{{payData.goldBeans}}个
                 </view>
             </view>
         </view>
@@ -103,7 +103,7 @@
                     微信支付
                 </view>
                 <view class="desp">
-                    微信支付{{payData.wxPayAmt}}元
+                    微信支付{{payData.wxPayAmt + payData.foregift}}元
                 </view>
             </view>
         </view>
@@ -153,6 +153,7 @@
                 return payRes.data.data
             },
             async pay () {
+                console.log(123333333)
                 let _self = this;
                 let openId = await wepy.getStorageSync('openId')
                 //测试环境
@@ -174,39 +175,45 @@
                 let payRes = await Api.pay(params)
                 let data = payRes.data.data
                 if(data.needWxPay) {
-                    wepy.requestPayment({
+                    wx.requestPayment({
                        timeStamp: data.payParams.timeStamp,
                        nonceStr: data.payParams.nonceStr,
                        package: data.payParams.package,
                        signType: data.payParams.signType,
                        paySign: data.payParams.paySign,
                        success:function(res){
-                            console.log('支付成功！！！！！！')
                             wepy.showToast({
-                                title: '支付成功',
-                                icon: 'success',
-                                success: function() {
-                                    wepy.navigateTo({
-                                        url: '../pages/myOrder?orderid=' + _self.orderid
-                                    })
-                                }
+                               title: '支付成功',
+                               icon: 'success'
                             })
+                            setTimeout(function(){
+                               wepy.hideToast()
+                               wepy.redirectTo({
+                                 url: '../pages/myOrder?orderid=' + _self.orderid
+                               })
+                            },150)
                             
                        },
                        fail:function(res){
-                       }
+                            wepy.showToast({
+                              title: '支付失败，请尽快完成支付',
+                              icon: 'none'
+                            }) 
+                       },
+                       
                     })
                 }
                 else {
                     wepy.showToast({
-                        title: '支付成功',
-                        icon: 'success',
-                        success: function() {
-                            wepy.navigateTo({
-                                url: '../pages/myOrder?orderid=' + _self.orderid
-                            })
-                        }
+                       title: '支付成功',
+                       icon: 'success'
                     })
+                    setTimeout(function(){
+                       wepy.hideToast()
+                       wepy.redirectTo({
+                         url: '../pages/myOrder?orderid=' + _self.orderid
+                       })
+                    },150)
                 }
                 console.log(payRes)
             }

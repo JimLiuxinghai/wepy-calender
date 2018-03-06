@@ -163,40 +163,73 @@
         }
         async onShow () {            
             //个人信息
-            let userInfo = await wepy.getUserInfo()
+            try {
+                let userInfo = await wepy.getUserInfo()
+                console.log(userInfo, '*****')
+                this.userInfo = userInfo.userInfo
 
-            this.userInfo = userInfo.userInfo
+                let nickName =  userInfo.userInfo.nickName
 
-            let nickName =  userInfo.userInfo.nickName
-
-            wx.setStorageSync('name', nickName)
-            let openId = await wepy.getStorageSync('openId')
-            let userid = await wepy.getStorageSync('userid')
-            let phone = await wepy.getStorageSync('phone')
-            if(openId) {
-                this.openid = openId
-                this.phone = phone
-            }
-            else {
-                let loginInfo = await wepy.login()
-                let code = loginInfo.code
-                let param = {
-                    method: 'POST',
-                    data: {
-                        code: code
-                    },
-                    query: {
-                        id: envConfig.appid
-                    }
+                wx.setStorageSync('name', nickName)
+                let openId = await wepy.getStorageSync('openId')
+                let userid = await wepy.getStorageSync('userid')
+                let phone = await wepy.getStorageSync('phone')
+                if(openId) {
+                    this.openid = openId
+                    this.phone = phone
                 }
-                let openInfo = await Api.openid(param)
+                else {
+                    let loginInfo = await wepy.login()
+                    let code = loginInfo.code
+                    let param = {
+                        method: 'POST',
+                        data: {
+                            code: code
+                        },
+                        query: {
+                            id: envConfig.appid
+                        }
+                    }
+                    let openInfo = await Api.openid(param)
 
-                this.openid = openInfo.data.data.openid
-                openId = this.openid
-                wepy.setStorageSync('openId', this.openid)
+                    this.openid = openInfo.data.data.openid
+                    openId = this.openid
+                    wepy.setStorageSync('openId', this.openid)
+                }
+                this.methods.getUser(openId, nickName, this)
+                this.$apply()
             }
-            this.methods.getUser(openId, nickName, this)
-            this.$apply()
+            catch (e) {
+                const openSetting = function() {
+                    wx.showModal({
+                      title: '用户未授权',
+                      content: '如需正常使用功能，请按确定并在授权管理中选中“用户信息”，然后点按确定。最后再重新进入小程序即可正常使用。',
+                      showCancel: false,
+                      success: function (res) {
+                        if (res.confirm) {
+                          console.log('用户点击确定')
+                          wx.openSetting({
+                            success: function success(res) {
+                              let authSetting = res.authSetting;
+                              if(authSetting['scope.userInfo']) {
+                                wx.switchTab({
+                                    url: '../pages/me'
+                                });
+                                
+                              }
+                              else {
+                                openSetting()
+                              }
+                            }
+                          });
+                        }
+                      }
+                    })
+                }
+                openSetting()
+                
+            }
+            
         }
     }
 </script>

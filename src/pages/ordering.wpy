@@ -550,11 +550,10 @@
                             userid: userid
                         }
                     }
-                    console.log(data)
                     let submitInfo = await Api.submitOrder(params)
                     
                     if(submitInfo.data.retCode == 0) {
-                        wepy.navigateTo({
+                        wepy.redirectTo({
                             url: '../pages/afterOrder?orderid=' + submitInfo.data.data + '&reffer=' + '../pages/detail' 
                         })
                     }

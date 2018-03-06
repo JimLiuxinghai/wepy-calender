@@ -268,7 +268,7 @@
                 }
             },
         }
-        async onLoad () {
+        async onShow () {
             let sysInfo = wepy.getSystemInfoSync()
             let orderInfo = await this.methods.getOrder()
             orderInfo.content.forEach((item) => {
