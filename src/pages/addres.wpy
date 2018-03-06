@@ -169,7 +169,10 @@
                     console.log(resData)
                     if(resData.data.retCode == 0) {
                         wepy.navigateTo({
-                            url: '../pages/resident'                        })
+                            url: '../pages/resident'                        
+
+
+                        })
                     }
                     else {
                         wepy.showToast({
@@ -181,13 +184,15 @@
             }
         }
         async onLoad (options) {
+            if(options.params) {
+                let params = JSON.parse(options.params)
+                console.log(params)
+                this.customerName = params.customerName
+                this.id = params.id
+                this.customerIdentity = params.customerIdentity
+                this.phoneNo = params.phoneNo
+            }
             
-            let params = JSON.parse(options.params)
-            console.log(params)
-            this.customerName = params.customerName
-            this.id = params.id
-            this.customerIdentity = params.customerIdentity
-            this.phoneNo = params.phoneNo
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
 
