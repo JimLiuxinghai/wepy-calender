@@ -65,6 +65,7 @@ const getMen = (params) => wxRequest(params, host + '/getCacheGuests?userId=' + 
 
 const postMen = (params) => wxRequest(params, host + '/saveCacheGuests?userId=' + params.query.userid)
 
+const deleteMen = (params) => wxRequest(params, host + '/delCacheGuests?userId=' + params.query.userid)
 
 //city
 const cityList = (params) => wxRequest(params, host + '/getCities/' + params.query.mctCode)
@@ -89,5 +90,6 @@ module.exports = {
     cityList,
     getCon,
     payDefer,
-    backOrder
+    backOrder,
+    deleteMen
 }

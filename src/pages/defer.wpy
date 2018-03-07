@@ -159,8 +159,9 @@
             gotoPay () {
             	let _self = this
             	_self.priceInfo.orderNo = _self.orderid
-            	_self.priceInfo.deferDays = _self.day
-        	    wepy.navigateTo({
+                _self.priceInfo.deferDays = _self.day
+                console.log(_self.priceInfo, '***********')
+        	    wepy.redirectTo({
         	        url: '../pages/conPay?price=' + JSON.stringify(_self.priceInfo)
         	    })
             }

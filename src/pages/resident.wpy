@@ -64,7 +64,7 @@
                 <text class="tel">{{item.phoneNo}}</text>
                 
                 <image class="edit" src="../img/edit.png" @tap="edit({{item}})"></image>
-                <image class="del" src="../img/delet.png" @tap="delete"></image>
+                <image class="del" src="../img/delet.png" @tap="delete({{item.id}})"></image>
             </view>
         </repeat>
 
@@ -101,6 +101,18 @@
                 wepy.navigateTo({
                     url: '../pages/addres?params=' + JSON.stringify(param)
                 })
+            },
+            async delete (id) {
+                let userid = await wepy.getStorageSync('userid')
+                let params = {
+                    method: 'POST',
+                    data: [id],
+                    query: {
+                        userid: userid
+                    }
+                }
+                let resData = await Api.deleteMen(params)
+                console.log(resData, '删除成功')
             }
         }
         async onLoad () {

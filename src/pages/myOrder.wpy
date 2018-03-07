@@ -71,7 +71,7 @@
     }
 </style>
 <template>
-    <view class="myorder" style="min-height: {{height}}px;">
+    <scroll-view  class="myorder" style="height: {{height}}px;" scroll-y="true" bindscrolltolower="searchScrollLower">
         <repeat for="{{orderInfo.content}}" key="index" index="index" item="item">
             <view class="order">
                 <view class="item-wrapper">
@@ -121,7 +121,7 @@
                 </view>
             </view>
         </repeat>
-    </view>
+    </scroll-view>
 </template>
 <script>
     import wepy from 'wepy'
@@ -155,13 +155,15 @@
         }
         data = {
             height: 0,
-            orderInfo: {}
+            orderInfo: {},
+            page: 0
         }
         methods = {
-            async getOrder () {
+            async getOrder (page) {
+                let _self = this
                 let userid = await wepy.getStorageSync('userid')
                 let data = {
-                    pageNum: 0,
+                    pageNum: page,
                     pageSize: 10
                 }
                 let params = {
@@ -174,6 +176,12 @@
                 let orderList = await Api.orderList(params)
                 
                 return orderList.data.data
+            },
+            async searchScrollLower () {
+                this.page += 1
+                let orderInfo = await this.methods.getOrder(this.page)
+                let newInfo = this.orderInfo.concat(orderInfo)
+                this.orderInfo = newInfo
             },
             gotoDetail (orderid) {
                 wepy.navigateTo({
@@ -270,7 +278,7 @@
         }
         async onShow () {
             let sysInfo = wepy.getSystemInfoSync()
-            let orderInfo = await this.methods.getOrder()
+            let orderInfo = await this.methods.getOrder(0)
             orderInfo.content.forEach((item) => {
                 item.statusStr = statusMap[item.status]
                 item.payStr = payMap[item.payStatus]

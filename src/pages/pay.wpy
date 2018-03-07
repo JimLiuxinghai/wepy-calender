@@ -80,7 +80,7 @@
 <template>
     <view class="pay" style="min-height: {{height}}px;">
         <view class="title">支付总金额</view>
-        <view class="num">{{(payData.wxPayAmt + payData.goldBeans + payData.foregift) || 0}}</view>
+        <view class="num">{{payData.wxPayAmt + payData.goldBeans + payData.foregift}}</view>
         <view class="panel" wx:if="{{payData.beansBalance > 0}}">
             <view class="img">
                 <image class="beans" src="../img/beans.png"></image>
@@ -90,7 +90,7 @@
                     金豆支付
                 </view>
                 <view class="desp">
-                    金豆剩余{{payData.beansBalance}}个，将自动扣除{{payData.goldBeans + payData.foregift}}个
+                    金豆剩余{{payData.beansBalance}}个，将自动扣除{{goldNum}}个
                 </view>
             </view>
         </view>
@@ -103,7 +103,7 @@
                     微信支付
                 </view>
                 <view class="desp">
-                    微信支付{{payData.wxPayAmt + payData.foregift}}元
+                    微信支付{{wxNum}}元
                 </view>
             </view>
         </view>
@@ -137,7 +137,9 @@
             height: 0,
             payData: {},
             userid: '',
-            orderid: ''
+            orderid: '',
+            wxNum: 0,
+            goldNum: 0
         }
         methods = {
             async getPay (userid, orderid) {
@@ -153,7 +155,6 @@
                 return payRes.data.data
             },
             async pay () {
-                console.log(123333333)
                 let _self = this;
                 let openId = await wepy.getStorageSync('openId')
                 //测试环境
@@ -215,7 +216,6 @@
                        })
                     },150)
                 }
-                console.log(payRes)
             }
         }
         async onLoad (options) {
@@ -226,7 +226,17 @@
             this.orderid = orderid
             let payRes = await this.methods.getPay(userid, orderid)
             this.payData = payRes.payDistributeInfo
-            
+            //判断出现几种支付情况
+            if(this.payData.wxPay && this.payData.beansBalance > 0) {
+                this.goldNum = this.payData.goldBeans
+                this.wxNum = this.payData.foregift + this.payData.wxPayAmt - this.goldNum
+            }
+            else if(this.payData.wxPay && this.payData.beansBalance <= 0){
+                this.wxNum = this.payData.foregift + this.payData.wxPayAmt
+            }
+            else if(!this.payData.wxPay && this.payData.beansBalance > 0) {
+                this.goldNum = this.payData.goldBeans + this.payData.foregift
+            }
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
             this.$apply()

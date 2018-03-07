@@ -67,7 +67,7 @@
                 </view>
             </repeat>
         </view>
-        <view class="totalPrice">订单总价:{{totalPrice.base}}</view>
+        <view class="totalPrice">订单总价:{{totalPrice.base * rooms}}</view>
     </view>
 </template>
 <script>

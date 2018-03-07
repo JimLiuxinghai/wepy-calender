@@ -17,5 +17,5 @@ const env = {
         //imgUrl: 'http://img.aiduminsu.com:80/i15/'
     }
 }
-console.log(env[currentEnv], 'config')
+
 module.exports = env[currentEnv]

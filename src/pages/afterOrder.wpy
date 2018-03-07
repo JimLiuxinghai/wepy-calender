@@ -365,7 +365,7 @@
             defer (orderid, name, type) {
                 let url = '../pages/defer?orderid=' + orderid + '&name=' + name + '&type=' + type
                 console.log(url)
-                wepy.navigateTo({
+                wepy.redirectTo({
                     url: url
                 })
             },

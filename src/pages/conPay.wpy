@@ -158,7 +158,7 @@
                         deferSubInfo: {
                         	deferDays: _self.payData.deferDays,
                         	orderNo: _self.payData.orderNo,
-                        	payAmt: _self.payData.wxPayAmt,
+                        	payAmt: _self.payData.wxPayAmt || 0,
                         	payType: 'WEI'
                         }
                     }
@@ -213,6 +213,7 @@
             this.height = sysInfo.screenHeight
             let priceInfo = JSON.parse(options.price)
             this.payData = priceInfo
+            
             this.deferDays = options.deferDays
             let userid = await wepy.getStorageSync('userid')
             this.userid = userid

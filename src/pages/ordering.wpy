@@ -401,7 +401,7 @@
                     }
 
                 }
-                let num = this.rooms * this.mens
+                
                 this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
                 console.log(this.showPrice, 'rooms')
                 
@@ -485,7 +485,7 @@
             dealShowPrice (rooms, priceInfo) {
                 let showPrice = {
                     originalPrice: 0,
-                    foregift: priceInfo.foregift,
+                    foregift: priceInfo.foregift * rooms,
                     highPrice: priceInfo.roomTypeInfo.highPrice || 0 * rooms + priceInfo.foregift
                 }
                 let originPrice = 0
