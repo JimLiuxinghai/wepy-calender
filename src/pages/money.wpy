@@ -41,6 +41,20 @@
                 line-height: 60rpx;
             }
         }
+        .button-wrapper {
+            text-align: center;
+            margin-top: 80rpx;
+            .button {
+                display: inline-block;
+                width: 250rpx;
+                height: 70rpx;
+                line-height: 70rpx;
+                border-radius: 70rpx;
+                background: #ff7e00;
+                color: #ffffff;
+                font-size: 30rpx;
+            }
+        }
     }
 </style>
 <template>
@@ -58,6 +72,11 @@
             </view>
             <view class="text">
                 金豆是科爱住公寓用户在科爱住客户端进行预订、参与活动给予的奖励。科爱住金豆仅能在科爱住客户端使用,可直接用于支付科爱住房费。消费是1颗金豆可抵1元使用。
+            </view>
+        </view>
+        <view class="button-wrapper">
+            <view class="button" @tap="gotopay">
+                去充值
             </view>
         </view>
     </view>
@@ -79,7 +98,11 @@
             height: 0
         }
         methods = {
-            
+            gotopay () {
+                wepy.navigateTo({
+                    url: '../pages/payGold?gold=' + this.gold
+                })
+            }
         }
         async onLoad (options) {
             console.log(options)

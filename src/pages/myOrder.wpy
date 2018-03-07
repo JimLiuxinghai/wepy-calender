@@ -183,7 +183,7 @@
                 this.page += 1
                 let orderInfo = await this.methods.getOrder(this.page)
                 let newInfo = this.orderInfo.content.concat(orderInfo.content)
-                this.orderInfo = newInfo
+                this.orderInfo.content = newInfo
             },
             gotoDetail (orderid) {
                 wepy.navigateTo({

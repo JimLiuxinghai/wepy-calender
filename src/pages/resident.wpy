@@ -112,7 +112,13 @@
                     }
                 }
                 let resData = await Api.deleteMen(params)
-                console.log(resData, '删除成功')
+                
+                if(resData.data.retCode == 0) {
+                    wepy.showToast({
+                       title: '删除成功',
+                       icon: 'success'
+                    })
+                }
             }
         }
         async onLoad () {

@@ -1,0 +1,112 @@
+<style lang="less">
+    .paygold {
+        width: 100%;
+        background: #f0f0f0;
+        overflow: hidden;
+        .my {
+        	margin: 25rpx 0;
+        	display: flex;
+        	padding: 50rpx 30rpx;
+        	color: #ffffff;
+        	background: #fc9530;
+        	.title {
+        		flex: 1;
+        		text-align: left;
+        		font-size: 32rpx;
+        	}
+        	.num {
+        		flex: 1;
+        		text-align: right;
+        		font-size: 32rpx;
+        	}
+        }
+        .panel {
+        	background: #ffffff;
+        	padding: 40rpx 30rpx;
+        	.title {
+        		font-size: 32rpx;
+        		color: #9a9a9a;
+        	}
+        	.num-wrapper {
+        		width: 180rpx;
+        		height: 80rpx;
+        		background: #fae6d2;
+        		color: #fc9530;
+        		font-size: 30rpx;
+        		text-align: center;
+        		line-height: 80rpx;
+        		border-radius: 10rpx;
+        		display: inline-block;
+        		
+        	}
+        }
+        
+    }
+</style>
+<template>
+    <view class="paygold" style="min-height: {{height}}px;">
+        <view class="my">
+        	<view class="title">我的金豆</view>
+        	<view class="num">{{gold}}豆</view>
+        </view>
+        <view class="panel">
+        	<view class="title">请选择充值金额</view>
+        	<repeat for="{{money}}" key="index" index="index" item="item">
+        		<view class="num-wrapper">
+        			{{item.num}}元
+        		</view>
+        	</repeat>
+        </view>
+    </view>
+</template>
+<script>
+
+    import wepy from 'wepy'
+    import Api from '../utils/api'
+    export default class PayGold extends wepy.page {
+        config = {
+            navigationBarTitleText: '金豆充值'
+        }
+        data = {
+            height: 0,
+            gold: 0,
+            money: [
+		    	{
+		    		num: 500,
+		    		status: false
+		    	},
+		    	{
+		    		num: 1000,
+		    		status: false
+		    	},
+		    	{
+		    		num: 2000,
+		    		status: false
+		    	},
+		    	{
+		    		num: 3000,
+		    		status: false
+		    	},
+		    	{
+		    		num: 5000,
+		    		status: false
+		    	},
+		    	{
+		    		num: 8000,
+		    		status: false
+		    	}
+		    ]
+        }
+        methods = {
+            
+        }
+        async onLoad (options) {
+            
+            this.gold = options.gold
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
+            
+            this.$apply()
+        }
+    }
+</script>

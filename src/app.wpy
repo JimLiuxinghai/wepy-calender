@@ -67,7 +67,8 @@ export default class extends wepy.app {
       'pages/myOrder',
       'pages/pay',
       'pages/defer',
-      'pages/conPay'
+      'pages/conPay',
+      'pages/payGold'
     ],
     window: {
       backgroundTextStyle: 'light',
