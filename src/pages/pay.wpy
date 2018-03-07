@@ -229,7 +229,7 @@
             //判断出现几种支付情况
             if(this.payData.wxPay && this.payData.beansBalance > 0) {
                 this.goldNum = this.payData.goldBeans
-                this.wxNum = this.payData.foregift + this.payData.wxPayAmt - this.goldNum
+                this.wxNum = this.payData.foregift + this.payData.wxPayAmt + this.payData.goldBeans - this.goldNum
             }
             else if(this.payData.wxPay && this.payData.beansBalance <= 0){
                 this.wxNum = this.payData.foregift + this.payData.wxPayAmt

@@ -60,6 +60,9 @@ const getCon = (params) => wxRequest(params, host + '/deferCalc?userId=' + param
 const payDefer = (params) => wxRequest(params, host + '/deferSub?userId=' + params.query.userid)
 
 const backOrder = (params) => wxRequest(params, host + '/restoreOrder/' + params.query.orderid + '?userId=' + params.query.userid)
+
+const payGold = (params) => wxRequest(params, host + '/recharge?userId=' + params.query.userid)
+
 //men
 const getMen = (params) => wxRequest(params, host + '/getCacheGuests?userId=' + params.query.userid)
 
@@ -91,5 +94,6 @@ module.exports = {
     getCon,
     payDefer,
     backOrder,
-    deleteMen
+    deleteMen,
+    payGold
 }

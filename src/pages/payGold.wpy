@@ -37,10 +37,65 @@
         		line-height: 80rpx;
         		border-radius: 10rpx;
         		display: inline-block;
+        		margin: 20rpx 0;
+        		border: 1px solid #fc9530;
         		
         	}
+        	.yes {
+        		background: #fc9530;
+        		color: #ffffff;
+        	}
+        	.margin {
+        		margin: 20rpx 70rpx;
+        	}
+        	.input-wrapper {
+        		border-top: 1px dashed #f0f0f0;
+        		margin-top: 40rpx;
+        		padding-top: 48rpx;
+        		.wrapper {
+        			margin-top: 30rpx;
+        			input {
+        				display: inline-block;
+        				width: 300rpx;
+        				height: 60rpx;
+        				line-height: 60rpx;
+        				//border: 1px solid #a9a9a9;
+        				background: #fae6d2;
+        				border-radius: 10rpx;
+        				border: 1px solid #fc9530;
+        				vertical-align: middle;
+        				box-sizing: border-box;
+        				padding: 0 10rpx;
+        				font-size: 30rpx;
+        			}
+        			text {
+        				font-size: 30rpx;
+        				margin-left: 18rpx;
+        				vertical-align: middle;
+        			}
+        		}
+        		.disable {
+        			input {
+        				border: 1px solid #a9a9a9;
+        				background: #f1f1f1;
+        			}
+        		}
+        	}
         }
-        
+        .button-wrapper {
+            text-align: center;
+            margin-top: 80rpx;
+            .button {
+                display: inline-block;
+                width: 300rpx;
+                height: 70rpx;
+                line-height: 70rpx;
+                border-radius: 70rpx;
+                background: #ff7e00;
+                color: #ffffff;
+                font-size: 30rpx;
+            }
+        }
     }
 </style>
 <template>
@@ -52,10 +107,29 @@
         <view class="panel">
         	<view class="title">请选择充值金额</view>
         	<repeat for="{{money}}" key="index" index="index" item="item">
-        		<view class="num-wrapper">
+        		<view wx:if="{{index != 1 && index != 4}}" class="num-wrapper {{item.status}}" @tap="choose({{index}})">
+        			{{item.num}}元
+        		</view>
+        		<view wx:if="{{index == 1 || index == 4}}" class="num-wrapper margin {{item.status}}" @tap="choose({{index}})">
         			{{item.num}}元
         		</view>
         	</repeat>
+        	<view class="input-wrapper">
+        		<view class="title">输入充值金额</view>
+        		<view class="wrapper" wx:if="{{!hasChoose}}">
+        			<input type="number" bindinput="inputFun" />
+        			<text>元</text>
+        		</view>
+        		<view class="wrapper disable" wx:if="{{hasChoose}}">
+        			<input type="number" bindfocus="inputFocus"/>
+        			<text>元</text>
+        		</view>
+        	</view>
+        </view>
+        <view class="button-wrapper">
+            <view class="button" @tap="pay">
+                确定充值
+            </view>
         </view>
     </view>
 </template>
@@ -63,6 +137,7 @@
 
     import wepy from 'wepy'
     import Api from '../utils/api'
+    import envConfig from '../utils/config'
     export default class PayGold extends wepy.page {
         config = {
             navigationBarTitleText: '金豆充值'
@@ -70,35 +145,116 @@
         data = {
             height: 0,
             gold: 0,
+            hasChoose: false,
+            num: 0,
             money: [
 		    	{
 		    		num: 500,
-		    		status: false
+		    		status: "no"
 		    	},
 		    	{
 		    		num: 1000,
-		    		status: false
+		    		status: "no"
 		    	},
 		    	{
 		    		num: 2000,
-		    		status: false
+		    		status: "no"
 		    	},
 		    	{
 		    		num: 3000,
-		    		status: false
+		    		status: "no"
 		    	},
 		    	{
 		    		num: 5000,
-		    		status: false
+		    		status: "no"
 		    	},
 		    	{
 		    		num: 8000,
-		    		status: false
+		    		status: "no"
 		    	}
 		    ]
         }
         methods = {
-            
+            choose (index) {
+            	this.money.forEach((item) => {
+            		item.status = "no"
+            	})
+            	this.money[index].status = "yes"
+            	this.hasChoose = true
+            	this.num = this.money[index].num
+            	this.$apply()
+            },
+            inputFocus() {
+            	this.money.forEach((item) => {
+            		item.status = "no"
+            	})
+            	this.num = 0
+            	this.hasChoose = false
+            },
+            inputFun(e) {
+            	let value = e.detail.value
+            	this.num = value
+            },
+            async pay() {
+            	let _self = this
+            	if(this.num == 0 || this.num == '') {
+            		wepy.showToast({
+            		   title: '请选择或填写充值金额',
+            		   icon: 'none'
+            		})
+            		return false
+            	}
+            	else {
+            		console.log(envConfig.payUrl + '/weixin/callback')
+            		let openId = await wepy.getStorageSync('openId')
+            		let userid = await wepy.getStorageSync('userid')
+            		let params = {
+            		    method: 'POST',
+            		    query: {
+            		        userid: userid
+            		    },
+            		    data: {
+            		    	openId: openId,
+            		    	redirect: envConfig.payUrl + '/weixin/callback',
+            		    	mctCode: envConfig.mctCode,
+            		    	appId: envConfig.appid,
+            		    	amount: _self.num
+            		    }
+            		}
+            		let resData = await Api.payGold(params)
+            		
+            		let data = resData.data.data
+            		
+            		wx.requestPayment({
+            		   timeStamp: data.timeStamp,
+            		   nonceStr: data.nonceStr,
+            		   package: data.package,
+            		   signType: data.signType,
+            		   paySign: data.paySign,
+            		   success:function(res){
+            		        wepy.showToast({
+            		           title: '支付成功',
+            		           icon: 'success'
+            		        })
+            		        setTimeout(function(){
+            		           wepy.hideToast()
+            		           wepy.switchTab({
+                                   url: '../pages/me'
+                               })
+            		        },150)
+            		        
+            		   },
+            		   fail:function(res){
+            		        wepy.showToast({
+            		          title: '支付失败，请尽快完成支付',
+            		          icon: 'none'
+            		        }) 
+            		   },
+            		   
+            		})
+            	}
+
+            }
         }
         async onLoad (options) {
             

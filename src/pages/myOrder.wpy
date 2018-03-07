@@ -130,24 +130,19 @@
     import Api from '../utils/api'
     import util from '../utils/util'
     const statusMap = {
-        1: '待支付',
-        2: '待确认',
-        3: '已确认',
-        4: '已入住',
-        5: '已离店',
-        6: '已取消'
+        2: '待支付',
+        4: '待确认',
+        5: '已确认',
+        6: '已入住',
+        7: '已取消',
+        17: '退房申请中',
+        18: '查房中',
+        20: '已退房',
+        11: '房满拒单',
+        9: '用户取消，退款中',
+        10: '用户取消，退款成功'
     }
-    const payMap = {
-        1: '未支付',
-        2: '已支付',
-        3: '退款中',
-        4: '退款成功'
-    }
-    const checkOutMap = {
-        1: '用户申请退房',
-        2: '查房中',
-        3: '已退房'
-    }
+    
     export default class Myorder extends wepy.page {
         config = {
             navigationBarTitleText: '我的订单'
@@ -282,8 +277,10 @@
             let sysInfo = wepy.getSystemInfoSync()
             let orderInfo = await this.methods.getOrder(0)
             orderInfo.content.forEach((item) => {
-                item.statusStr = statusMap[item.status]
-                item.payStr = payMap[item.payStatus]
+                item.checkoutStatus = item.checkoutStatus ? item.checkoutStatus + 10 : 0
+                console.log(item.checkoutStatus)
+
+                item.statusStr = statusMap[parseInt(item.status) + parseInt(item.checkoutStatus) + parseInt(item.payStatus)]
                 item.bDateStr = util.dateUtils.format(new Date(item.bDate))
                 item.eDateStr = util.dateUtils.format(new Date(item.eDate))
                 item.dateLen =  util.dateUtils.getDateDiff(item.bDateStr, item.eDateStr)

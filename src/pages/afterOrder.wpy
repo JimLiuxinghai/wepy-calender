@@ -127,10 +127,10 @@
                 </view>
                 <text>:</text>
                 <view class="value">{{orderDetail.orderGenInfo.statusStr}}</view>
-                <view class="right">
+                <!-- <view class="right">
                     <text>支 付 状 态:</text>
                     <text class="green">{{orderDetail.orderGenInfo.payStr}}</text>
-                </view>
+                </view> -->
             </view>
         </view>
 
@@ -267,12 +267,17 @@
     import Api from '../utils/api'
     import util from '../utils/util'
     const statusMap = {
-        1: '等待支付',
-        2: '待确认',
-        3: '已确认',
-        4: '已入住',
-        5: '已离店',
-        6: '已取消'
+        2: '待支付',
+        4: '待确认',
+        5: '已确认',
+        6: '已入住',
+        7: '已取消',
+        17: '退房申请中',
+        18: '查房中',
+        20: '已退房',
+        11: '房满拒单',
+        9: '用户取消，退款中',
+        10: '用户取消，退款成功'
     }
     const payMap = {
         1: '未支付',
@@ -305,7 +310,8 @@
                 }
                 let result = await Api.orderDetail(params)
                 let newData = result.data.data
-                newData.orderGenInfo.statusStr = statusMap[newData.orderGenInfo.status]
+                newData.orderGenInfo.checkoutStatus = newData.orderGenInfo.checkoutStatus ? newData.orderGenInfo.checkoutStatus + 10 : 0
+                newData.orderGenInfo.statusStr = statusMap[parseInt(newData.orderGenInfo.status) + parseInt(newData.orderGenInfo.payStatus) + parseInt(newData.orderGenInfo.checkoutStatus)]
                 newData.orderGenInfo.payStr = payMap[newData.orderGenInfo.payStatus]
                 newData.orderGenInfo.bDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.bDate))
                 newData.orderGenInfo.eDateStr = util.dateUtils.format(new Date(newData.orderGenInfo.eDate))

@@ -285,7 +285,7 @@
             </view>
         </repeat>
 
-        <view class="add" @tap="mens(1)">
+        <view class="add" @tap="mensDeal(1)">
             <view class="icon">+</view>
             <text>添加入住人</text>
         </view>
@@ -448,12 +448,23 @@
             },
             //选择常用入住人
             selectRes (e) {
+
                 let index = e.detail.value
                 let domIndex = e.target.dataset.index
-                this.resindex = index
-                this.mensInfo[domIndex].name = this.resident[index].customerName
-                this.mensInfo[domIndex].pid = this.resident[index].customerIdentity
-                this.$apply()
+                
+                if(this.resident.length > 0) {
+                    this.resindex = index
+                    this.mensInfo[domIndex].name = this.resident[index].customerName
+                    this.mensInfo[domIndex].pid = this.resident[index].customerIdentity
+                    this.$apply()
+                }
+                else {
+                    wepy.showToast({
+                       title: '暂无常用入住人',
+                       icon: 'none'
+                    })
+                }
+                
             },
             async getPrice (bDate, eDate, len, roomid, userid) {
                 let oType = wepy.getStorageSync('oType')
