@@ -3,6 +3,8 @@
         padding: 0 30rpx;
         background: #f0f0f0;
         overflow: hidden;
+        width: 100%;
+        box-sizing: border-box;
         .order {
              margin-top: 20rpx;
              font-size: 26rpx;
@@ -180,7 +182,7 @@
             async searchScrollLower () {
                 this.page += 1
                 let orderInfo = await this.methods.getOrder(this.page)
-                let newInfo = this.orderInfo.concat(orderInfo)
+                let newInfo = this.orderInfo.content.concat(orderInfo.content)
                 this.orderInfo = newInfo
             },
             gotoDetail (orderid) {
