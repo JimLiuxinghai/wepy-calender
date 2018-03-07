@@ -90,7 +90,7 @@
                     金豆支付
                 </view>
                 <view class="desp">
-                    金豆剩余{{payData.beansBalance}}个，将自动扣除{{payData.goldBeans}}个
+                    金豆剩余{{payData.beansBalance}}个，将自动扣除{{payData.goldBeans + payData.foregift}}个
                 </view>
             </view>
         </view>
