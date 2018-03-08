@@ -205,7 +205,7 @@
             		return false
             	}
             	else {
-            		console.log(envConfig.payUrl + '/weixin/callback')
+            		
             		let openId = await wepy.getStorageSync('openId')
             		let userid = await wepy.getStorageSync('userid')
             		let params = {
@@ -215,7 +215,7 @@
             		    },
             		    data: {
             		    	openId: openId,
-            		    	redirect: envConfig.payUrl + '/weixin/callback',
+            		    	redirect: envConfig.payUrl + '/weixin/payInform',
             		    	mctCode: envConfig.mctCode,
             		    	appId: envConfig.appid,
             		    	amount: _self.num

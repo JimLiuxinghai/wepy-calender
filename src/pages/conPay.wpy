@@ -153,7 +153,7 @@
                         },
                         data: {
                             openId: openId,
-                            redirect: envConfig.payUrl + '/weixin/callback',
+                            redirect: envConfig.payUrl + '/weixin/payInform',
                             mctCode: envConfig.mctCode,
                             appId: envConfig.appid,
                             deferSubInfo: {
