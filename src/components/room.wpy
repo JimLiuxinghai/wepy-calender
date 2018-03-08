@@ -75,8 +75,10 @@
         <view class="info">
             <view class="price">
                 <text class="name">{{item.roomName}}</text>
-                <text class="num">￥{{item.price}}</text>
-                <text class="text">/日</text>
+                <text class="num" wx:if="{{oType == 'a'}}">￥{{item.price}}</text>
+                <text class="num" wx:if="{{oType == 'p'}}">￥{{item.hourPrice}}</text>
+                <text class="text" wx:if="{{oType == 'a'}}">/日</text>
+                <text class="text" wx:if="{{oType == 'p'}}">/4h</text>
             </view>
             <view class="still">原价:￥{{item.highPrice}}</view>
             <view class="order-wrapper">
@@ -103,7 +105,8 @@ export default class Room extends wepy.component {
     }
     data = {
         modal: false,
-        imgUrl: envConfig.imgUrl
+        imgUrl: envConfig.imgUrl,
+        oType: ''
     }
     methods = {
         showModal (id, index) {
@@ -113,7 +116,9 @@ export default class Room extends wepy.component {
             this.$emit('detail-order', index)
         }
     }
-    onLoad () {
+    async onLoad () {
+        let oType = wepy.getStorageSync('oType')
+        this.oType = oType
         console.log(this.item)
         console.log(this.id, 'Id')
     }
