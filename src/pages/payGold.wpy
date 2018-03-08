@@ -215,7 +215,7 @@
             		    },
             		    data: {
             		    	openId: openId,
-            		    	redirect: envConfig.payUrl + '/weixin/payInform',
+            		    	redirect: envConfig.payUrl,
             		    	mctCode: envConfig.mctCode,
             		    	appId: envConfig.appid,
             		    	amount: _self.num

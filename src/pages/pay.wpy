@@ -166,7 +166,7 @@
                     data: {
                         openId: openId,
                         orderNo: _self.orderid,
-                        redirect: envConfig.payUrl + '/weixin/payInform',
+                        redirect: envConfig.payUrl,
                         mctCode: envConfig.mctCode,
                         attach: `mini_shop${envConfig.mctCode}`,
                         appId: envConfig.appid,

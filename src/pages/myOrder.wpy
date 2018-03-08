@@ -153,7 +153,8 @@
         data = {
             height: 0,
             orderInfo: {},
-            page: 0
+            page: 1,
+            total: 0
         }
         methods = {
             async getOrder (page) {
@@ -175,10 +176,20 @@
                 return orderList.data.data
             },
             async searchScrollLower () {
-                this.page += 1
-                let orderInfo = await this.methods.getOrder(this.page)
-                let newInfo = this.orderInfo.content.concat(orderInfo.content)
-                this.orderInfo.content = newInfo
+                if(this.page <= this.total) {
+                    let orderInfo = await this.methods.getOrder(this.page)
+                
+                    let newInfo = this.orderInfo.content.concat(orderInfo.content)
+                    this.orderInfo.content = newInfo
+                    this.page += 1
+                }
+                else {
+                     wepy.showToast({
+                        title: '已经到底了！',
+                        icon: 'success'
+                     })
+                }
+                
             },
             gotoDetail (orderid) {
                 wepy.navigateTo({
@@ -285,10 +296,10 @@
                 item.eDateStr = util.dateUtils.format(new Date(item.eDate))
                 item.dateLen =  util.dateUtils.getDateDiff(item.bDateStr, item.eDateStr)
                 item.cancelState = this.methods.cancelState(item)
-                console.log(item.cancelState)
             })
             this.orderInfo = orderInfo
-            console.log(this.orderInfo, 'this')
+            this.total = orderInfo.totalPages
+            console.log(this.total, 'total')
             this.height = sysInfo.screenHeight
             this.$apply()
         }
