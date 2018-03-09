@@ -157,7 +157,7 @@
             async pay () {
                 let _self = this;
                 let openId = await wepy.getStorageSync('openId')
-                //测试环境
+
                 let params = {
                     method: 'POST',
                     query: {
@@ -174,48 +174,57 @@
                     }
                 }
                 let payRes = await Api.pay(params)
-                let data = payRes.data.data
-                if(data.needWxPay) {
-                    wx.requestPayment({
-                       timeStamp: data.payParams.timeStamp,
-                       nonceStr: data.payParams.nonceStr,
-                       package: data.payParams.package,
-                       signType: data.payParams.signType,
-                       paySign: data.payParams.paySign,
-                       success:function(res){
+                if(payRes.data.retCode == 0) {
+                    let data = payRes.data.data
+                    if(data.needWxPay) {
+                        wx.requestPayment({
+                        timeStamp: data.payParams.timeStamp,
+                        nonceStr: data.payParams.nonceStr,
+                        package: data.payParams.package,
+                        signType: data.payParams.signType,
+                        paySign: data.payParams.paySign,
+                        success:function(res){
                             wepy.showToast({
-                               title: '支付成功',
-                               icon: 'success'
+                                title: '支付成功',
+                                icon: 'success'
                             })
                             setTimeout(function(){
-                               wepy.hideToast()
-                               wepy.redirectTo({
-                                 url: '../pages/myOrder?orderid=' + _self.orderid
-                               })
+                                wepy.hideToast()
+                                wepy.redirectTo({
+                                    url: '../pages/myOrder?orderid=' + _self.orderid
+                                })
                             },150)
-                            
-                       },
-                       fail:function(res){
+                                
+                        },
+                        fail:function(res){
                             wepy.showToast({
-                              title: '支付失败，请尽快完成支付',
-                              icon: 'none'
+                                title: '支付失败，请尽快完成支付',
+                                icon: 'none'
                             }) 
-                       },
-                       
-                    })
+                        },
+                        
+                        })
+                    }
+                    else {
+                        wepy.showToast({
+                            title: '支付成功',
+                            icon: 'success'
+                        })
+                        setTimeout(function(){
+                            wepy.hideToast()
+                            wepy.redirectTo({
+                                url: '../pages/myOrder?orderid=' + _self.orderid
+                            })
+                        },150)
+                    }
                 }
                 else {
                     wepy.showToast({
-                       title: '支付成功',
-                       icon: 'success'
+                        title: payRes.data.retMsg,
+                        icon: 'none'
                     })
-                    setTimeout(function(){
-                       wepy.hideToast()
-                       wepy.redirectTo({
-                         url: '../pages/myOrder?orderid=' + _self.orderid
-                       })
-                    },150)
                 }
+                
             }
         }
         async onLoad (options) {
