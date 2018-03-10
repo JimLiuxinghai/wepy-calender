@@ -1,6 +1,20 @@
 <style lang="less">
     .tab-wrapper {
         padding: 0 40rpx;
+        .input-wrapper {
+            width: 70%;
+            height: 60rpx;
+            line-height: 60rpx;
+            border-radius: 30rpx;
+            background: rgba(255, 255, 255, 0.5);
+            margin: 30rpx auto;
+            .search {
+                line-height: 60rpx;
+                height: 60rpx;
+                font-size: 24rpx;
+                padding: 0 20rpx;
+            }
+        }
         .tab-title {
             display: flex;
             .title {
@@ -173,6 +187,9 @@
 
 <template>
     <view class="tab-wrapper">
+        <view class="input-wrapper">
+            <input placeholder="请输入关键字/爱屋名称" type="text" class="search"  bindinput="input"></input>
+        </view>
         <view class="tab-title">
             <view class="title {{type == 'day' ? 'active':''}}" style="border-radius: 10rpx 0 0 0;" @tap="titleTap" data-type="day">全日房</view>
             <view class="title {{type == 'hour' ? 'active':''}}" @tap="titleTap" style="border-radius: 0 10rpx 0 0;" data-type="hour">时租房</view>
@@ -182,7 +199,7 @@
             <view class="add-select" @tap="openCity">
                 <view class="inner">{{address}}</view>
                 <view class="choose">
-                    我的位置
+                    选择城市
                 </view>
             </view>
         </view>
@@ -229,8 +246,8 @@
             </view>
         </view>
 
-        <view class="button-wrapper">
-            <view class="button">爱屋搜索</view>
+        <view class="button-wrapper" @tap="search">
+            <view class="button" >爱屋搜索</view>
         </view>
 
     </view>
@@ -248,7 +265,7 @@
     export default class Hoteltab extends wepy.component {
         data = {
             type: 'day',
-            address: '郑州',
+            address: '',
             cshow: false,
             sshow: false,
             ctype: 0,
@@ -260,12 +277,18 @@
             starthour: hour,
             endhour: 5,
             startindex: 0,
-            hourlen: 0
+            hourlen: 0,
+            code: '',
+            addition: ''
         }
+        
         components = {
             calender: Calender
         }
-
+        props = {
+            cityName: [],
+            cityList: []
+        }
         methods = {
             async titleTap (e) {
                 let type = e.target.dataset.type
@@ -290,6 +313,12 @@
 
                 this.$apply()
             },
+            input (e) {
+                let value = e.detail.value
+                this.addtion = value
+                console.log(this.addtion)
+            },
+            
             daboulopen () {
                 this.cshow = true
                 this.ctype = 1
@@ -316,21 +345,34 @@
                 this.$apply()
             },
             openCity () {
-                wepy.showActionSheet({
-                  itemList: ['郑州'],
+                let _self = this
+                wx.showActionSheet({
+                  itemList: _self.cityName,
                   success: function(res) {
-                    console.log(res.tapIndex)
+                    _self.code = _self.cityList[res.tapIndex].code
+                    _self.address = _self.cityName[res.tapIndex]
+                    _self.$apply()
                   },
                   fail: function(res) {
                     console.log(res.errMsg)
                   }
                 })
+                
+            },
+            search() {
+                let param = {
+                    addition: this.addtion,
+                    cityCode: this.code
+                }
+                this.$emit('search', param)
             }
 
         }
         async onLoad() {
             let day = util.dateUtils.format(new Date())
             wepy.setStorageSync('oType', 'a')
+
+
             let nextDay = util.dateUtils.switch(day, 1)
             this.outdate = [day, nextDay]
             this.showdate = [day, nextDay]

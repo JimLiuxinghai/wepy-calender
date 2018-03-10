@@ -11,20 +11,7 @@
         }
         .content {
 
-            .input-wrapper {
-                width: 70%;
-                height: 60rpx;
-                line-height: 60rpx;
-                border-radius: 30rpx;
-                background: rgba(255, 255, 255, 0.5);
-                margin: 30rpx auto;
-                .search {
-                    line-height: 60rpx;
-                    height: 60rpx;
-                    font-size: 24rpx;
-                    padding: 0 20rpx;
-                }
-            }
+            
             position: relative;
             z-index: 2;
         }
@@ -34,11 +21,9 @@
     <view class="index" style="min-height: {{height - 80}}px;">
         <image  class="banner" src="../img/index-banner.png"></image>
         <view class="content">
-            <view class="input-wrapper">
-                <input placeholder="请输入关键字/爱屋名称" type="text" class="search" confirm-type="search" bindinput="input" bindconfirm="search"></input>
-            </view>
             
-            <hoteltab @dateInfo.user="date" :cityList.sync="cityList"></hoteltab>  
+            
+            <hoteltab @search.user="search"  @dateInfo.user="date" :cityList.sync="cityList" :cityName.sync="cityName"></hoteltab>  
         </view>
         <view>
             <repeat for="{{hotelList}}" key="index" index="index" item="item">
@@ -67,7 +52,8 @@
             hotelList: [],
             date: [],
             height: 0,
-            cityList: []
+            cityList: [],
+            cityName: []
         }
         methods = {
             open () {
@@ -77,24 +63,20 @@
                 this.cshow = false
                 console.log(date)
             },
-            input (e) {
-                console.log(e)
-            },
-            search () {
-                console.log(1212)
-            },
+            
             async date (date) {
                 this.date = date
                 wepy.setStorageSync('date', date)
             },
-            async getData () {
+            async getData (addtion, cityCode) {
                 let param = {
                     method: 'POST',
                     data: {
-                        addition: '',
+                        addition: addtion,
+                        cityCode: cityCode,
                         page: {
                             pageNum: 0,
-                            pageSize: 10
+                            pageSize: 20
                         }
                     },
                     query: {
@@ -114,20 +96,44 @@
                     }
                 }
                 let cityList = await Api.cityList(param)
+                console.log(cityList.data)
+                this.cityList = cityList.data.data.citys
+                return cityList.data.data.citys
+                let nameData = [];
+                this.cityList.forEach((city) => {
+                    nameData.push(city.name)
+                })
+                this.cityName = nameData
                 
             },
+            async search (param) {
+                let hotelList = await this.methods.getData(param.addtion, param.cityCode)
+                this.hotelList = hotelList.data.content
+                this.$apply()
+            }
 
         }
         async onLoad () {
             
             let hotelList = await this.methods.getData()
-            this.methods.getCity()
+            let cityData = await this.methods.getCity()
+
+            this.cityList = cityData
+
+            let nameData = [];
+            this.cityList.forEach((city) => {
+                nameData.push(city.name)
+            })
+            this.cityName = nameData
+
+
+
             this.hotelList = hotelList.data.content;
 
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
 
-            this.$apply();
+            this.$apply()
         }
         onShareAppMessage (res) {
             if (res.from === 'button') {
