@@ -62,7 +62,7 @@
                         }
                     })
                 } else {
-                    console.log(e)
+                    
                     let params = {
                        method: 'POST',
                        data: {
@@ -76,6 +76,7 @@
                     let phoneInfo = await Api.getPhone(params)
                     console.log(phoneInfo, '*****')
                     let phoneNum = phoneInfo.data.data.purePhoneNumber
+                    
                     this.methods.register(phoneNum, _self.openid, _self.nickname)
                 }
             },
@@ -93,6 +94,7 @@
                 let registerRes = await Api.register(params)
                 
                 if(registerRes.data.retCode == 0) {
+                    wx.setStorageSync('phone', phone)
                     wepy.switchTab({
                         url: '../pages/me'
                     })

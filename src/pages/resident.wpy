@@ -53,10 +53,10 @@
 </style>
 <template>
     <view class="resident" style="height: {{height}}px;">
-        <navigator class="add-wrapper" url="../pages/addres">
+        <view class="add-wrapper" @tap="gotoAdd">
             <view class="add">+</view>
             添加常住人
-        </navigator>
+        </view>
 
         <repeat for="{{list}}" key="index" index="index" item="item">
             <view class="concat">
@@ -97,8 +97,13 @@
                 // console.log(resData)
                 return resData.data.data
             },
+            gotoAdd () {
+                wepy.redirectTo({
+                    url: '../pages/addres'
+                })
+            },
             edit (param) {
-                wepy.navigateTo({
+                wepy.redirectTo({
                     url: '../pages/addres?params=' + JSON.stringify(param)
                 })
             },

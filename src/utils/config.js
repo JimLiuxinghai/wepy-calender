@@ -11,7 +11,7 @@ const env = {
     prod: {
         host: 'https://shop1.aiduminsu.com/hotel',
         appid: 'wx36d0488dc9e41578',
-        mctCode: 3333,
+        mctCode: 1111,
         payUrl: `https://shop1.aiduminsu.com/hotel/miniCallback/wx36d0488dc9e41578`,
         imgUrl: 'http://img.aiduminsu.com:80/i15/'
     }

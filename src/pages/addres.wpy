@@ -168,7 +168,7 @@
                     let resData = await Api.postMen(params)
                     console.log(resData)
                     if(resData.data.retCode == 0) {
-                        wepy.navigateTo({
+                        wepy.redirectTo({
                             url: '../pages/resident'                        
 
 

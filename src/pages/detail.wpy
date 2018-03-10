@@ -223,11 +223,12 @@
 
         }
         async onLoad (options) {
+            let date = wepy.getStorageSync('date')
             let param = {
                 method: 'POST',
                 data: {
                     type: 'a',
-                    bDate: options.bDate
+                    bDate: date[0]
                 },
                 query: {
                     id: options.id

@@ -156,8 +156,8 @@
                     that.goldBeans = userData.data.data.goldBeans || 0
                     wx.setStorageSync('userid', userData.data.data.id)
                     wx.setStorageSync('phone', userData.data.data.phone)
+                    that.phone = userData.data.data.phone
                     that.$apply()
-                    console.log(that.goldBeans)
                 }
             }
         }
@@ -165,7 +165,7 @@
             //个人信息
             try {
                 let userInfo = await wepy.getUserInfo()
-                console.log(userInfo, '*****')
+                
                 this.userInfo = userInfo.userInfo
 
                 let nickName =  userInfo.userInfo.nickName
@@ -174,7 +174,7 @@
                 let openId = await wepy.getStorageSync('openId')
                 let userid = await wepy.getStorageSync('userid')
                 let phone = await wepy.getStorageSync('phone')
-                if(openId) {
+                if(openId && phone) {
                     this.openid = openId
                     this.phone = phone
                 }

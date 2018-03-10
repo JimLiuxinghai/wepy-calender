@@ -93,6 +93,7 @@ export default class GroupItem extends wepy.component {
     }
     methods = {
         gotoDetail (id, bDate) {
+            console.log(bDate)
             wepy.navigateTo({
               url: '../pages/detail?id='+id + '&bData=' + bDate
             })
