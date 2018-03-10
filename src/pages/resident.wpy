@@ -131,7 +131,11 @@
             this.height = sysInfo.screenHeight
             let list = await this.methods.getMens()
             this.list = list
-            console.log(this.list)
+            if(this.list.length == 0) {
+                wepy.redirectTo({
+                    url: '../pages/addres'
+                })
+            }
             this.$apply()
         }
     }
