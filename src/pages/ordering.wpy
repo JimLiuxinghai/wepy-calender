@@ -264,10 +264,10 @@
                     <view class="item-input">
                         <input placeholder="请填写入住人" value="{{mensInfo[index].name}}" data-index="{{index}}" bindinput="inputmen"/>
                     </view>
-                    <picker @change="selectRes" data-index="{{index}}" value="{{resindex}}" range="{{resName}}">
+                    <picker wx:if="{{resName.length > 0}}" @change="selectRes" data-index="{{index}}" value="{{resindex}}" range="{{resName}}">
                         <view class="item-icon">常用入住人</view>
                     </picker>
-                    
+                    <view wx:if="{{resName.length == 0}}" @tap="noMens" class="item-icon">常用入住人</view>
                 </view>
                 <!-- <view class="item">
                     <view class="item-title">联系方式</view>
@@ -352,7 +352,10 @@
             datelen: 0,
             showPrice: {},
             priceInfo: {},
-            mensInfo: [],
+            mensInfo: [{
+                name: '',
+                pid: ''
+            }],
             ctype: 1,
             cshow: false,
             time: [],
@@ -382,7 +385,8 @@
 
                 }
                 let num = this.mens
-                this.mensInfo = this.methods.dealMens(num)
+                console.log(this.mensInfo)
+                this.mensInfo = this.methods.dealMens(num, this.mensInfo)
                 this.$apply()
             },
             roomsDeal (type) {
@@ -403,7 +407,6 @@
                 }
                 
                 this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
-                console.log(this.showPrice, 'rooms')
                 
                 this.$apply()
             },
@@ -506,13 +509,18 @@
                 showPrice.originalPrice = originPrice
                 return showPrice
             },
-            dealMens (num) {
+            dealMens (num, info) {
                 let newData = []
                 for (let i = 0; i < num; i ++) {
                     let data = {
                         name: '',
                         pid: ''
                     }
+                    if(info[i] && info[i].name) {
+                        data.name = info[i].name;
+                        data.pid = info[i].pid
+                    }
+                    
                     newData.push(data)
                 }
                 return newData
@@ -597,6 +605,12 @@
                 wepy.navigateTo({
                     url: '../pages/price?params=' + JSON.stringify(param)
                 })
+            },
+            noMens () {
+                wepy.showToast({
+                  title: '没有常用入住人',
+                  icon: 'none'
+                }) 
             }
         }
         async onLoad (options) {
@@ -628,7 +642,7 @@
             this.$apply()
             this.priceInfo = await this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
             this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
-            this.mensInfo = this.methods.dealMens(num)
+            this.mensInfo = this.methods.dealMens(num, this.mensInfo)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight
             

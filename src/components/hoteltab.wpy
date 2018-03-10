@@ -317,7 +317,7 @@
             },
             openCity () {
                 wepy.showActionSheet({
-                  itemList: ['A', 'B', 'C'],
+                  itemList: ['郑州'],
                   success: function(res) {
                     console.log(res.tapIndex)
                   },

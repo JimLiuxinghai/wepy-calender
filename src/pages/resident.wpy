@@ -124,6 +124,9 @@
                        icon: 'success'
                     })
                 }
+                let list = await this.methods.getMens()
+                this.list = list
+                this.$apply()
             }
         }
         async onLoad () {

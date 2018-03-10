@@ -38,7 +38,7 @@
                 <input placeholder="请输入关键字/爱屋名称" type="text" class="search" confirm-type="search" bindinput="input" bindconfirm="search"></input>
             </view>
             
-            <hoteltab @dateInfo.user="date"></hoteltab>  
+            <hoteltab @dateInfo.user="date" :cityList.sync="cityList"></hoteltab>  
         </view>
         <view>
             <repeat for="{{hotelList}}" key="index" index="index" item="item">
@@ -66,7 +66,8 @@
             cshow: false,
             hotelList: [],
             date: [],
-            height: 0
+            height: 0,
+            cityList: []
         }
         methods = {
             open () {
@@ -113,6 +114,7 @@
                     }
                 }
                 let cityList = await Api.cityList(param)
+                this.cityList = cityList.data.data.citys
                 console.log(cityList)
             },
 
