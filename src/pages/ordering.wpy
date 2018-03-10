@@ -500,8 +500,9 @@
                 let showPrice = {
                     originalPrice: 0,
                     foregift: priceInfo.foregift * rooms,
-                    highPrice: priceInfo.roomTypeInfo.highPrice || 0 * rooms + priceInfo.foregift
+                    highPrice: priceInfo.originalPrice * rooms + priceInfo.foregift
                 }
+
                 let originPrice = 0
                 priceInfo.roomBasePriceInfos.forEach((dayPrice) => {
                     originPrice += dayPrice.cmpnPrice * rooms

@@ -68,11 +68,11 @@
                 this.date = date
                 wepy.setStorageSync('date', date)
             },
-            async getData (addtion, cityCode) {
+            async getData (addition, cityCode) {
                 let param = {
                     method: 'POST',
                     data: {
-                        addition: addtion,
+                        addition: addition,
                         cityCode: cityCode,
                         page: {
                             pageNum: 0,
@@ -107,7 +107,7 @@
                 
             },
             async search (param) {
-                let hotelList = await this.methods.getData(param.addtion, param.cityCode)
+                let hotelList = await this.methods.getData(param.addition, param.cityCode)
                 this.hotelList = hotelList.data.content
                 this.$apply()
             }

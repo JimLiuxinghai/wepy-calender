@@ -1,8 +1,13 @@
 <style lang="less">
     .tab-wrapper {
         padding: 0 40rpx;
+        .shadow {
+            box-shadow: 0px 0px 20px #56595f;
+            border-radius: 10rpx;
+            overflow: hidden;
+        }
         .input-wrapper {
-            width: 70%;
+            width: 80%;
             height: 60rpx;
             line-height: 60rpx;
             border-radius: 30rpx;
@@ -13,13 +18,25 @@
                 height: 60rpx;
                 font-size: 24rpx;
                 padding: 0 20rpx;
+                width: 80%;
+                display: inline-block;
+            }
+            .search-icon {
+                float: right;
+                margin-right: 10rpx;
+                display: inline-block;
+                vertical-align: top;
+                margin-top: 10rpx;
+                width: 35rpx;
+                height: 35rpx;
             }
         }
         .tab-title {
             display: flex;
+            
             .title {
-                overflow: hidden;
                 flex: 1;
+                position: relative;
                 color: #ffffff;
                 background: rgba(0, 0, 0, 0.5);
                 height: 70rpx;
@@ -29,9 +46,46 @@
                 &.active {
                     background: #ffffff;
                     color: #ff7e00;
-                    border-bottom: 1px solid #ff7e00;
+                    border-bottom: 1rpx solid #ff7e00;
+                }
+                .title-inner {
+                    position: relative;
+                    width: 130rpx;
+                    height: 67rpx;
+                    line-height: 67rpx;
+                    margin: 0 auto;
+                    text-align: center;
+                    z-index: 2;
+                    &.inner-active {
+                        border-bottom: 4rpx solid #ff7e00;
+                    }
+                }
+                .left {
+                    top: 0;
+                    right: -13rpx;
+                    width: 36rpx;
+                    height: 70rpx;
+                    transform: skew(20deg);
+                    background: #ffffff;
+                    position: absolute;
+                    z-index: 2;
+                    border-bottom: 1rpx solid #ff7e00;
+                    
+                }
+                .right {
+                    top: 0;
+                    left: -13rpx;
+                    width: 36rpx;
+                    height: 70rpx;
+                    transform: skew(-20deg);
+                    background: #ffffff;
+                    position: absolute;
+                    z-index: 2;
+                    border-bottom: 1rpx solid #ff7e00;
+                    
                 }
             }
+
         }
         .address {
             background: #ffffff;
@@ -55,6 +109,10 @@
                     flex: 1;
                     font-size: 18rpx;
                     color: #9c9c9c;
+                    image {
+                        width: 19rpx;
+                        height: 25rpx;
+                    }
                 }
             }
         }
@@ -189,66 +247,77 @@
     <view class="tab-wrapper">
         <view class="input-wrapper">
             <input placeholder="请输入关键字/爱屋名称" type="text" class="search"  bindinput="input"></input>
+            <image class="search-icon" src="../img/search.png" />
         </view>
-        <view class="tab-title">
-            <view class="title {{type == 'day' ? 'active':''}}" style="border-radius: 10rpx 0 0 0;" @tap="titleTap" data-type="day">全日房</view>
-            <view class="title {{type == 'hour' ? 'active':''}}" @tap="titleTap" style="border-radius: 0 10rpx 0 0;" data-type="hour">时租房</view>
-        </view>
-        <view class="address">
-            <view class="add-title">入住地点</view>
-            <view class="add-select" @tap="openCity">
-                <view class="inner">{{address}}</view>
-                <view class="choose">
-                    选择城市
+        <view class="shadow">
+            <view class="tab-title">
+                <view class="title {{type == 'day' ? 'active':''}}" style="border-radius: 10rpx 0 0 0;" @tap="titleTap" data-type="day">
+                    <view @tap.stop="titleTap" data-type="day" class="title-inner {{type == 'day' ? 'inner-active' : ''}}">全日房</view>
+                    <view @tap.stop="titleTap" data-type="day"  class="left" wx:if="{{type == 'day'}}"></view>
+                </view>
+                
+                <view class="title {{type == 'hour' ? 'active':''}}" @tap="titleTap" style="border-radius: 0 10rpx 0 0;" data-type="hour">
+                    <view @tap.stop="titleTap"  data-type="hour" class="right" wx:if="{{type == 'hour'}}"></view>
+                    <view @tap.stop="titleTap" data-type="hour" class="title-inner {{type == 'hour' ? 'inner-active' : ''}}">时租房</view>
                 </view>
             </view>
-        </view>
-        <view class="day" wx:if="{{type == 'day'}}" @tap="daboulopen">
-            <view class="day-choose">
-                <view class="desp">入住日期</view>
-                <view class="date">{{showdate[0]}}</view>
-            </view>
-            <view class="day-len">
-                <view class="len-wrapper">
-                    {{datelen}}晚
+            <view class="address">
+                <view class="add-title">入住地点</view>
+                <view class="add-select" @tap="openCity">
+                    <view class="inner">{{address}}</view>
+                    <view class="choose">
+                        <image src="../img/gps.png" />选择城市
+                    </view>
                 </view>
             </view>
-            <view class="day-choose">
-                <view class="desp">离店日期</view>
-                <view class="date">{{showdate[1]}}</view>
-            </view>
-        </view>
-        <view class="hour" wx:if="{{type == 'hour'}}">
-            <view class="hour-day" @tap="singleopen">
-                <view class="desp">入住日期</view>
-                <view class="date">{{showdate[0]}}</view>
-            </view>
-            <view class="select-hour">
-                <view class="hour-choose">
-                    <view class="desp">入住时间</view>
-                    <picker @change="startChange" value="{{startindex}}" range="{{starthour}}">
-                        <view class="time">
-                            {{starthour[startindex]}}时
-                        </view>
-                    </picker>
+            <view class="day" wx:if="{{type == 'day'}}" @tap="daboulopen">
+                <view class="day-choose">
+                    <view class="desp">入住日期</view>
+                    <view class="date">{{showdate[0]}}</view>
                 </view>
-                <view class="hour-len">
+                <view class="day-len">
                     <view class="len-wrapper">
-                        4h
+                        {{datelen}}晚
                     </view>
                 </view>
-                <view class="hour-choose">
-                    <view class="desp">离店时间</view>
-                    <view class="time">
-                        {{endhour}}时
+                <view class="day-choose">
+                    <view class="desp">离店日期</view>
+                    <view class="date">{{showdate[1]}}</view>
+                </view>
+            </view>
+            <view class="hour" wx:if="{{type == 'hour'}}">
+                <view class="hour-day" @tap="singleopen">
+                    <view class="desp">入住日期</view>
+                    <view class="date">{{showdate[0]}}</view>
+                </view>
+                <view class="select-hour">
+                    <view class="hour-choose">
+                        <view class="desp">入住时间</view>
+                        <picker @change="startChange" value="{{startindex}}" range="{{starthour}}">
+                            <view class="time">
+                                {{starthour[startindex]}}时
+                            </view>
+                        </picker>
+                    </view>
+                    <view class="hour-len">
+                        <view class="len-wrapper">
+                            4h
+                        </view>
+                    </view>
+                    <view class="hour-choose">
+                        <view class="desp">离店时间</view>
+                        <view class="time">
+                            {{endhour}}时
+                        </view>
                     </view>
                 </view>
             </view>
-        </view>
 
-        <view class="button-wrapper" @tap="search">
-            <view class="button" >爱屋搜索</view>
+            <view class="button-wrapper" @tap="search">
+                <view class="button" >爱屋搜索</view>
+            </view>
         </view>
+        
 
     </view>
     <calender wx:if="{{cshow}}"  @index-tap.user="calender" :type.sync="ctype" :outdate.sync="outdate"></calender>
@@ -299,6 +368,7 @@
                     this.outdate = [day, nextDay]
                     this.showdate = [day, nextDay]
                     this.datelen = util.dateUtils.getDateDiff(this.showdate[0], this.showdate[1])
+                    
                     wepy.setStorageSync('date', this.showdate)
                     wx.setStorageSync('oType', 'a')
                 }
@@ -315,11 +385,12 @@
             },
             input (e) {
                 let value = e.detail.value
-                this.addtion = value
-                console.log(this.addtion)
+                this.addition = value
+                console.log(this.addition)
             },
             
             daboulopen () {
+                console.log(this.outdate, 'out')
                 this.cshow = true
                 this.ctype = 1
             },
@@ -333,9 +404,12 @@
                 this.cshow = false
                 if (type) {
                     this.showdate = date
+                    this.outdate = date
                     this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
+                    this.$apply()
+                    this.$emit('dateInfo', this.showdate)
                 }
-                this.$emit('dateInfo', this.showdate)
+                
 
             },
             startChange (e) {
@@ -361,9 +435,10 @@
             },
             search() {
                 let param = {
-                    addition: this.addtion,
+                    addition: this.addition,
                     cityCode: this.code
                 }
+                console.log(param)
                 this.$emit('search', param)
             }
 

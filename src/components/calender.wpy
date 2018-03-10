@@ -182,8 +182,11 @@
         }
         computed = {
             outdate() {
+
                 let allIndex = [];
+                
                 if(this.outdate) {
+                    console.log(this.outdate, '*****in-date')
                     this.outdate.forEach((date) => {
                         this.monthDay.forEach((week, windex) => {
                             week.forEach((day, dindex) => {
@@ -194,9 +197,11 @@
                             })
                         })
                     })
+                    console.log(allIndex, 'index')
                     allIndex.forEach((index) => {
                         if(allIndex.length > 1) {
                             this.methods.chooseday.apply(this, ['', index])
+                            //this.methods.chooseday('', index)
                         }
                         else {
                             this.methods.singleday.apply(this, ['', index])
@@ -217,9 +222,9 @@
         methods = {
             chooseday (e, outindex) {
                 let index = outindex || e.target.dataset.index
+
                 let dayObj = this.monthDay[index[0]][index[1]]
                 if (dayObj.disabled) {
-
                     if (this.date.length === 0) {
                         this.first = index;
                         this.date.push(dayObj.__date)
@@ -235,7 +240,7 @@
                             this.first = index
                         }
                         else {
-                            if(index[1] <= this.first[1]) {
+                            if(index[1] <= this.first[1] &&index[0] == this.first[0]) {
                                 this.date = []
 
                                 this.date.push(dayObj.__date)
@@ -246,6 +251,22 @@
 
                                 this.monthDay[index[0]][index[1]].state = '入住'
                                 this.first = index
+                            }
+                            else if(index[1] > this.first[1] && index[0] == this.first[0]) {
+                                this.date.push(dayObj.__date)
+                                let dates = util.dateUtils.filterWeek(this.date)
+
+                                this.monthDay.forEach((week) => {
+                                    week.forEach((day) => {
+                                        dates.forEach((date) => {
+                                            if(!day.state && date == day.__date) {
+                                                day.in = true;
+                                            }
+                                        })
+                                    })
+                                })
+
+                                this.monthDay[index[0]][index[1]].state = '离店'
                             }
                             else {
                                 this.date.push(dayObj.__date)
@@ -288,8 +309,14 @@
             singleday (e, outindex) {
                 let index = outindex || e.target.dataset.index
                 let dayObj = this.monthDay[index[0]][index[1]]
+                
                 if (dayObj.disabled) {
-
+                    this.monthDay.forEach((week) => {
+                        week.forEach((day) => {
+                            day.state = '';
+                            day.in = false;
+                        })
+                    })
                     if (this.date.length === 0) {
                         this.first = index;
                         this.date.push(dayObj.__date)
@@ -302,6 +329,7 @@
                         this.monthDay[index[0]][index[1]].state = '入住'
                         this.first = index
                     }
+                    
                     this.$apply()
                 }
                 else {
@@ -337,30 +365,38 @@
                 this.monthDay = this.methods.dealMonth(this.year, this.month)
             },
             cancel (e) {
-                this.monthDay.forEach((week) => {
-                    week.forEach((day) => {
-                        day.state = '';
-                        day.in = false;
-                    })
-                })
-                console.log(this.monthDay)
+                // this.monthDay.forEach((week) => {
+                //     week.forEach((day) => {
+                //         day.state = '';
+                //         day.in = false;
+                //     })
+                // })
                 this.$emit('index-tap', false, '')
             },
             sure (e) {
-                this.monthDay.forEach((week) => {
-                    week.forEach((day) => {
-
-                        day.state = '';
-                        day.in = false;
+                let oType = wepy.getStorageSync('oType')
+                if(this.date.length < 2 && oType == 'a') {
+                    wepy.showToast({
+                         title: '请选择离店日期',
+                         icon: 'none'
+                    }) 
+                    return false
+                }
+                else {
+                    this.monthDay.forEach((week) => {
+                        week.forEach((day) => {
+                            day.state = '';
+                            day.in = false;
+                        })
                     })
-                })
-                console.log(this.monthDay)
-                this.$emit('index-tap', true, this.date)
+                    this.$emit('index-tap', true, this.date)
+                }
+                
             }
         }
         onLoad() {
             this.monthDay = this.methods.dealMonth(this.year, this.month)
-            console.log(this.monthDay, 'siii')
+            
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight;
 
