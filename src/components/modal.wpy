@@ -136,7 +136,8 @@ export default class Modal extends wepy.component {
         roomDetail: {},
         height: 0,
         imgList: [],
-        iconList: []
+        iconList: [],
+        index: 0
     }
     computed = {
         roomDetail() {
@@ -158,7 +159,7 @@ export default class Modal extends wepy.component {
             this.$emit('detail-tap', false)
         },
         order (index) {
-            this.$emit('order', index)
+            this.$emit('detail-order', index)
         }
     }
     onLoad () {

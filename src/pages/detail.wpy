@@ -134,7 +134,7 @@
     			</repeat>
     		</view>
     	</view>
-        <detail wx:if="{{isModal}}" @detail-tap.user="showModal" :imgList.sync="imgList" :iconList.sync="iconList"  :roomDetail.sync="roomDetail"/>
+        <detail wx:if="{{isModal}}" @detail-tap.user="showModal" @detail-order.user="order" :imgList.sync="imgList" :iconList.sync="iconList"  :roomDetail.sync="roomDetail" :index.sync="index"/>
     </view>
 </template>
 <script>
@@ -154,7 +154,8 @@
             roomDetail: {},
             imgUrl: envConfig.imgUrl,
 			imgList: [],
-			iconList: []
+			iconList: [],
+            index: 0
         }
         components = {
             room: Room,
@@ -179,7 +180,7 @@
         	},
             async showModal (isShow, id, index) {
                 this.isModal = isShow;
-
+                this.index = index
                 if(isShow) {
                     let param = {
                         method: 'POST',
@@ -199,6 +200,7 @@
                 }
             },
 			async order (index) {
+                console.log(index)
 				let _self = this
 				let userid = await wepy.getStorageSync('userid')
 				let roomDetail = this.hotelDetail.roomTypeInfos[index]
