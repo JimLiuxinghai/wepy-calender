@@ -248,7 +248,7 @@
         </view>
 
 
-        <view class="button-wrapper" wx:if="{{orderDetail.orderGenInfo.status == 4}}">
+        <view class="button-wrapper" wx:if="{{orderDetail.orderGenInfo.status == 4 && orderDetail.orderGenInfo.payStatus == 2 && orderDetail.orderGenInfo.checkoutStatus == 0}}">
             <view class="btn-item">
                 <view class="btn orange" @tap="back({{orderDetail.orderGenInfo.orderNo}})">
                     立即退房
