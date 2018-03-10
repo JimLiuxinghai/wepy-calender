@@ -192,7 +192,7 @@
                 
             },
             gotoDetail (orderid) {
-                wepy.navigateTo({
+                wepy.redirectTo({
                     url: '../pages/afterOrder?orderid=' + orderid + '&reffer=' + '../pages/myOrder'
                 })
             },
@@ -233,16 +233,7 @@
                               title: '取消成功',
                               icon: 'success'
                             })
-                            // if(_self.reffer == '../pages/myOrder') {
-                            //     wepy.navigateTo({
-                            //         url: '../pages/myOrder'
-                            //     })
-                            // }
-                            // else {
-                            //     wepy.switchTab({
-                            //         url: '../pages/index'
-                            //     })
-                            // }
+                    
                             wepy.switchTab({
                                 url: '../pages/index'
                             })
@@ -272,14 +263,27 @@
                 let resData = await Api.backOrder(params)
                 
                 if(resData.data.retCode == 0) {
-                    wepy.navigateTo({
-                        url: '../pages/myOder'
+                    // wepy.switchTab({
+                    //     url: '../pages/index'
+                    // })
+                    let orderInfo = await this.methods.getOrder(0)
+                    orderInfo.content.forEach((item) => {
+                        item.checkoutStatus = item.checkoutStatus ? parseInt(item.checkoutStatus) + 10 : 0
+
+                        item.statusStr = statusMap[parseInt(item.status) + parseInt(item.checkoutStatus) + parseInt(item.payStatus)]
+                        item.bDateStr = util.dateUtils.format(new Date(item.bDate))
+                        item.eDateStr = util.dateUtils.format(new Date(item.eDate))
+                        item.dateLen =  util.dateUtils.getDateDiff(item.bDateStr, item.eDateStr)
+                        item.cancelState = this.methods.cancelState(item)
                     })
+                    this.orderInfo = orderInfo
+                    this.total = orderInfo.totalPages
+                    this.$apply()
                 }
                 else {
                     wepy.showToast({
                       title: resData.data.retMsg,
-                      icon: 'success'
+                      icon: 'none'
                     })
                 }
             },
@@ -288,8 +292,7 @@
             let sysInfo = wepy.getSystemInfoSync()
             let orderInfo = await this.methods.getOrder(0)
             orderInfo.content.forEach((item) => {
-                item.checkoutStatus = item.checkoutStatus ? item.checkoutStatus + 10 : 0
-                console.log(item.checkoutStatus)
+                item.checkoutStatus = item.checkoutStatus ? parseInt(item.checkoutStatus) + 10 : 0
 
                 item.statusStr = statusMap[parseInt(item.status) + parseInt(item.checkoutStatus) + parseInt(item.payStatus)]
                 item.bDateStr = util.dateUtils.format(new Date(item.bDate))
@@ -299,7 +302,7 @@
             })
             this.orderInfo = orderInfo
             this.total = orderInfo.totalPages
-            console.log(this.total, 'total')
+            
             this.height = sysInfo.screenHeight
             this.$apply()
         }
