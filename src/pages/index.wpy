@@ -114,8 +114,7 @@
                     }
                 }
                 let cityList = await Api.cityList(param)
-                this.cityList = cityList.data.data.citys
-                console.log(cityList)
+                
             },
 
         }
