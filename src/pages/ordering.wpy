@@ -290,7 +290,7 @@
                 <view class="price-title">房间总价:</view>
                 <view class="price-num">￥{{showPrice.originalPrice}}</view>
                 <view class="nav" @tap="gotoPrice">房费明细</view>
-                <view class="high-num">订单总价: ¥{{showPrice.highPrice + showPrice.foregift}}</view>
+                <!-- <view class="high-num">订单总价: ¥{{showPrice.highPrice + showPrice.foregift}}</view> -->
             </view>
 
             <view class="item">
