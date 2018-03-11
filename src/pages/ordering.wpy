@@ -1,7 +1,7 @@
 <style lang="less">
     .ordering {
         width: 100%;
-        background: #f0f0f0;
+        background: #e8e8e8;
         overflow: hidden;
         .title {
             text-align: center;
@@ -127,13 +127,8 @@
                 display: inline-block;
                 width: 40rpx;
                 height: 40rpx;
-                line-height: 35rpx;
-                background: #ffffff;
-                color: #ff7e00;
-                font-size: 40rpx;
-                border-radius: 40rpx;
+                vertical-align: middle;
                 margin-right: 10rpx;
-                text-align: center;
             }
             text {
                 font-size: 22rpx;
@@ -286,7 +281,7 @@
         </repeat>
 
         <view class="add" @tap="mensDeal(1)">
-            <view class="icon">+</view>
+            <image src="../img/add-icon.png" class="icon"/>
             <text>添加入住人</text>
         </view>
 
