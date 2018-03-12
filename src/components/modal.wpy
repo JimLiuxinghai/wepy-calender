@@ -91,7 +91,7 @@
             <view class="close" @tap="closeModal">
                 <image src="../img/close.png"></image>
             </view>
-            <swiper indicator-dots="true" autoplay="true" interval="3000" duration="500">
+            <swiper indicator-dots="true" autoplay="true" interval="3000" duration="150">
                 <block wx:for="{{imgList}}" wx:key="{{index}}">
                     <swiper-item class="swiper-item">
                     <image src="{{imgUrl}}{{item.imageName}}" class="image"/>

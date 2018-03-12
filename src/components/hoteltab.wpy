@@ -23,10 +23,10 @@
             }
             .search-icon {
                 float: right;
-                margin-right: 10rpx;
+                margin-right: 12rpx;
                 display: inline-block;
                 vertical-align: top;
-                margin-top: 10rpx;
+                margin-top: 12rpx;
                 width: 35rpx;
                 height: 35rpx;
             }

@@ -81,7 +81,7 @@
 </style>
 <template>
     <view class="detail">
-    	<swiper indicator-dots="true" autoplay="true" interval="3000" duration="500">
+    	<swiper indicator-dots="true" autoplay="true" interval="3000" duration="150">
     	  	<block wx:for="{{hotelDetail.hotelImageInfos}}" wx:key="{{index}}">
 	    	    <swiper-item class="swiper-item">
 	    	      <image src="{{imgUrl}}{{item.imageName}}" class="slide-image"/>

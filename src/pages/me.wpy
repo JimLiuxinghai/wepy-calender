@@ -2,6 +2,7 @@
     .me {
         position: relative;
         overflow: hidden;
+        background: #f0f0f0;
         .bg {
             width: 100%;
             height: 335rpx;
@@ -56,8 +57,9 @@
                 display: flex;
                 border-radius: 10rpx;
                 box-shadow: 0px 0px 10px 0px #A3A2A5;
+                background: #ffffff;
                 .item {
-                    padding: 30rpx;
+                    padding: 30rpx 20rpx;;
                     flex: 1;
                     image {
                         display: block;
@@ -67,8 +69,12 @@
                     }
                     .title {
                         margin-top: 30rpx;
-                        font-size: 24rpx;
+                        font-size: 22rpx;
+                        width: 100%;
                         text-align: center;
+                        .grade-num {
+                            color: #f07434;
+                        }
                     }
                 }
             }
@@ -76,7 +82,7 @@
     }
 </style>
 <template>
-    <view class="me">
+    <view class="me" style="height: {{height}}px;">
         <image class="bg" src="../img/me-bg.png"></image>
 
         <view class="info-wrapper">
@@ -92,10 +98,10 @@
             <view class="nav">
                 <view class="golden item">
                     <navigator url="../pages/money?gold={{goldBeans}}" open-type="navigate" hover-class="other-navigator-hover">
-                    <image src="../img/sgold.png"></image>
-                    <view class="title">
-                        我的金豆
-                    </view>
+                        <image src="../img/sgold.png"></image>
+                        <view class="title">
+                            我的金豆
+                        </view>
                     </navigator>
                 </view>
                 <view class="always item">
@@ -113,6 +119,12 @@
                            我的订单
                         </view>
                     </navigator>
+                </view>
+                <view class="grade item">
+                    <image src="../img/grade.png"></image>
+                    <view class="title">
+                        积分(<text class="grade-num">{{points}}</text>)
+                    </view>
                 </view>
             </view>
         </view>
@@ -133,7 +145,9 @@
         data = {
             userInfo: {},
             goldBeans: 10,
-            phone: ''
+            phone: '',
+            height: 0,
+            points: 0
         }
         methods = {
             async getUser (openid, nickName, that) {
@@ -157,13 +171,18 @@
                     wx.setStorageSync('userid', userData.data.data.id)
                     wx.setStorageSync('phone', userData.data.data.phone)
                     that.phone = userData.data.data.phone
+                    that.points = userData.data.data.points
                     that.$apply()
                 }
             }
         }
+
         async onShow () {            
             //个人信息
             try {
+                let sysInfo = wepy.getSystemInfoSync()
+                this.height = sysInfo.screenHeight
+
                 let userInfo = await wepy.getUserInfo()
                 
                 this.userInfo = userInfo.userInfo
