@@ -36,16 +36,17 @@
     				flex: 2;
     				image {
     					display: inline-block;
-    					margin-left: 40rpx;
+    					margin-left: 50rpx;
+
     				}
     				.tel {
-    					width: 35rpx;
-    					height: 35rpx;
+    					width: 40rpx;
+    					height: 40rpx;
 
     				}
     				.gps {
-    					width: 28rpx;
-    					height: 35rpx;
+    					width: 32rpx;
+    					height: 40rpx;
     				}
     			}
     		}
