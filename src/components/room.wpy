@@ -4,14 +4,14 @@
         display: flex;
         border-top: 1px solid #c9c9c9;
         .img {
-            flex: 1;
+            flex: 2;
             image {
-                width: 360rpx;
-                height: 200rpx;
+                width: 300rpx;
+                height: 196rpx;
             }
         }
         .info {
-            flex: 1;
+            flex: 3;
             padding: 20rpx;
             box-sizing: border-box;
             position: relative;
@@ -52,18 +52,18 @@
                     font-size: 16rpx;
                 }
                 .order {
-                    width: 100rpx;
-                    height: 40rpx;
+                    position: absolute;
+                    right: 20rpx;
+                    width: 110rpx;
+                    height: 46rpx;
                     color: #ffffff;
                     background: #ff7e00;
                     text-align: center;
-                    font-size: 24rpx;
-                    line-height: 40rpx;
+                    font-size: 26rpx;
+                    line-height: 44rpx;
                     border-radius: 5rpx;
                     vertical-align: middle;
-                    float: right;
-                    margin-top: 10rpx;
-                    margin-right: 20rpx;
+                    
                     &.gray {
                         background: #9d9d9d;
                     }
