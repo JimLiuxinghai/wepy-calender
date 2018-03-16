@@ -144,6 +144,7 @@
     import Room from '../components/room'
     import dModal from '../components/modal'
     import envConfig from '../utils/config'
+    import util from '../utils/util'
     export default class Detail extends wepy.page {
         config = {
         	navigationBarTitleText: '酒店详情'
@@ -194,14 +195,14 @@
 					this.imgList = roomData.data.hotelImageInfos
 					//this.iconList = roomData.data.hotelFacilityInfos
 					this.iconList = this.hotelDetail.hotelFacilityInfos
-					console.log(this.iconList)
+					
                     this.roomDetail = this.hotelDetail.roomTypeInfos[index]
                     this.$apply()
                     
                 }
             },
 			async order (index) {
-                console.log(index)
+                
 				let _self = this
 				let userid = await wepy.getStorageSync('userid')
 				let roomDetail = this.hotelDetail.roomTypeInfos[index]
@@ -226,7 +227,8 @@
 
         }
         async onLoad (options) {
-            let date = wepy.getStorageSync('date')
+            let day = util.dateUtils.format(new Date())
+            let date = wepy.getStorageSync('date') || [day, util.dateUtils.switch(day, 1)]
             let param = {
                 method: 'POST',
                 data: {
@@ -241,7 +243,6 @@
 
             this.hotelDetail = hotelDetail.data
 
-            console.log(this.hotelDetail)
             this.$apply();
         }
     }
