@@ -10,8 +10,6 @@
             z-index: 1;
         }
         .content {
-
-            
             position: relative;
             z-index: 2;
         }
@@ -21,8 +19,6 @@
     <view class="index" style="min-height: {{height - 80}}px;">
         <image  class="banner" src="../img/index-banner.png"></image>
         <view class="content">
-            
-            
             <hoteltab @search.user="search"  @dateInfo.user="date" :cityList.sync="cityList" :cityName.sync="cityName"></hoteltab>  
         </view>
         <view>
@@ -113,7 +109,11 @@
             }
 
         }
-        async onLoad () {
+        async onLoad (options) {
+            let recommendCode = options.recommendCode
+            if(recommendCode) {
+                wx.setStorageSync('recommendCode', recommendCode)
+            }
             
             let hotelList = await this.methods.getData()
             let cityData = await this.methods.getCity()

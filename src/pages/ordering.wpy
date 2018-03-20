@@ -306,7 +306,10 @@
                 <view class="price-title">住房押金:</view>
                 <view class="price-num">￥{{showPrice.foregift}}</view>
                 <view class="price-title total">订单总价: <text>￥{{showPrice.foregift + showPrice.originalPrice}}</text></view>
-
+            </view>
+            <view class="item" wx:if="{{hasCode}}">
+                <view class="price-title">推荐码折扣:</view>
+                <view class="nav" style="text-decoration: none;">{{ruleDesc}}</view>
             </view>
         </view>
 
@@ -366,7 +369,9 @@
             week: [],
             resident: [],
             resName: [],
-            resindex: 0
+            resindex: 0,
+            ruleDesc: '',
+            hasCode: false
         }
         components = {
             ncalender: Calender
@@ -475,6 +480,7 @@
             },
             async getPrice (bDate, eDate, len, roomid, userid) {
                 let oType = wepy.getStorageSync('oType')
+                let recommendCode = await wepy.getStorageSync('recommendCode') || ''
                 let num = 0;
                 if(oType == 'a') {
                     num = len
@@ -489,13 +495,15 @@
                         bDate: bDate,
                         eDate: eDate || bDate,
                         lockNum: num,
-                        type: oType
+                        type: oType,
+                        recommend: recommendCode
                     },
                     query: {
                         roomid: roomid,
                         userid: userid
                     }
                 }
+
                 let priceInfo = await Api.getPrice(params)
 
                 return priceInfo.data.data
@@ -640,9 +648,30 @@
                 this.date = [date[0], date[0]]
             }
             
-            console.log(this.datelen)
+            //获取优惠信息
+           
+            let recommendCode = await wepy.getStorageSync('recommendCode') || ''
+            if(recommendCode) {
+                let codeParam = {
+                    method: 'POST',
+                    data: {
+                        hotelId: this.params.hotelId,
+                        recommend: recommendCode
+                    }
+                }
+
+                let codeRes = await Api.codeApi(codeParam)
+
+                
+                this.ruleDesc = codeRes.data.data.ruleDesc
+                
+                this.hasCode = true
+                this.$apply()
+            }
+            
+
             let week = [util.dateUtils.getWeekNum(date[0]).week, util.dateUtils.getWeekNum(date[1] || date[0]).week]
-            console.log(week)
+
             this.week = [weekConfig[week[0]], weekConfig[week[1]]]
             this.$apply()
             this.priceInfo = await this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
