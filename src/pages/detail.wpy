@@ -228,11 +228,12 @@
         }
         async onLoad (options) {
             let day = util.dateUtils.format(new Date())
+            let oType = wepy.getStorageSync('oType')
             let date = wepy.getStorageSync('date') || [day, util.dateUtils.switch(day, 1)]
             let param = {
                 method: 'POST',
                 data: {
-                    type: 'a',
+                    type: oType,
                     bDate: date[0]
                 },
                 query: {
