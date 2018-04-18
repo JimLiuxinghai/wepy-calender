@@ -53,8 +53,7 @@
     <view class="price" style="height: {{height}}px;">
         <view class="top">
             <view class="cmp">
-                <text class="num">￥{{totalPrice.cmp}}</text>
-                <text class="text">(折后)</text>
+                <text class="num">￥{{totalPrice.base}}</text>
             </view>
             <view class="name">{{hotelName}}{{roomType}}</view>
         </view>
@@ -63,7 +62,7 @@
             <repeat for="{{priceInfo}}" key="index" index="index" item="item">
                 <view class="day">
                     <text class="date">{{item.dateStr}}</text>
-                    <text class="day-price">￥{{item.basePrice}} × {{rooms}}间 × {{item.discount}}折</text>
+                    <text class="day-price">￥{{item.basePrice}} × {{rooms}}间<text wx:if="{{item.discount != 10}}"> × {{item.discount}}折</text></text>
                 </view>
             </repeat>
         </view>
@@ -105,9 +104,10 @@
                 price.base += dayPrice.basePrice*param.rooms
                 price.cmp += dayPrice.cmpnPrice*param.rooms
                 dayPrice.dateStr = util.dateUtils.format(new Date(dayPrice.date))
-                dayPrice.discount = (dayPrice.cmpnPrice/dayPrice.basePrice).toFixed(2) * 10
+                dayPrice.discount = (param.rate/100).toFixed(2) * 10
             })
             this.rebatePrice = param.priceInfo.rebatePrice
+            price.base = Math.round(price.base*param.rate/100)
             this.totalPrice = price
             console.log(this.totalPrice)
             this.rooms = param.rooms

@@ -63,6 +63,8 @@ const backOrder = (params) => wxRequest(params, host + '/restoreOrder/' + params
 
 const payGold = (params) => wxRequest(params, host + '/recharge?userId=' + params.query.userid)
 
+const codeApi = (params) => wxRequest(params, host + '/promotion')
+
 //men
 const getMen = (params) => wxRequest(params, host + '/getCacheGuests?userId=' + params.query.userid)
 
@@ -95,5 +97,6 @@ module.exports = {
     payDefer,
     backOrder,
     deleteMen,
-    payGold
+    payGold,
+    codeApi
 }

@@ -217,7 +217,7 @@
                 </view>
                 <view class="date">{{date[0]}}</view>
             </view>
-            <view clas="week">
+            <view clas="week" wx:if="{{oType == 'p'}}">
                 <view class="info">
                     {{week[0]}}
                 </view>
@@ -228,13 +228,13 @@
                     {{datelen}}天
                 </view>
             </view>
-            <view clas="end">
+            <view class="end">
                 <view class="info">
                     离店时间
                 </view>
                 <view class="date">{{date[1]}}</view>
             </view>
-            <view class="week">
+            <view class="week" wx:if="{{oType == 'p'}}">
                 <view class="info">
                     {{week[1]}}
                 </view>
@@ -371,7 +371,10 @@
             resName: [],
             resindex: 0,
             ruleDesc: '',
-            hasCode: false
+            hasCode: false,
+            recommendCode: '',
+            oType: '',
+            rate: 100
         }
         components = {
             ncalender: Calender
@@ -415,7 +418,7 @@
 
                 }
                 
-                this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
+                this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo, this.rate)
                 
                 this.$apply()
             },
@@ -440,7 +443,7 @@
                     this.date = date
                     this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
                     this.priceInfo = await this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
-                    this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
+                    this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo, this.rate)
                     this.$apply()
                 }
 
@@ -508,7 +511,7 @@
 
                 return priceInfo.data.data
             },
-            dealShowPrice (rooms, priceInfo) {
+            dealShowPrice (rooms, priceInfo, rate) {
                 let showPrice = {
                     originalPrice: 0,
                     foregift: priceInfo.foregift * rooms,
@@ -519,7 +522,8 @@
                 priceInfo.roomBasePriceInfos.forEach((dayPrice) => {
                     originPrice += dayPrice.cmpnPrice * rooms
                 })
-                showPrice.originalPrice = originPrice
+                
+                showPrice.originalPrice = Math.round(originPrice*rate/100)
                 return showPrice
             },
             dealMens (num, info) {
@@ -562,6 +566,7 @@
                     data.contactName = name
                     data.contactPhone = phone
                     data.personInfos = this.mensInfo
+                    data.recommend = this.recommendCode
                     if(oType == 'a') {
                         data.bDate = this.date[0]
                         data.eDate = this.date[1]
@@ -613,7 +618,8 @@
                     hotelName: this.params.hotelName,
                     roomType: this.params.roomType,
                     priceInfo: this.priceInfo,
-                    rooms: this.rooms
+                    rooms: this.rooms,
+                    rate: this.rate
                 }
                 wepy.navigateTo({
                     url: '../pages/price?params=' + JSON.stringify(param)
@@ -635,6 +641,7 @@
             //时租房 日租房
             let oType = wepy.getStorageSync('oType')
             let time = wepy.getStorageSync('time')
+            this.oType = oType
             if(oType == 'a') {
                 this.time = ['12:00', '12:00']
                 this.datelen = util.dateUtils.getDateDiff(date[0], date[1])
@@ -651,6 +658,7 @@
             //获取优惠信息
            
             let recommendCode = await wepy.getStorageSync('recommendCode') || ''
+            this.recommendCode = recommendCode
             if(recommendCode) {
                 let codeParam = {
                     method: 'POST',
@@ -661,11 +669,13 @@
                 }
 
                 let codeRes = await Api.codeApi(codeParam)
-
+    
+                if(codeRes.data.retCode != 1) {
+                    this.ruleDesc = codeRes.data.data.ruleDesc
+                    this.rate = codeRes.data.data.rate
+                    this.hasCode = true
+                }
                 
-                this.ruleDesc = codeRes.data.data.ruleDesc
-                
-                this.hasCode = true
                 this.$apply()
             }
             
@@ -675,7 +685,7 @@
             this.week = [weekConfig[week[0]], weekConfig[week[1]]]
             this.$apply()
             this.priceInfo = await this.methods.getPrice(date[0], date[1], this.datelen, this.params.roomId, this.userid)
-            this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo)
+            this.showPrice = this.methods.dealShowPrice(this.rooms, this.priceInfo, this.rate)
             this.mensInfo = this.methods.dealMens(num, this.mensInfo)
             let sysInfo = wepy.getSystemInfoSync()
             this.height = sysInfo.screenHeight

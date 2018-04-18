@@ -103,7 +103,7 @@
                      wx.showModal({
                         title: '错误',
                         showCancel: false,
-                        content: '网络错误, 请稍候重试',
+                        content: registerRes.data.retMsg,
                         success: function (res) {
                             wepy.switchTab({
                                 url: '../pages/index'
