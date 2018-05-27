@@ -210,7 +210,7 @@
             <view>{{params.hotelName}}</view>
             <view>{{params.roomType}}</view>
         </view>
-        <view class="date-info" @tap="showCalender">
+        <view class="date-info">
             <view class="start">
                 <view class="info">
                     入住时间
@@ -653,6 +653,7 @@
                 this.time = [num, num1]
                 this.datelen = 1
                 this.date = [date[0], date[0]]
+                this.ctype = 2
             }
             
             //获取优惠信息
