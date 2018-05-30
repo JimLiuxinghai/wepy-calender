@@ -37,19 +37,33 @@
                 .name {
                     position: relative;
                     text-align: center;
-                    top: 100rpx;
+                    top: 80rpx;
                     font-size: 36rpx;
                     color: #3f4954;
+                }
+                .phone {
+                    position: relative;
+                    top: 110rpx;
+                    text-align: center;
+                    color: #3f4953;
+                    font-size: 26rpx;
+                    text-decoration: underline;
+                }
+                button {
+                    position: relative;
+                    top: 60rpx;
+                    border: none;
+                    outline: none;
+                    background: none !important;
+                    color: red;
+                    &:after {
+                        border: none;
+                    }
                 }
             }
 
         }
-        .phone {
-            text-align: center;
-            color: #3f4953;
-            font-size: 26rpx;
-            text-decoration: underline;
-        }
+        
         .nav-wrapper {
             margin-top: 40rpx;
             padding: 30rpx;
@@ -84,17 +98,26 @@
 <template>
     <view class="me" style="height: {{height}}px;">
         <image class="bg" src="../img/me-bg.png"></image>
-
-        <view class="info-wrapper">
+        
+        <view class="info-wrapper" wx:if="{{hasLogin}}">
             <view class="info">
                 <view class="logo">
-                    <image src="{{userInfo.avatarUrl}}"></image>
+                    <image src="{{avatarUrl}}"></image>
                 </view>
-                <view class="name">{{userInfo.nickName}}</view>
+                <view class="name">{{nickName}}</view>
+                <view class="phone">{{phone}}</view>
             </view>
         </view>
-        <view class="phone">{{phone}}</view>
-        <view class="nav-wrapper">
+        <view class="info-wrapper" wx:if="{{!hasLogin}}">
+            <view class="info">
+                <view class="logo">
+                    <image src="{{avatarUrl}}"></image>
+                </view>
+                <button open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">点击登录</button>
+            </view>
+        </view>
+        
+        <view class="nav-wrapper" wx:if="{{hasLogin}}">
             <view class="nav">
                 <view class="golden item">
                     <navigator url="../pages/money?gold={{goldBeans}}" open-type="navigate" hover-class="other-navigator-hover">
@@ -147,7 +170,10 @@
             goldBeans: 10,
             phone: '',
             height: 0,
-            points: 0
+            points: 0,
+            hasLogin: false,
+            avatarUrl: '',
+            nickName: ''
         }
         methods = {
             async getUser (openid, nickName, that) {
@@ -172,81 +198,61 @@
                     wx.setStorageSync('phone', userData.data.data.phone)
                     that.phone = userData.data.data.phone
                     that.points = userData.data.data.points
+                    that.hasLogin = true
                     that.$apply()
                 }
+            },
+            onGotUserInfo(e) {
+                this.userInfo = e.detail.userInfo
+                let nickName =  this.userInfo.nickName
+                this.nickName = nickName
+                this.avatarUrl = this.userInfo.avatarUrl
+                wx.setStorageSync('avatarUrl', this.userInfo.avatarUrl)
+                wx.setStorageSync('name', nickName)
+                this.methods.getLogin(this, nickName)
+                this.$apply()
+            },
+            async getLogin(that, nickName) {
+                
+                let loginInfo = await wepy.login()
+                let code = loginInfo.code
+                
+                let param = {
+                    method: 'POST',
+                    data: {
+                        code: code
+                    },
+                    query: {
+                        id: envConfig.appid
+                    }
+                }
+                let openInfo = await Api.openid(param)
+                
+                that.openid = openInfo.data.data.openid
+                let openId = that.openid
+                wepy.setStorageSync('openId', that.openid)
+                that.methods.getUser(openId, nickName, that)
+                that.$apply()
             }
         }
 
         async onShow () {            
             //个人信息
-            try {
-                let sysInfo = wepy.getSystemInfoSync()
-                this.height = sysInfo.screenHeight
-
-                let userInfo = await wepy.getUserInfo()
-                
-                this.userInfo = userInfo.userInfo
-
-                let nickName =  userInfo.userInfo.nickName
-
-                wx.setStorageSync('name', nickName)
-                let openId = await wepy.getStorageSync('openId')
-                let userid = await wepy.getStorageSync('userid')
-                let phone = await wepy.getStorageSync('phone')
-                if(openId && phone) {
-                    this.openid = openId
-                    this.phone = phone
-                }
-                else {
-                    let loginInfo = await wepy.login()
-                    let code = loginInfo.code
-                    let param = {
-                        method: 'POST',
-                        data: {
-                            code: code
-                        },
-                        query: {
-                            id: envConfig.appid
-                        }
-                    }
-                    let openInfo = await Api.openid(param)
-
-                    this.openid = openInfo.data.data.openid
-                    openId = this.openid
-                    wepy.setStorageSync('openId', this.openid)
-                }
+            let sysInfo = wepy.getSystemInfoSync()
+            this.height = sysInfo.screenHeight
+            let openId = await wepy.getStorageSync('openId')
+            let userid = await wepy.getStorageSync('userid')
+            let phone = await wepy.getStorageSync('phone')
+            let nickName = await wepy.getStorageSync('name')
+            let avatarUrl = await wepy.getStorageSync('avatarUrl')
+            if(openId && phone) {
+                this.openid = openId
+                this.phone = phone
+                this.nickName = nickName
+                this.avatarUrl = avatarUrl
+                this.hasLogin = true
                 this.methods.getUser(openId, nickName, this)
                 this.$apply()
-            }
-            catch (e) {
-                const openSetting = function() {
-                    wx.showModal({
-                      title: '用户未授权',
-                      content: '如需正常使用功能，请按确定并在授权管理中选中“用户信息”，然后点按确定。最后再重新进入小程序即可正常使用。',
-                      showCancel: false,
-                      success: function (res) {
-                        if (res.confirm) {
-                          console.log('用户点击确定')
-                          wx.openSetting({
-                            success: function success(res) {
-                              let authSetting = res.authSetting;
-                              if(authSetting['scope.userInfo']) {
-                                wx.switchTab({
-                                    url: '../pages/me'
-                                });
-                                
-                              }
-                              else {
-                                openSetting()
-                              }
-                            }
-                          });
-                        }
-                      }
-                    })
-                }
-                openSetting()
-                
             }
             
         }

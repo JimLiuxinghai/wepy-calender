@@ -123,8 +123,8 @@
                 </view>
             </view>
 
-            <view class="order" wx:if="{{item.roomQuantity != 0}}" @tap.stop="order({{index}})">预定</view>
-            <view class="order gray" wx:if="{{item.roomQuantity == 0}}">预定</view>
+            <view class="order" wx:if="{{detail.roomQuantity != 0}}" @tap.stop="order({{index}})">预定</view>
+            <view class="order gray" wx:if="{{detail.roomQuantity == 0}}">预定</view>
         </view>
     </view>
 </template>

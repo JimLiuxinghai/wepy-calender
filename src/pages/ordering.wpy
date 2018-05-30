@@ -58,6 +58,9 @@
             .select {
                 padding: 10rpx 30rpx;
                 border-bottom: 1px solid #e8e8e8;
+                overflow: hidden;
+                height: 80rpx;
+                box-sizing: border-box;
                 .s-title {
                     display: inline-block;
                     font-size: 24rpx;
@@ -66,6 +69,8 @@
                     float: right;
                     display: inline-block;
                     font-size: 24rpx;
+                    height: 60rpx;
+                    overflow: hidden;
                     text {
                         display: inline-block;
                         margin: 0 10rpx;
@@ -122,6 +127,8 @@
                     flex: 2;
                     color: #ff7e00;
                     font-size: 24rpx;
+                    height: 60rpx;
+                    overflow: hidden;
                     line-height: 60rpx;
                     text-align: right;
                 }
@@ -563,7 +570,7 @@
                     data.bDate = this.date[0]
                     data.eDate = this.date[1]
                     data.lockTime = this.datelen
-                    data.contactName = name
+                    data.contactName = this.mensInfo[0].name
                     data.contactPhone = phone
                     data.personInfos = this.mensInfo
                     data.recommend = this.recommendCode
@@ -633,6 +640,7 @@
             }
         }
         async onLoad (options) {
+            
             let num = this.rooms * this.mens
             this.params = JSON.parse(options.params)
             let date =  await wepy.getStorageSync('date')
