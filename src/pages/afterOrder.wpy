@@ -376,7 +376,7 @@
                 })
             },
             async back (orderid) {
-                wepy.showModal({
+                wx.showModal({
                   content: '您确定要退房吗?',
                   async success (res) {
                     if (res.confirm) {
@@ -396,7 +396,7 @@
                           })
                       }
                       else {
-                          wepy.showToast({
+                          wx.showToast({
                             title: resData.data.retMsg,
                             icon: 'success'
                           })

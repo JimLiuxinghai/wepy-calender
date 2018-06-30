@@ -119,6 +119,7 @@
                         <view class="button" @tap="cancelOrder({{item.orderNo}})" wx:if="{{(item.status == 2 || item.status == 3) && item.cancelState}}">取消订单</view>
                         <view class="button gray" wx:if="{{(item.status == 2 || item.status == 3) && !item.cancelState}}">取消订单</view>
                         <view class="button" wx:if="{{item.status == 4 && item.checkoutStatus == 0}}" @tap="back({{item.orderNo}})">立即退房</view>
+                        
                     </view>
                 </view>
             </view>
@@ -253,9 +254,10 @@
             },
             async back (orderid) {
                 let that = this;
-                wepy.showModal({
+                wx.showModal({
                   content: '您确定要退房吗?',
                   async success (res) {
+
                     if (res.confirm) {
                       let userid = await wepy.getStorageSync('userid')
                       let params = {
