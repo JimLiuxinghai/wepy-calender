@@ -145,6 +145,13 @@ const dateUtils =  {
 			const __date = dateUtils.strToDate(`${config.year}-${config.month + 1}-${config.index}`);
 			
 			config.disabled = currentDate <= __date;
+			let hour = new Date().getHours()
+			let diff = this.getDateDiff(currentDate, __date)
+			
+			if(hour >= 0 && hour <= 6 && diff == -1) {
+				config.disabled = true
+			}
+			
 			config.__date = observeDts(config);
 			config.current = getCurrent(config);
 
@@ -256,7 +263,7 @@ const dateUtils =  {
 	getDateDiff: function (startTime, endTime) {
 		let start = new Date(startTime).getTime();
 		let end = new Date(endTime).getTime();
-		return Math.abs((end - start) / 86400000);
+		return (end - start) / 86400000;
 	},
 	/**
 	 * 切换日期
@@ -316,17 +323,6 @@ const dateUtils =  {
 			}
 		}
 		return format;
-	},
-	/**
-	 * 日期段相差多少天
-	 * @param startTime {Date} 2016-08-01
-	 * @param endTime {Date} 2016-08-10
-	 * @returns 10 {Number}
-	 * */
-	getDateDiff: function (startTime, endTime) {
-		let start = new Date(startTime).getTime();
-		let end = new Date(endTime).getTime();
-		return Math.abs((end - start) / 86400000);
 	},
 	/**
 	 * 获取日期属于一年中第几周 星期几

@@ -186,7 +186,7 @@
                 let allIndex = [];
                 
                 if(this.outdate) {
-                    console.log(this.outdate, '*****in-date')
+                    
                     this.outdate.forEach((date) => {
                         this.monthDay.forEach((week, windex) => {
                             week.forEach((day, dindex) => {
@@ -197,7 +197,7 @@
                             })
                         })
                     })
-                    console.log(allIndex, 'index')
+                   
                     allIndex.forEach((index) => {
                         if(allIndex.length > 1) {
                             this.methods.chooseday.apply(this, ['', index])

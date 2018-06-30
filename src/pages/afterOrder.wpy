@@ -376,27 +376,37 @@
                 })
             },
             async back (orderid) {
-                let userid = await wepy.getStorageSync('userid')
-                let params = {
-                    method: 'POST',
-                    query: {
-                        orderid: orderid,
-                        userid: userid
+                wepy.showModal({
+                  content: '您确定要退房吗?',
+                  async success (res) {
+                    if (res.confirm) {
+                      let userid = await wepy.getStorageSync('userid')
+                      let params = {
+                          method: 'POST',
+                          query: {
+                              orderid: orderid,
+                              userid: userid
+                          }
+                      }
+                      let resData = await Api.backOrder(params)
+                      
+                      if(resData.data.retCode == 0) {
+                          wepy.redirectTo({
+                              url: '../pages/myOrder'
+                          })
+                      }
+                      else {
+                          wepy.showToast({
+                            title: resData.data.retMsg,
+                            icon: 'success'
+                          })
+                      }
+                    } else if (res.cancel) {
+                      console.log('用户点击取消')
                     }
-                }
-                let resData = await Api.backOrder(params)
+                  }
+                })
                 
-                if(resData.data.retCode == 0) {
-                    wepy.redirectTo({
-                        url: '../pages/myOrder'
-                    })
-                }
-                else {
-                    wepy.showToast({
-                      title: resData.data.retMsg,
-                      icon: 'success'
-                    })
-                }
             },
             tel (num) {
         		wepy.makePhoneCall({

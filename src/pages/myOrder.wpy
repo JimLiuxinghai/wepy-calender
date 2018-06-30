@@ -252,44 +252,55 @@
                 
             },
             async back (orderid) {
-                let userid = await wepy.getStorageSync('userid')
-                let params = {
-                    method: 'POST',
-                    query: {
-                        orderid: orderid,
-                        userid: userid
-                    }
-                }
-                let resData = await Api.backOrder(params)
-                
-                if(resData.data.retCode == 0) {
-                    // wepy.switchTab({
-                    //     url: '../pages/index'
-                    // })
-                    wepy.showToast({
-                      title: '已申请退房成功，请等待查房',
-                      icon: 'success'
-                    }) 
-                    let orderInfo = await this.methods.getOrder(0)
-                    orderInfo.content.forEach((item) => {
-                        item.checkoutStatus = item.checkoutStatus ? parseInt(item.checkoutStatus) + 10 : 0
+                let that = this;
+                wepy.showModal({
+                  content: '您确定要退房吗?',
+                  async success (res) {
+                    if (res.confirm) {
+                      let userid = await wepy.getStorageSync('userid')
+                      let params = {
+                          method: 'POST',
+                          query: {
+                              orderid: orderid,
+                              userid: userid
+                          }
+                      }
+                      let resData = await Api.backOrder(params)
+                      
+                      if(resData.data.retCode == 0) {
+                          // wepy.switchTab({
+                          //     url: '../pages/index'
+                          // })
+                          wepy.showToast({
+                            title: '已申请退房成功，请等待查房',
+                            icon: 'success'
+                          }) 
+                          let orderInfo = await that.methods.getOrder(0)
+                          orderInfo.content.forEach((item) => {
+                              item.checkoutStatus = item.checkoutStatus ? parseInt(item.checkoutStatus) + 10 : 0
 
-                        item.statusStr = statusMap[parseInt(item.status) + parseInt(item.checkoutStatus) + parseInt(item.payStatus)]
-                        item.bDateStr = util.dateUtils.format(new Date(item.bDate))
-                        item.eDateStr = util.dateUtils.format(new Date(item.eDate))
-                        item.dateLen =  util.dateUtils.getDateDiff(item.bDateStr, item.eDateStr)
-                        item.cancelState = this.methods.cancelState(item)
-                    })
-                    this.orderInfo = orderInfo
-                    this.total = orderInfo.totalPages
-                    this.$apply()
-                }
-                else {
-                    wepy.showToast({
-                      title: resData.data.retMsg,
-                      icon: 'none'
-                    })
-                }
+                              item.statusStr = statusMap[parseInt(item.status) + parseInt(item.checkoutStatus) + parseInt(item.payStatus)]
+                              item.bDateStr = util.dateUtils.format(new Date(item.bDate))
+                              item.eDateStr = util.dateUtils.format(new Date(item.eDate))
+                              item.dateLen =  util.dateUtils.getDateDiff(item.bDateStr, item.eDateStr)
+                              item.cancelState = that.methods.cancelState(item)
+                          })
+                          that.orderInfo = orderInfo
+                          that.total = orderInfo.totalPages
+                          that.$apply()
+                      }
+                      else {
+                          wepy.showToast({
+                            title: resData.data.retMsg,
+                            icon: 'none'
+                          })
+                      }
+                    } else if (res.cancel) {
+                      console.log('用户点击取消')
+                    }
+                  }
+                })
+                
             },
         }
         async onShow () {
