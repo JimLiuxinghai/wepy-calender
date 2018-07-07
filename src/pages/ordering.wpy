@@ -255,7 +255,7 @@
             </view>
             
         </view>
-        <view class="tips" wx:if="{{nowtime >= 0 && nowtime <= 6 }}">客官，如今天6点前入住，入住请选择{{tipdate}}。</view>
+        <view class="tips">客官，如今天6点前入住，入住请选择{{tipdate}}。</view>
         <view class="select-wrapper">
              <view class="select">
                  <view class="s-title">请选择房间数量</view>
