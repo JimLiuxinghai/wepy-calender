@@ -50,7 +50,13 @@
                 flex: 2;
             }
         }
-
+        .tips {
+            font-size: 24rpx;
+            color: #f22424;
+            box-sizing: border-box;
+            padding-left: 25rpx;
+            margin-top: 30rpx;
+        }
         //选择信息
         .select-wrapper {
             margin-top: 20rpx;
@@ -249,6 +255,7 @@
             </view>
             
         </view>
+        <view class="tips" wx:if="{{nowtime >= 0 && nowtime <= 6 }}">客官，如今天6点前入住，入住请选择{{tipdate}}。</view>
         <view class="select-wrapper">
              <view class="select">
                  <view class="s-title">请选择房间数量</view>
@@ -381,7 +388,9 @@
             hasCode: false,
             recommendCode: '',
             oType: '',
-            rate: 100
+            rate: 100,
+            tipdate: '',
+            nowtime: ''
         }
         components = {
             ncalender: Calender
@@ -640,7 +649,13 @@
             }
         }
         async onLoad (options) {
+            //获取当前时间
+            let nowtime = new Date().getHours()
+            let nowDate = util.dateUtils.format(new Date())
             
+            this.nowtime = nowtime
+            this.tipdate = util.dateUtils.switch(nowDate, -1)
+        
             let num = this.rooms * this.mens
             this.params = JSON.parse(options.params)
             let date =  await wepy.getStorageSync('date')
