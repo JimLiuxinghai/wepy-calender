@@ -349,6 +349,7 @@
     import wepy from 'wepy'
     import Api from '../utils/api'
     import util from '../utils/util'
+    import envConfig from '../utils/config'
     import Calender from '../components/calender'
 
     const weekConfig = {
@@ -573,7 +574,7 @@
                        isId = isCorrect 
                     }
                 })
-                if(isId) {
+                if(isId|| envConfig.noneedId) {
                     data.roomCnt = this.rooms
 
                     data.bDate = this.date[0]
