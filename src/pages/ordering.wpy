@@ -540,7 +540,7 @@
                     originPrice += dayPrice.cmpnPrice * rooms
                 })
                 
-                showPrice.originalPrice = Math.round(originPrice*rate/100)
+                showPrice.originalPrice = Math.ceil(originPrice*rate/100)
                 return showPrice
             },
             dealMens (num, info) {
