@@ -208,23 +208,25 @@
                             deferSubInfo: {
                                 deferDays: _self.payData.deferDays,
                                 orderNo: _self.payData.orderNo,
-                                payAmt: _self.payData.wxPayAmt || 0,
+                                payAmt: _self.payData.goldBeans || 0,
                                 payType: 'GB'
                             }
                         }
                     }
                     let payRes = await Api.payDefer(params)
-                    console.log(payRes, '&&&&&')
-                    wepy.showToast({
-                       title: '支付成功',
-                       icon: 'success'
-                    })
-                    setTimeout(function(){
-                       wepy.hideToast()
-                       wepy.redirectTo({
-                         url: '../pages/myOrder?orderid=' + _self.orderid
-                       })
-                    },150)
+                    if(payRes.data.retCode == 0) {
+                        wepy.showToast({
+                           title: '支付成功',
+                           icon: 'success'
+                        })
+                        setTimeout(function(){
+                           wepy.hideToast()
+                           wepy.redirectTo({
+                             url: '../pages/myOrder?orderid=' + _self.orderid
+                           })
+                        },150)
+                    }
+                    
                 }
                 
             }
