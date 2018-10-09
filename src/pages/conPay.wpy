@@ -195,6 +195,26 @@
                 }
                 
                 else {
+                    let params = {
+                        method: 'POST',
+                        query: {
+                            userid: _self.userid
+                        },
+                        data: {
+                            openId: openId,
+                            redirect: envConfig.payUrl,
+                            mctCode: envConfig.mctCode,
+                            appId: envConfig.appid,
+                            deferSubInfo: {
+                                deferDays: _self.payData.deferDays,
+                                orderNo: _self.payData.orderNo,
+                                payAmt: _self.payData.wxPayAmt || 0,
+                                payType: 'GB'
+                            }
+                        }
+                    }
+                    let payRes = await Api.payDefer(params)
+                    console.log(payRes, '&&&&&')
                     wepy.showToast({
                        title: '支付成功',
                        icon: 'success'

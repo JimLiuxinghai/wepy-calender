@@ -310,6 +310,7 @@
                 }
                 let result = await Api.orderDetail(params)
                 let newData = result.data.data
+                console.log(newData.orderGenInfo.status, newData.orderGenInfo.payStatus, newData.orderGenInfo.checkoutStatus)
                 newData.orderGenInfo.checkoutStatus = newData.orderGenInfo.checkoutStatus ? parseInt(newData.orderGenInfo.checkoutStatus) + 10 : 0
                 newData.orderGenInfo.statusStr = statusMap[parseInt(newData.orderGenInfo.status) + parseInt(newData.orderGenInfo.payStatus) + parseInt(newData.orderGenInfo.checkoutStatus)]
                 newData.orderGenInfo.payStr = payMap[newData.orderGenInfo.payStatus]
